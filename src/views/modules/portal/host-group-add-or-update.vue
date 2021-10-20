@@ -7,6 +7,16 @@
       <el-form-item :label="'名称'" prop="name">
         <el-input v-model="dataForm.name" :placeholder="'名称'"></el-input>
       </el-form-item>
+      <el-form-item :label="'类型'" prop="type">
+        <el-select v-model="dataForm.type" filterable placeholder="请选择">
+          <el-option v-for="item in types" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="dataForm.type === 'container'" :label="'开阳服务'">
+        <el-select v-model="dataForm.caasServiceId" filterable placeholder="请选择" remote :remote-method="searchCaasService">
+          <el-option v-for="item in caasServices" :key="item.id" :label="showCaasService(item)" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="上级群组" prop="parentName">
         <el-popover
           ref="hostGroupPopover"
@@ -49,7 +59,7 @@
           </el-col>
           <el-col :span="2" class="icon-list__tips">
             <el-tooltip placement="top" effect="light">
-              <div slot="content">全站推荐使用SVG Sprite, 详细请参考:<a href="//github.com/daxiongYang/renren-fast-vue/blob/master/src/icons/index.js" target="_blank">icons/index.js</a>描述</div>
+              <div slot="content">描述</div>
               <i class="el-icon-warning"></i>
             </el-tooltip>
           </el-col>
@@ -76,8 +86,10 @@
         dataForm: {
           id: 0,
           name: '',
+          type: '',
           parentName: '',
           parentId: 0,
+          caasServiceId: '',
           perms: '',
           icon: '',
           desc: '',
@@ -87,15 +99,26 @@
           name: [
             { required: true, message: '群组名称不能为空', trigger: 'blur' }
           ],
+          type: [
+            { required: true, message: '群组类型不能为空', trigger: 'blur' }
+          ],
           parentName: [
             { required: true, message: '上级群组不能为空', trigger: 'change' }
           ]
         },
+        types: [{
+          value: 'vm',
+          label: '虚拟机'
+        }, {
+          value: 'container',
+          label: '容器'
+        }],
         hostGroup: [],
         hostGroupTreeProps: {
           label: 'name',
           children: 'children'
-        }
+        },
+        caasServices: []
       }
     },
     created () {
@@ -130,7 +153,9 @@
             }).then(({data}) => {
               this.dataForm.id = data.id
               this.dataForm.name = data.name
-              this.dataForm.parent = data.parent
+              this.dataForm.type = data.type
+              this.dataForm.parentName = data.parentName
+              this.dataForm.parentId = data.parentId
               this.dataForm.perms = data.perms
               this.dataForm.icon = data.icon
               // this.hostGroupTreeSetCurrentNode()
@@ -155,6 +180,23 @@
       iconActiveHandle (iconName) {
         this.dataForm.icon = iconName
       },
+      // 搜索开阳服务
+      searchCaasService (query) {
+        if (query !== '') {
+          this.$http({
+            url: this.$http.adornUrl('/api/v1/caas/service/list'),
+            method: 'get',
+            params: this.$http.adornParams({'name': query})
+          }).then(({data}) => {
+            this.caasServices = data.list
+          }).catch((error) => {
+            this.$message.error(error.message)
+          })
+        }
+      },
+      showCaasService (item) {
+        return item.serviceName + '(' + item.appName + ':' + item.type + ')'
+      },
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
@@ -165,8 +207,10 @@
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
                 'name': this.dataForm.name,
-                // 'parent': this.dataForm.parentName,
+                'type': this.dataForm.type,
+                'parentName': this.dataForm.parentName,
                 'parentId': this.dataForm.parentId,
+                'caasServiceId': this.dataForm.caasServiceId,
                 'perms': this.dataForm.perms,
                 'icon': this.dataForm.icon,
                 'desc': this.dataForm.desc

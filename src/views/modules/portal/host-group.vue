@@ -19,7 +19,18 @@
         label="名称" >
       </el-table-column>
       <el-table-column
-        prop="parent"
+        prop="type"
+        header-align="center"
+        align="center"
+        min-width="80"
+        label="类型" >
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.type=='vm'" size="small">虚拟机</el-tag>
+          <el-tag v-if="scope.row.type=='container'" size="small">容器</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="parentName"
         header-align="center"
         align="center"
         min-width="80"

@@ -19,22 +19,6 @@
       <el-form-item label="群组" prop="groups">
         <el-cascader ref="groupCascader" v-model="dataForm.groups" :options="dataForm.groupOptions" :props="dataForm.groupProps" @change="groupChangeHandle" placeholder="请选择" clearable></el-cascader>
       </el-form-item>
-<!--      <el-form-item label="租户" prop="tenant">-->
-<!--        <el-select v-model="dataForm.tenant" filterable remote placeholder="请选择" :remote-method="searchTenant">-->
-<!--          <el-option v-for="item in dataForm.tenants" :key="item.name" :label="item.cnName" :value="item.name"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="环境" prop="env">-->
-<!--        <el-select v-model="dataForm.env" filterable remote placeholder="请选择" :remote-method="searchEnv">-->
-<!--          <el-option v-for="item in dataForm.envs" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="项目" prop="project">-->
-<!--        <el-input v-model="dataForm.project" placeholder="所属项目"></el-input>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="模块" prop="module">-->
-<!--        <el-input v-model="dataForm.module" placeholder="所属模块"></el-input>-->
-<!--      </el-form-item>-->
       <el-form-item label="开发负责人" prop="devOwner">
         <el-select v-model="dataForm.devOwner" filterable remote placeholder="请选择" :remote-method="searchUser">
           <el-option v-for="item in dataForm.devOwners" :key="item.jgygUserId" :label="userInfo(item.cnName, item.jgygUserId)" :value="item.jgygUserId"></el-option>
@@ -89,18 +73,6 @@
           groups: [
             { required: true, message: '所属组不能为空', trigger: 'blur' }
           ],
-          // tenant: [
-          //   { required: true, message: '所属租户不能为空', trigger: 'blur' }
-          // ],
-          // env: [
-          //   { required: true, message: '所属环境为空', trigger: 'blur' }
-          // ],
-          // project: [
-          //   { required: false, message: '所属项目不能为空', trigger: 'blur' }
-          // ],
-          // module: [
-          //   { required: false, message: '所属模块不能为空', trigger: 'blur' }
-          // ],
           devOwner: [
             { required: true, message: '开发负责人不能为空', trigger: 'blur' }
           ]
@@ -121,26 +93,6 @@
           this.$message.error(error.message)
         })
 
-        // this.$http({
-        //   url: this.$http.adornUrl(`/api/v1/tenant/list`),
-        //   method: 'get',
-        //   params: this.$http.adornParams()
-        // }).then(({data}) => {
-        //   this.dataForm.tenants = data.list
-        // }).catch((error) => {
-        //   this.$message.error(error.message)
-        // })
-        //
-        // this.$http({
-        //   url: this.$http.adornUrl(`/api/v1/env/list`),
-        //   method: 'get',
-        //   params: this.$http.adornParams({'name': 'env'})
-        // }).then(({data}) => {
-        //   this.dataForm.envs = data
-        // }).catch((error) => {
-        //   this.$message.error(error.message)
-        // })
-
         this.$http({
           url: this.$http.adornUrl(`/api/v1/host/info/${this.dataForm.id}`),
           method: 'get',
@@ -153,10 +105,6 @@
           this.dataForm.ip = data.ip
           this.dataForm.physicalSystem = data.physicalSystem
           this.dataForm.groups = data.groups
-          // this.dataForm.tenant = data.tenant
-          // this.dataForm.env = data.env
-          // this.dataForm.project = data.project
-          // this.dataForm.module = data.module
           this.dataForm.devOwner = data.devOwner
         }).catch((error) => {
           this.$message.error(error.message)
@@ -171,20 +119,6 @@
             params: this.$http.adornParams({'name': query})
           }).then(({data}) => {
             this.dataForm.tenants = data.list
-          }).catch((error) => {
-            this.$message.error(error.message)
-          })
-        }
-      },
-      searchEnv (query) {
-        if (query !== '') {
-          this.loading = true
-          this.$http({
-            url: this.$http.adornUrl('/api/v1/env/list'),
-            method: 'get',
-            params: this.$http.adornParams({'name': query})
-          }).then(({data}) => {
-            this.dataForm.envs = data.list
           }).catch((error) => {
             this.$message.error(error.message)
           })

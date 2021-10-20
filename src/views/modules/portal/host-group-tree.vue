@@ -18,11 +18,7 @@
       @node-drop="dropHandle"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <el-tooltip v-if="data.desc" class="item" effect="dark" :content="data.desc" placement="right">
-          <span v-if="data.isWarning === true" class="box alarm">{{ node.label }}</span>
-          <span v-else>{{ node.label }}</span>
-        </el-tooltip>
-        <el-tooltip v-else disabled="true" class="item" effect="dark" :content="data.desc" placement="right">
+        <el-tooltip class="item" effect="dark" :content="showTooltip(data)" placement="right">
           <span v-if="data.isWarning === true" class="box alarm">{{ node.label }}</span>
           <span v-else>{{ node.label }}</span>
         </el-tooltip>
@@ -50,7 +46,8 @@ export default {
   data () {
     return {
       dataForm: {
-        id: 0
+        id: 0,
+        nodeType: 'vm'
       },
       filterText: '',
       dataListLoading: false,
@@ -92,7 +89,7 @@ export default {
     // },
     // 点击树形结构
     nodeClickHandle (node, checked, indeterminate) {
-      if (node.ip) {
+      if (node.type === undefined) {
         this.$router.push({ name: 'host-detail', params: {id: node.id} })
       }
     },
@@ -118,46 +115,62 @@ export default {
     dropHandle (draggingNode, dropNode, dropType, ev) {
       // 拖拽成功完成时触发的事件
       // console.log(draggingNode, dropNode, dropType, ev)
-      if (draggingNode.data.parent) {
-        // 拖动host group节点
-        this.$http({
-          url: this.$http.adornUrl('/api/v1/host_group/move'),
-          method: 'post',
-          params: this.$http.adornParams({
-            'id': draggingNode.data.id,
-            'parent': dropNode.data.id
-          })
-        }).then(() => {
-          dropNode.data.isLeaf = false
-          dropNode.loaded = false
-          dropNode.expand()
-        }).catch((error) => {
-          this.$message.error(error.message)
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/tree/dragging'),
+        method: 'post',
+        params: this.$http.adornParams({
+          'draggingNodeId': draggingNode.data.id,
+          'draggingNodeType': draggingNode.data.type,
+          'dropNodeId': dropNode.data.id,
+          'dropNodeType': dropNode.data.type
         })
-      } else {
-        // 拖动host节点
-        this.$http({
-          url: this.$http.adornUrl('/api/v1/host_group/bind_host'),
-          method: 'post',
-          params: this.$http.adornParams({
-            'hostId': draggingNode.data.id,
-            'groupId': dropNode.data.id
-          })
-        }).then(() => {
-          dropNode.data.isLeaf = true   // 目标节点设置为叶子节点
-          dropNode.loaded = false
-          dropNode.expand()
-        }).catch((error) => {
-          this.$message.error(error.message)
-        })
-      }
+      }).then(() => {
+        // dropNode.data.isLeaf = false
+        dropNode.loaded = false
+        dropNode.expand()
+      }).catch((error) => {
+        this.$message.error(error.message)
+      })
+      // if (draggingNode.data.parent) {
+      //   // 拖动host group节点
+      //   this.$http({
+      //     url: this.$http.adornUrl('/api/v1/tree/move'),
+      //     method: 'post',
+      //     params: this.$http.adornParams({
+      //       'id': draggingNode.data.id,
+      //       'parent': dropNode.data.id
+      //     })
+      //   }).then(() => {
+      //     dropNode.data.isLeaf = false
+      //     dropNode.loaded = false
+      //     dropNode.expand()
+      //   }).catch((error) => {
+      //     this.$message.error(error.message)
+      //   })
+      // } else {
+      //   // 拖动host节点
+      //   this.$http({
+      //     url: this.$http.adornUrl('/api/v1/host_group/bind_host'),
+      //     method: 'post',
+      //     params: this.$http.adornParams({
+      //       'hostId': draggingNode.data.id,
+      //       'groupId': dropNode.data.id
+      //     })
+      //   }).then(() => {
+      //     dropNode.data.isLeaf = true   // 目标节点设置为叶子节点
+      //     dropNode.loaded = false
+      //     dropNode.expand()
+      //   }).catch((error) => {
+      //     this.$message.error(error.message)
+      //   })
+      // }
     },
     allowDrop (draggingNode, dropNode, type) {
       // console.log(draggingNode, dropNode, type)
       if (type !== 'inner') {
         return false
       }
-      if (!dropNode.data.children && !dropNode.data.ip) {
+      if (dropNode.data.type && !dropNode.data.children) {
         // 拖到host group节点
         return true
       } else {
@@ -174,52 +187,85 @@ export default {
     },
     loadNode (node, resolve) {
       // console.log(node)
-      if (node.level === 0) {
-        this.$http({
-          url: this.$http.adornUrl('/api/v1/host_group/tree'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'id': this.dataForm.id
-          })
-        }).then(({data}) => {
-          resolve(data)
-        }).catch((error) => {
-          this.$message.error(error.message)
-        })
-      } else if (node.data.isLeaf === false) {
-        this.$http({
-          url: this.$http.adornUrl('/api/v1/host_group/children'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'id': node.data.id
-          })
-        }).then(({data}) => {
-          if (data) {
-            resolve(data)
-          } else {
-            resolve([])
-          }
-        }).catch((error) => {
-          this.$message.error(error.message)
-        })
-      } else if (node.data.isLeaf === true) {
-        this.$http({
-          url: this.$http.adornUrl('/api/v1/host_group/hosts'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'id': node.data.id
-          })
-        }).then(({data}) => {
-          if (data) {
-            resolve(data)
-          } else {
-            resolve([])
-          }
-        }).catch((error) => {
-          this.$message.error(error.message)
-        })
+      let id = 0
+      let type = 'vm'
+      if (node && node.data) {
+        id = node.data.id
+        type = node.data.type
       }
-      resolve([])
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/tree'),
+        method: 'get',
+        params: this.$http.adornParams({
+          'id': id,
+          'type': type
+        })
+      }).then(({data}) => {
+        resolve(data)
+      }).catch((error) => {
+        this.$message.error(error.message)
+      })
+      // if (node.level === 0) {
+      //   this.$http({
+      //     url: this.$http.adornUrl('/api/v1/host_group/tree'),
+      //     method: 'get',
+      //     params: this.$http.adornParams({
+      //       'id': this.dataForm.id,
+      //       'nodeType': this.dataForm.nodeType
+      //     })
+      //   }).then(({data}) => {
+      //     resolve(data)
+      //   }).catch((error) => {
+      //     this.$message.error(error.message)
+      //   })
+      // } else if (node.data.isLeaf === false) {
+      //   this.$http({
+      //     url: this.$http.adornUrl('/api/v1/host_group/children'),
+      //     method: 'get',
+      //     params: this.$http.adornParams({
+      //       'id': node.data.id
+      //     })
+      //   }).then(({data}) => {
+      //     if (data) {
+      //       resolve(data)
+      //     } else {
+      //       resolve([])
+      //     }
+      //   }).catch((error) => {
+      //     this.$message.error(error.message)
+      //   })
+      // } else if (node.data.isLeaf === true) {
+      //   this.$http({
+      //     url: this.$http.adornUrl('/api/v1/host_group/hosts'),
+      //     method: 'get',
+      //     params: this.$http.adornParams({
+      //       'id': node.data.id
+      //     })
+      //   }).then(({data}) => {
+      //     if (data) {
+      //       resolve(data)
+      //     } else {
+      //       resolve([])
+      //     }
+      //   }).catch((error) => {
+      //     this.$message.error(error.message)
+      //   })
+      // }
+      // resolve([])
+    },
+    showTooltip (data) {
+      let tooltip = ''
+      if (data.type === 'vm') {
+        tooltip = '(虚拟机服务)'
+      } else if (data.type === 'container') {
+        tooltip = '(容器服务)'
+      } else if (data.type === undefined) {
+        tooltip = '(资源节点)'
+      }
+      if (data.desc !== undefined) {
+        tooltip += data.desc
+      }
+      return tooltip
     },
     append (data) {
       const newChild = {label: '', children: []}

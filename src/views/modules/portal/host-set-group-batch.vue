@@ -1,21 +1,9 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="'设置'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
-      <el-form-item label="IP" prop="ip" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-if="dataForm.id" v-model="dataForm.ip" placeholder="IP" :disabled="true"></el-input>
-        <el-input v-else v-model="dataForm.ip" placeholder="IP"></el-input>
-      </el-form-item>
-      <el-form-item label="名称" prop="name">
-        <el-input v-if="dataForm.id" v-model="dataForm.name" placeholder="名称" :disabled="true"></el-input>
-        <el-input v-else v-model="dataForm.name" placeholder="名称"></el-input>
-      </el-form-item>
-      <el-form-item label="物理子系统" prop="physicalSystem">
-        <el-input v-if="dataForm.id" v-model="dataForm.physicalSystem" placeholder="物理子系统" :disabled="true"></el-input>
-        <el-input v-else v-model="dataForm.physicalSystem" placeholder="物理子系统"></el-input>
-      </el-form-item>
       <el-form-item label="群组" prop="groups">
         <el-cascader ref="groupCascader" v-model="dataForm.groups" :options="dataForm.groupOptions" :props="dataForm.groupProps" @change="groupChangeHandle" placeholder="请选择" clearable></el-cascader>
       </el-form-item>
@@ -39,10 +27,7 @@
         loading: false,
         visible: false,
         dataForm: {
-          id: 0,
-          name: '',
-          physicalSystem: '',
-          ip: '',
+          ids: [],
           groups: [],
           groupIds: [],
           devOwner: '',
@@ -58,12 +43,6 @@
           devOwners: []
         },
         dataRule: {
-          ip: [
-            { required: true, message: 'ip不能为空', trigger: 'blur' }
-          ],
-          physicalSystem: [
-            { required: true, message: '物理子系统', trigger: 'blur' }
-          ],
           groups: [
             { required: true, message: '所属组不能为空', trigger: 'blur' }
           ],
@@ -74,50 +53,18 @@
       }
     },
     methods: {
-      init (id) {
+      init (ids) {
         this.visible = true
-        this.dataForm.id = id || 0
+        this.dataForm.ids = ids || 0
         this.$http({
           url: this.$http.adornUrl('/api/v1/tree'),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          console.log(data)
           this.dataForm.groupOptions = data
         }).catch((error) => {
           this.$message.error(error.message)
         })
-
-        this.$http({
-          url: this.$http.adornUrl(`/api/v1/host/info/${this.dataForm.id}`),
-          method: 'get',
-          params: this.$http.adornParams()
-        }).then(({data}) => {
-          data.groups.forEach(function (value, index, array) {
-            array[index] = JSON.parse(value.path)
-          })
-          this.dataForm.name = data.name
-          this.dataForm.ip = data.ip
-          this.dataForm.physicalSystem = data.physicalSystem
-          this.dataForm.groups = data.groups
-          this.dataForm.devOwner = data.devOwner
-        }).catch((error) => {
-          this.$message.error(error.message)
-        })
-      },
-      searchTenant (query) {
-        if (query !== '') {
-          this.loading = true
-          this.$http({
-            url: this.$http.adornUrl('/api/v1/tenant/list'),
-            method: 'get',
-            params: this.$http.adornParams({'name': query})
-          }).then(({data}) => {
-            this.dataForm.tenants = data.list
-          }).catch((error) => {
-            this.$message.error(error.message)
-          })
-        }
       },
       searchUser (query) {
         if (query !== '') {
@@ -148,13 +95,10 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/host/${!this.dataForm.id ? 'create' : 'update'}`),
-              method: !this.dataForm.id ? 'post' : 'put',
+              url: this.$http.adornUrl(`/api/v1/host/batch/update`),
+              method: 'put',
               data: this.$http.adornData({
-                'id': this.dataForm.id || undefined,
-                'name': this.dataForm.name,
-                'physicalSystem': this.dataForm.physicalSystem,
-                'ip': this.dataForm.ip,
+                'ids': this.dataForm.ids || undefined,
                 'groups': this.dataForm.groups,
                 'groupIds': this.dataForm.groupIds,
                 'devOwner': this.dataForm.devOwner

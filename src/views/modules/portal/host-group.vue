@@ -2,6 +2,10 @@
   <div class="mod-host-group">
     <el-form :inline="true" :model="dataForm">
       <el-form-item>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="getDataList()">查询</el-button>
         <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
       </el-form-item>
     </el-form>
@@ -91,7 +95,9 @@
   export default {
     data () {
       return {
-        dataForm: {},
+        dataForm: {
+          name: ''
+        },
         dataList: [],
         pageIndex: 1,
         pageSize: 10,
@@ -115,6 +121,7 @@
           url: this.$http.adornUrl('/api/v1/host_group/list'),
           method: 'get',
           params: this.$http.adornParams({
+            'name': this.dataForm.name,
             'page': this.pageIndex,
             'limit': this.pageSize
           })

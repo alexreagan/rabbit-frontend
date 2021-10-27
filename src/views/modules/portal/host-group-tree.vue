@@ -18,9 +18,33 @@
       @node-drop="dropHandle"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <el-tooltip class="item" effect="dark" :content="showTooltip(data)" placement="right">
-          <span v-if="data.isWarning === true" class="box alarm">{{ node.label }}</span>
-          <span v-else>{{ node.label }}</span>
+        <el-tooltip v-if="data.desc" class="item" effect="dark" :content="showTooltip(data)" placement="right">
+          <span v-if="data.isWarning === true" class="box alarm">
+            <icon-svg v-if="data.type === 'vm'" name="group" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
+            {{ node.label }}
+          </span>
+          <span v-else>
+            <icon-svg v-if="data.type === 'vm'" name="group" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
+            {{ node.label }}
+          </span>
+        </el-tooltip>
+        <el-tooltip v-else :disabled="true" class="item" effect="dark" :content="showTooltip(data)" placement="right">
+          <span v-if="data.isWarning === true" class="box alarm">
+            <icon-svg v-if="data.type === 'vm'" name="group" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
+            {{ node.label }}
+          </span>
+          <span v-else>
+            <icon-svg v-if="data.type === 'vm'" name="group" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
+            {{ node.label }}
+          </span>
         </el-tooltip>
 <!--        <span>-->
 <!--          <el-button-->
@@ -89,8 +113,11 @@ export default {
     // },
     // 点击树形结构
     nodeClickHandle (node, checked, indeterminate) {
-      if (node.type === undefined) {
+      // console.log(node)
+      if (node.type === 'host') {
         this.$router.push({ name: 'host-detail', params: {id: node.id} })
+      } else if (node.type === 'pod') {
+        this.$router.push({name: 'pod-detail', params: {id: node.id}})
       }
     },
     dragStartHandle (node, ev) {
@@ -255,13 +282,6 @@ export default {
     },
     showTooltip (data) {
       let tooltip = ''
-      if (data.type === 'vm') {
-        tooltip = '(虚拟机服务)'
-      } else if (data.type === 'container') {
-        tooltip = '(容器服务)'
-      } else if (data.type === undefined) {
-        tooltip = '(资源节点)'
-      }
       if (data.desc !== undefined) {
         tooltip += data.desc
       }

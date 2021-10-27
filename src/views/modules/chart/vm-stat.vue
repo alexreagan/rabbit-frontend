@@ -36,7 +36,7 @@
     methods: {
       getDataList () {
         this.$http({
-          url: this.$http.adornUrl('/api/v1/chart/stat'),
+          url: this.$http.adornUrl('/api/v1/chart/vm/stat'),
           method: 'get'
         }).then(({data}) => {
           console.log(data)

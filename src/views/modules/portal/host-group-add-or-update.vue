@@ -195,7 +195,7 @@
         }
       },
       showCaasService (item) {
-        return item.serviceName + '(' + item.appName + ':' + item.type + ')'
+        return item.serviceName + '(' + item.workspaceName + ':' + item.namespace + ':' + item.appName + ':' + item.type + ')'
       },
       // 表单提交
       dataFormSubmit () {

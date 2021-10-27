@@ -30,6 +30,7 @@
         <el-button @click="getDataList()">查询</el-button>
         <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="warning" @click="setGroupBatchHandle()" :disabled="dataListSelections.length <= 0">批量设置群组</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -125,11 +126,13 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <set-group-batch v-if="setGroupBatchVisible" ref="setGroupBatch" @refreshDataList="getDataList"></set-group-batch>
   </div>
 </template>
 
 <script>
 import AddOrUpdate from './host-add-or-update'
+import SetGroupBatch from './host-set-group-batch'
 import Detail from './host-detail'
 export default {
   data () {
@@ -157,12 +160,14 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      addOrUpdateVisible: false
+      addOrUpdateVisible: false,
+      setGroupBatchVisible: false
     }
   },
   components: {
     AddOrUpdate,
-    Detail
+    Detail,
+    SetGroupBatch
   },
   activated () {
     this.getDataList()
@@ -286,6 +291,15 @@ export default {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id)
+      })
+    },
+    setGroupBatchHandle (id) {
+      var ids = id ? [id] : this.dataListSelections.map(item => {
+        return item.id
+      })
+      this.setGroupBatchVisible = true
+      this.$nextTick(() => {
+        this.$refs.setGroupBatch.init(ids)
       })
     },
     // 删除

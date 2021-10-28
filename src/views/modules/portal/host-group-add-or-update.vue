@@ -89,7 +89,7 @@
           type: '',
           parentName: '',
           parentId: 0,
-          caasServiceId: '',
+          caasServiceId: 0,
           perms: '',
           icon: '',
           desc: '',

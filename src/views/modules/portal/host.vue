@@ -11,10 +11,35 @@
         <el-input v-model="dataForm.group" placeholder="群组名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.cpuUsage" placeholder="CPU使用率大于" clearable></el-input>
+        <el-input v-model="dataForm.cpuNumber" placeholder="CPU核数" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.fsUsage" placeholder="磁盘使用率大于" clearable></el-input>
+        <el-select v-model="dataForm.areaName" placeholder="请选择" clearable>
+          <el-option
+            v-for="item in areaNameChoices"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.cpuUsageLowerLimit" placeholder="CPU使用率下限" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.cpuUsageUpperLimit" placeholder="CPU使用率上限" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.fsUsageLowerLimit" placeholder="磁盘使用率下限" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.fsUsageUpperLimit" placeholder="磁盘使用率上限" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.memoryUsageLowerLimit" placeholder="内存使用率下限" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.memoryUsageUpperLimit" placeholder="内存使用率上限" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="dataForm.boundGroup" placeholder="请选择" clearable>
@@ -74,6 +99,12 @@
         header-align="center"
         align="center"
         label="群组">
+      </el-table-column>
+      <el-table-column
+        prop="areaName"
+        header-align="center"
+        align="center"
+        label="区域">
       </el-table-column>
       <el-table-column
         prop="cpuNumber"
@@ -140,13 +171,47 @@ export default {
       dataForm: {
         ip: '',
         physicalSystem: '',
-        cpuUsage: '',
-        fsUsage: '',
+        cpuNumber: '',
+        areaName: '',
+        cpuUsageUpperLimit: '',
+        cpuUsageLowerLimit: '',
+        fsUsageUpperLimit: '',
+        fsUsageLowerLimit: '',
+        memoryUsageUpperLimit: '',
+        memoryUsageLowerLimit: '',
         group: '',
         boundGroup: ''
       },
       orderBy: '',
       order: '',
+      areaNameChoices: [{
+        value: '外部客户托管区',
+        label: '外部客户托管区'
+      }, {
+        value: '环境内部管理区域',
+        label: '环境内部管理区域'
+      }, {
+        value: '公有云功能测试区',
+        label: '公有云功能测试区'
+      }, {
+        value: '开发区域',
+        label: '开发区域'
+      }, {
+        value: '管理工具运营区',
+        label: '管理工具运营区'
+      }, {
+        value: '功能测试区域',
+        label: '功能测试区域'
+      }, {
+        value: '环境特殊管理区域',
+        label: '环境特殊管理区域'
+      }, {
+        value: '子公司托管区',
+        label: '子公司托管区'
+      }, {
+        value: '非功能测试区域',
+        label: '非功能测试区域'
+      }],
       boundGroupChoices: [{
         value: 'bound',
         label: '已关联群组'
@@ -184,8 +249,14 @@ export default {
           'limit': this.pageSize,
           'ip': this.dataForm.ip,
           'physicalSystem': this.dataForm.physicalSystem,
-          'cpuUsage': this.dataForm.cpuUsage,
-          'fsUsage': this.dataForm.fsUsage,
+          'cpuNumber': this.dataForm.cpuNumber,
+          'areaName': this.dataForm.areaName,
+          'cpuUsageLowerLimit': this.dataForm.cpuUsageLowerLimit,
+          'cpuUsageUpperLimit': this.dataForm.cpuUsageUpperLimit,
+          'fsUsageLowerLimit': this.dataForm.fsUsageLowerLimit,
+          'fsUsageUpperLimit': this.dataForm.fsUsageUpperLimit,
+          'memoryUsageLowerLimit': this.dataForm.memoryUsageLowerLimit,
+          'memoryUsageUpperLimit': this.dataForm.memoryUsageUpperLimit,
           'group': this.dataForm.group,
           'boundGroup': this.dataForm.boundGroup,
           'orderBy': this.orderBy,

@@ -269,7 +269,8 @@ export default {
               value.groups = '[]'
             }
             value.groups.forEach(function (val, idx, arr) {
-              arr[idx] = JSON.parse(val.path).join('/')
+              // arr[idx] = JSON.parse(val.path).join('/')
+              arr[idx] = val.path
             })
             value.groups = value.groups.join(',')
             value.cpuUsage = value.cpuUsage + '%'

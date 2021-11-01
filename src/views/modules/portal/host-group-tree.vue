@@ -20,13 +20,13 @@
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <el-tooltip v-if="data.desc" class="item" effect="dark" :content="showTooltip(data)" placement="right">
           <span v-if="data.isWarning === true" class="box alarm">
-            <icon-svg v-if="data.type === 'vm'" name="group" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ node.label }}
           </span>
           <span v-else>
-            <icon-svg v-if="data.type === 'vm'" name="group" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ node.label }}
@@ -34,13 +34,13 @@
         </el-tooltip>
         <el-tooltip v-else :disabled="true" class="item" effect="dark" :content="showTooltip(data)" placement="right">
           <span v-if="data.isWarning === true" class="box alarm">
-            <icon-svg v-if="data.type === 'vm'" name="group" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ node.label }}
           </span>
           <span v-else>
-            <icon-svg v-if="data.type === 'vm'" name="group" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ node.label }}
@@ -71,7 +71,7 @@ export default {
     return {
       dataForm: {
         id: 0,
-        nodeType: 'vm'
+        nodeType: 'vmGroup'
       },
       filterText: '',
       dataListLoading: false,
@@ -215,7 +215,7 @@ export default {
     loadNode (node, resolve) {
       // console.log(node)
       let id = 0
-      let type = 'vm'
+      let type = 'vmGroup'
       if (node && node.data) {
         id = node.data.id
         type = node.data.type

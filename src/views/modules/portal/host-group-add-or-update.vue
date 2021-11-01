@@ -35,36 +35,6 @@
         </el-popover>
         <el-input v-model="dataForm.parentName" v-popover:hostGroupPopover :readonly="true" placeholder="点击选择上级群组" class="menu-list__input"></el-input>
       </el-form-item>
-      <el-form-item label="图标" prop="icon">
-        <el-row>
-          <el-col :span="22">
-            <el-popover
-              ref="iconListPopover"
-              placement="bottom-start"
-              trigger="click"
-              popper-class="mod-menu__icon-popover">
-              <div class="mod-menu__icon-inner">
-                <div class="mod-menu__icon-list">
-                  <el-button
-                    v-for="(item, index) in iconList"
-                    :key="index"
-                    @click="iconActiveHandle(item)"
-                    :class="{ 'is-active': item === dataForm.icon }">
-                    <icon-svg :name="item"></icon-svg>
-                  </el-button>
-                </div>
-              </div>
-            </el-popover>
-            <el-input v-model="dataForm.icon" v-popover:iconListPopover :readonly="true" placeholder="图标名称" class="icon-list__input"></el-input>
-          </el-col>
-          <el-col :span="2" class="icon-list__tips">
-            <el-tooltip placement="top" effect="light">
-              <div slot="content">描述</div>
-              <i class="el-icon-warning"></i>
-            </el-tooltip>
-          </el-col>
-        </el-row>
-      </el-form-item>
       <el-form-item :label="'描述'" prop="desc">
         <el-input type="textarea" v-model="dataForm.desc" :placeholder="'描述'" maxlength="255" show-word-limit></el-input>
       </el-form-item>
@@ -107,10 +77,10 @@
           ]
         },
         types: [{
-          value: 'vm',
+          value: 'vmGroup',
           label: '虚拟机'
         }, {
-          value: 'container',
+          value: 'containerGroup',
           label: '容器'
         }],
         hostGroup: [],
@@ -154,6 +124,7 @@
               this.dataForm.id = data.id
               this.dataForm.name = data.name
               this.dataForm.type = data.type
+              this.dataForm.caasServiceId = data.caasServiceId
               this.dataForm.parentName = data.parentName
               this.dataForm.parentId = data.parentId
               this.dataForm.perms = data.perms

@@ -29,8 +29,8 @@
         min-width="80"
         label="类型" >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.type=='vm'" size="small">虚拟机</el-tag>
-          <el-tag v-if="scope.row.type=='container'" size="small">容器</el-tag>
+          <el-tag v-if="scope.row.type=='vmGroup'" size="small">虚拟机</el-tag>
+          <el-tag v-if="scope.row.type=='containerGroup'" size="small">容器</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -127,13 +127,13 @@
           })
         }).then(({data}) => {
           if (data && data.list) {
-            data.list.forEach(function (value, index, array) {
-              if (value.path === '') {
-                value.path = '[""]'
-              }
-              value.path = JSON.parse(value.path).join('/')
-              array[index] = value
-            })
+            // data.list.forEach(function (value, index, array) {
+            //   if (value.path === '') {
+            //     value.path = '[""]'
+            //   }
+            //   value.path = JSON.parse(value.path).join('/')
+            //   array[index] = value
+            // })
             this.dataList = data.list
             this.totalPage = data.totalCount
           } else {

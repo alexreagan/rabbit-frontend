@@ -77,7 +77,8 @@ import {
   Message,
   Notification,
   Descriptions,
-  DescriptionsItem
+  DescriptionsItem,
+  Link
 } from 'element-ui'
 
 Vue.use(Pagination)
@@ -145,6 +146,7 @@ Vue.use(Main)
 Vue.use(Footer)
 Vue.use(Descriptions)
 Vue.use(DescriptionsItem)
+Vue.use(Link)
 
 Vue.use(Loading.directive)
 

@@ -12,7 +12,7 @@
           <el-option v-for="item in types" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="dataForm.type === 'container'" :label="'开阳服务'">
+      <el-form-item v-if="dataForm.type === 'containerGroup'" :label="'开阳服务'">
         <el-select v-model="dataForm.caasServiceId" filterable placeholder="请选择" remote :remote-method="searchCaasService">
           <el-option v-for="item in caasServices" :key="item.id" :label="showCaasService(item)" :value="item.id"></el-option>
         </el-select>

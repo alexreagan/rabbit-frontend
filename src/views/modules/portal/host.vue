@@ -8,7 +8,7 @@
         <el-input v-model="dataForm.physicalSystem" placeholder="物理子系统" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.group" placeholder="群组名称" clearable></el-input>
+        <el-input v-model="dataForm.group" placeholder="服务组名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-input v-model="dataForm.cpuNumber" placeholder="CPU核数" clearable></el-input>
@@ -55,7 +55,7 @@
         <el-button @click="getDataList()">查询</el-button>
         <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
-        <el-button type="warning" @click="setGroupBatchHandle()" :disabled="dataListSelections.length <= 0">批量设置群组</el-button>
+        <el-button type="warning" @click="setGroupBatchHandle()" :disabled="dataListSelections.length <= 0">批量设置服务组</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -98,7 +98,7 @@
         prop="groups"
         header-align="center"
         align="center"
-        label="群组">
+        label="服务组">
       </el-table-column>
       <el-table-column
         prop="areaName"
@@ -214,10 +214,10 @@ export default {
       }],
       boundGroupChoices: [{
         value: 'bound',
-        label: '已关联群组'
+        label: '已关联服务组'
       }, {
         value: 'unbound',
-        label: '未关联群组'
+        label: '未关联服务组'
       }],
       dataList: [],
       pageIndex: 1,

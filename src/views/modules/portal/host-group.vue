@@ -38,14 +38,14 @@
         header-align="center"
         align="center"
         min-width="80"
-        label="上级群组">
+        label="上级服务组">
       </el-table-column>
       <el-table-column
         prop="path"
         header-align="center"
         align="center"
         min-width="150"
-        label="群组路径">
+        label="服务组路径">
       </el-table-column>
       <el-table-column
         header-align="center"

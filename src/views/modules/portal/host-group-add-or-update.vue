@@ -17,7 +17,7 @@
           <el-option v-for="item in caasServices" :key="item.id" :label="showCaasService(item)" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="上级群组" prop="parentName">
+      <el-form-item label="上级服务组" prop="parentName">
         <el-popover
           ref="hostGroupPopover"
           placement="bottom-start"
@@ -67,13 +67,13 @@
         },
         dataRule: {
           name: [
-            { required: true, message: '群组名称不能为空', trigger: 'blur' }
+            { required: true, message: '服务组名称不能为空', trigger: 'blur' }
           ],
           type: [
-            { required: true, message: '群组类型不能为空', trigger: 'blur' }
+            { required: true, message: '服务组类型不能为空', trigger: 'blur' }
           ],
           parentName: [
-            { required: true, message: '上级群组不能为空', trigger: 'change' }
+            { required: true, message: '上级服务组不能为空', trigger: 'change' }
           ]
         },
         types: [{
@@ -136,13 +136,13 @@
           }
         })
       },
-      // 群组树选中
+      // 服务树选中
       hostGroupTreeCurrentChangeHandle (data, node) {
         // console.log(data, node)
         this.dataForm.parentName = data.name
         this.dataForm.parentId = data.id
       },
-      // 群组树设置当前选中节点
+      // 服务组树设置当前选中节点
       hostGroupTreeSetCurrentNode () {
         this.$refs.hostGroupTree.setCurrentKey(this.dataForm.parentName)
         this.dataForm.parentName = (this.$refs.hostGroupTree.getCurrentNode() || {})['name']

@@ -1,6 +1,6 @@
 <template>
   <el-descriptions title="虚拟机申请">
-    <el-descriptions-item>在资源池中将机器挂载到相应的群组即可</el-descriptions-item>
+    <el-descriptions-item>在资源池中将机器挂载到相应的服务组即可</el-descriptions-item>
   </el-descriptions>
 </template>
 

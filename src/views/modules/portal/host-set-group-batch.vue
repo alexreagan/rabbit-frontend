@@ -4,7 +4,7 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
-      <el-form-item label="群组" prop="groups">
+      <el-form-item label="服务组" prop="groups">
         <el-cascader ref="groupCascader" v-model="dataForm.groups" :options="dataForm.groupOptions" :props="dataForm.groupProps" @change="groupChangeHandle" placeholder="请选择" clearable></el-cascader>
       </el-form-item>
       <el-form-item label="开发负责人" prop="devOwner">

@@ -94,7 +94,7 @@
           params: this.$http.adornParams()
         }).then(({data}) => {
           data.groups.forEach(function (value, index, array) {
-            array[index] = JSON.parse(value.path)
+            array[index] = JSON.parse(value.pathArray)
           })
           this.dataForm.name = data.name
           this.dataForm.ip = data.ip

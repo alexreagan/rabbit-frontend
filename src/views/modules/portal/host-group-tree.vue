@@ -21,13 +21,13 @@
         <el-tooltip v-if="data.desc" class="item" effect="dark" :content="showTooltip(data)" placement="right">
           <span v-if="data.isWarning === true" class="box alarm">
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ node.label }}
           </span>
           <span v-else>
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ node.label }}
           </span>
@@ -35,13 +35,13 @@
         <el-tooltip v-else :disabled="true" class="item" effect="dark" :content="showTooltip(data)" placement="right">
           <span v-if="data.isWarning === true" class="box alarm">
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ node.label }}
           </span>
           <span v-else>
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else-if="data.type === 'container'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ node.label }}
           </span>

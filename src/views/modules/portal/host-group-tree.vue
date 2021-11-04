@@ -18,32 +18,32 @@
       @node-drop="dropHandle"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <el-tooltip v-if="data.desc" class="item" effect="dark" :content="showTooltip(data)" placement="right">
+        <el-tooltip v-if="data.desc" class="item" effect="dark" :content="data.desc" placement="right">
           <span v-if="data.isWarning === true" class="box alarm">
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
-            {{ node.label }}
+            {{ nodeName(node) }}
           </span>
           <span v-else>
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
-            {{ node.label }}
+            {{ nodeName(node) }}
           </span>
         </el-tooltip>
-        <el-tooltip v-else :disabled="true" class="item" effect="dark" :content="showTooltip(data)" placement="right">
+        <el-tooltip v-else :disabled="true" class="item" effect="dark" :content="data.desc" placement="right">
           <span v-if="data.isWarning === true" class="box alarm">
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
-            {{ node.label }}
+            {{ nodeName(node) }}
           </span>
           <span v-else>
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
-            {{ node.label }}
+            {{ nodeName(node) }}
           </span>
         </el-tooltip>
 <!--        <span>-->
@@ -76,7 +76,6 @@ export default {
       filterText: '',
       dataListLoading: false,
       props: {
-        // isLeaf: 'isLeaf',
         children: 'children',
         label: 'name'
       }
@@ -152,7 +151,6 @@ export default {
           'dropNodeType': dropNode.data.type
         })
       }).then(() => {
-        // dropNode.data.isLeaf = false
         dropNode.loaded = false
         dropNode.expand()
       }).catch((error) => {
@@ -168,7 +166,6 @@ export default {
       //       'parent': dropNode.data.id
       //     })
       //   }).then(() => {
-      //     dropNode.data.isLeaf = false
       //     dropNode.loaded = false
       //     dropNode.expand()
       //   }).catch((error) => {
@@ -184,7 +181,6 @@ export default {
       //       'groupId': dropNode.data.id
       //     })
       //   }).then(() => {
-      //     dropNode.data.isLeaf = true   // 目标节点设置为叶子节点
       //     dropNode.loaded = false
       //     dropNode.expand()
       //   }).catch((error) => {
@@ -232,60 +228,14 @@ export default {
       }).catch((error) => {
         this.$message.error(error.message)
       })
-      // if (node.level === 0) {
-      //   this.$http({
-      //     url: this.$http.adornUrl('/api/v1/host_group/tree'),
-      //     method: 'get',
-      //     params: this.$http.adornParams({
-      //       'id': this.dataForm.id,
-      //       'nodeType': this.dataForm.nodeType
-      //     })
-      //   }).then(({data}) => {
-      //     resolve(data)
-      //   }).catch((error) => {
-      //     this.$message.error(error.message)
-      //   })
-      // } else if (node.data.isLeaf === false) {
-      //   this.$http({
-      //     url: this.$http.adornUrl('/api/v1/host_group/children'),
-      //     method: 'get',
-      //     params: this.$http.adornParams({
-      //       'id': node.data.id
-      //     })
-      //   }).then(({data}) => {
-      //     if (data) {
-      //       resolve(data)
-      //     } else {
-      //       resolve([])
-      //     }
-      //   }).catch((error) => {
-      //     this.$message.error(error.message)
-      //   })
-      // } else if (node.data.isLeaf === true) {
-      //   this.$http({
-      //     url: this.$http.adornUrl('/api/v1/host_group/hosts'),
-      //     method: 'get',
-      //     params: this.$http.adornParams({
-      //       'id': node.data.id
-      //     })
-      //   }).then(({data}) => {
-      //     if (data) {
-      //       resolve(data)
-      //     } else {
-      //       resolve([])
-      //     }
-      //   }).catch((error) => {
-      //     this.$message.error(error.message)
-      //   })
-      // }
-      // resolve([])
     },
-    showTooltip (data) {
-      let tooltip = ''
-      if (data.desc !== undefined) {
-        tooltip += data.desc
+    nodeName (node) {
+      if (node.data.subGroupCount !== undefined) {
+        let subNodeCount = node.data.subGroupCount + node.data.relatedHostCount + node.data.relatedPodCount
+        return node.label + '(' + subNodeCount + ')'
+      } else {
+        return node.label
       }
-      return tooltip
     },
     append (data) {
       const newChild = {label: '', children: []}

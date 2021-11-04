@@ -5,7 +5,15 @@
         <el-input v-model="dataForm.ip" placeholder="机器IP" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.physicalSystem" placeholder="物理子系统" clearable></el-input>
+<!--        <el-input v-model="dataForm.physicalSystem" placeholder="物理子系统" clearable></el-input>-->
+        <el-select v-model="dataForm.physicalSystem" placeholder="请选择" clearable>
+          <el-option
+            v-for="item in physicalSystemChoices"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-input v-model="dataForm.group" placeholder="服务组名称" clearable></el-input>
@@ -184,6 +192,7 @@ export default {
       },
       orderBy: '',
       order: '',
+      physicalSystemChoices: [],
       areaNameChoices: [{
         value: '外部客户托管区',
         label: '外部客户托管区'
@@ -242,6 +251,15 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
+        url: this.$http.adornUrl('/api/v1/host/physical_system_choices'),
+        method: 'get',
+        params: this.$http.adornParams()
+      }).then(({data}) => {
+        this.physicalSystemChoices = data.list
+      }).catch((error) => {
+        this.$message.error(error.message)
+      })
+      this.$http({
         url: this.$http.adornUrl('/api/v1/host/list'),
         method: 'get',
         params: this.$http.adornParams({
@@ -269,7 +287,6 @@ export default {
               value.groups = '[]'
             }
             value.groups.forEach(function (val, idx, arr) {
-              // arr[idx] = JSON.parse(val.path).join('/')
               arr[idx] = val.path
             })
             value.groups = value.groups.join(',')

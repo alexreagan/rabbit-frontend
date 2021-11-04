@@ -34,27 +34,11 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="parentName"
-        header-align="center"
-        align="center"
-        min-width="80"
-        label="上级服务组">
-      </el-table-column>
-      <el-table-column
         prop="path"
         header-align="center"
         align="center"
         min-width="150"
         label="服务组路径">
-      </el-table-column>
-      <el-table-column
-        header-align="center"
-        align="center"
-        min-width="40"
-        label="图标">
-        <template slot-scope="scope">
-          <icon-svg :name="scope.row.icon || ''"></icon-svg>
-        </template>
       </el-table-column>
       <el-table-column
         prop="desc"

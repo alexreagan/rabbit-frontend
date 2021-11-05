@@ -17,7 +17,7 @@
         <el-input v-else v-model="dataForm.physicalSystem" placeholder="物理子系统"></el-input>
       </el-form-item>
       <el-form-item label="服务组" prop="groups">
-        <el-cascader ref="groupCascader" v-model="dataForm.groups" :options="dataForm.groupOptions" :props="dataForm.groupProps" @change="groupChangeHandle" placeholder="请选择" clearable></el-cascader>
+        <el-cascader ref="groupCascader" v-model="dataForm.groups" :options="dataForm.groupOptions" :props="dataForm.groupProps" @change="groupChangeHandle" placeholder="请选择" clearable style="width:100%"></el-cascader>
       </el-form-item>
       <el-form-item label="开发负责人" prop="devOwner">
         <el-select v-model="dataForm.devOwner" filterable remote placeholder="请选择" :remote-method="searchUser">

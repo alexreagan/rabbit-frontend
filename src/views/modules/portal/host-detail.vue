@@ -35,13 +35,17 @@
     },
     methods: {
       getDataList () {
-        let id = this.$route.params.id || 1
+        let id = this.$route.params.id
+        let ip = this.$route.params.ip
         this.$http({
-          url: this.$http.adornUrl('/api/v1/host/info/' + id),
+          url: this.$http.adornUrl('/api/v1/host/detail'),
           method: 'get',
-          params: this.$http.adornParams()
+          params: this.$http.adornParams({
+            'id': id,
+            'ip': ip
+          })
         }).then(({data}) => {
-          console.log(data)
+          // console.log(data)
           this.hostAttr = data
 
           let toTime = new Date().getTime()

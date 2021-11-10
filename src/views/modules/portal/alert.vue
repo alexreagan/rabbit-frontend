@@ -48,7 +48,7 @@
         min-width="150"
         label="IP">
         <template slot-scope="scope">
-          <a @click="clickIPHandle(scope.row.id)">{{scope.row.ip}}</a>
+          <a @click="clickIPHandle(scope.row.prodIp)">{{scope.row.prodIp}}</a>
         </template>
       </el-table-column>
       <el-table-column
@@ -209,8 +209,8 @@ export default {
       this.order = order.replace('ending', '')
       this.getDataList()
     },
-    clickIPHandle (id) {
-      this.$router.push({ name: 'host-detail', params: {id: id} })
+    clickIPHandle (ip) {
+      this.$router.push({ name: 'host-detail', params: {ip: ip} })
     }
   }
 }

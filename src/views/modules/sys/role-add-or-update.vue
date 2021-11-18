@@ -4,21 +4,23 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-      <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="dataForm.roleName" placeholder="角色名称"></el-input>
+      <el-form-item label="角色名称" prop="name">
+        <el-input v-model="dataForm.name" placeholder="角色名称"></el-input>
+      </el-form-item>
+      <el-form-item label="中文名称" prop="cnName">
+        <el-input v-model="dataForm.cnName" placeholder="中文名称"></el-input>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
-      <el-form-item size="mini" label="授权">
-        <el-tree
-          :data="menuList"
-          :props="menuListTreeProps"
-          node-key="menuId"
-          ref="menuListTree"
-          :default-expand-all="true"
-          show-checkbox>
-        </el-tree>
+      <el-form-item size="mini" label="权限">
+        <el-transfer
+          :data="permList"
+          :titles="titleList"
+          v-model="dataForm.permList"
+          ref="permTransfer"
+          >
+        </el-transfer>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -29,79 +31,92 @@
 </template>
 
 <script>
-  import { treeDataTranslate } from '@/utils'
+  // import { treeDataTranslate } from '@/utils'
   export default {
     data () {
       return {
         visible: false,
-        menuList: [],
-        menuListTreeProps: {
-          label: 'name',
-          children: 'children'
-        },
+        permList: [],
+        titleList: ['待选择', '已选择'],
         dataForm: {
           id: 0,
-          roleName: '',
-          remark: ''
+          name: '',
+          cnName: '',
+          remark: '',
+          permList: []
         },
         dataRule: {
-          roleName: [
+          name: [
             { required: true, message: '角色名称不能为空', trigger: 'blur' }
+          ],
+          cnName: [
+            { required: true, message: '中文名称不能为空', trigger: 'blur' }
           ]
-        },
-        tempKey: -666666 // 临时key, 用于解决tree半选中状态项不能传给后台接口问题. # 待优化
+        }
       }
     },
     methods: {
       init (id) {
+        this.visible = true
         this.dataForm.id = id || 0
         this.$http({
-          url: this.$http.adornUrl('/sys/menu/list'),
+          url: this.$http.adornUrl('/api/v1/perm/list'),
           method: 'get',
-          params: this.$http.adornParams()
-        }).then(({data}) => {
-          this.menuList = treeDataTranslate(data, 'menuId')
-        }).then(() => {
-          this.visible = true
-          this.$nextTick(() => {
-            this.$refs['dataForm'].resetFields()
-            this.$refs.menuListTree.setCheckedKeys([])
+          params: this.$http.adornParams({
+            limit: 10000
           })
-        }).then(() => {
-          if (this.dataForm.id) {
-            this.$http({
-              url: this.$http.adornUrl(`/sys/role/info/${this.dataForm.id}`),
-              method: 'get',
-              params: this.$http.adornParams()
-            }).then(({data}) => {
-              if (data && data.code === 0) {
-                this.dataForm.roleName = data.role.roleName
-                this.dataForm.remark = data.role.remark
-                var idx = data.role.menuIdList.indexOf(this.tempKey)
-                if (idx !== -1) {
-                  data.role.menuIdList.splice(idx, data.role.menuIdList.length - idx)
-                }
-                this.$refs.menuListTree.setCheckedKeys(data.role.menuIdList)
-              }
-            })
-          }
+        }).then(({data}) => {
+          data.list.forEach(function (value, index, array) {
+            value.key = value.id
+            value.label = value.cnName
+            array[index] = value
+          })
+          this.permList = data.list
+        }).catch((error) => {
+          this.$message.error(error.message)
         })
+
+        if (this.dataForm.id) {
+          this.$http({
+            url: this.$http.adornUrl(`/api/v1/role/info`),
+            method: 'get',
+            params: this.$http.adornParams({
+              'id': this.dataForm.id
+            })
+          }).then(({data}) => {
+            if (!data.error) {
+              this.dataForm.name = data.role.name
+              this.dataForm.cnName = data.role.cnName
+              this.dataForm.remark = data.role.remark
+              if (data.perms) {
+                let perms = []
+                data.perms.forEach((perm) => {
+                  perms.push(perm.id)
+                })
+                this.dataForm.permList = perms
+              }
+            }
+          }).catch((error) => {
+            this.$message.error(error.message)
+          })
+        }
       },
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/role/${!this.dataForm.id ? 'save' : 'update'}`),
-              method: 'post',
+              url: this.$http.adornUrl(`/api/v1/role/${!this.dataForm.id ? 'create' : 'update'}`),
+              method: !this.dataForm.id ? 'post' : 'put',
               data: this.$http.adornData({
-                'roleId': this.dataForm.id || undefined,
-                'roleName': this.dataForm.roleName,
+                'id': this.dataForm.id || undefined,
+                'name': this.dataForm.name,
+                'cnName': this.dataForm.cnName,
                 'remark': this.dataForm.remark,
-                'menuIdList': [].concat(this.$refs.menuListTree.getCheckedKeys(), [this.tempKey], this.$refs.menuListTree.getHalfCheckedKeys())
+                'permList': this.dataForm.permList
               })
             }).then(({data}) => {
-              if (data && data.code === 0) {
+              if (data && !data.error) {
                 this.$message({
                   message: '操作成功',
                   type: 'success',

@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('sys:role:create')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
@@ -23,17 +23,23 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="roleId"
+        prop="id"
         header-align="center"
         align="center"
         width="80"
         label="ID">
       </el-table-column>
       <el-table-column
-        prop="roleName"
+        prop="name"
         header-align="center"
         align="center"
         label="角色名称">
+      </el-table-column>
+      <el-table-column
+        prop="cnName"
+        header-align="center"
+        align="center"
+        label="中文名称">
       </el-table-column>
       <el-table-column
         prop="remark"
@@ -42,7 +48,7 @@
         label="备注">
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="createdAt"
         header-align="center"
         align="center"
         width="180"
@@ -55,8 +61,9 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button v-if="isAuth('sys:role:delete')" type
+            ="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -102,7 +109,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/role/list'),
+          url: this.$http.adornUrl('/api/v1/role/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -110,9 +117,9 @@
             'roleName': this.dataForm.roleName
           })
         }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+          if (data && !data.error) {
+            this.dataList = data.list
+            this.totalPage = data.totalCount
           } else {
             this.dataList = []
             this.totalPage = 0
@@ -145,7 +152,7 @@
       // 删除
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.roleId
+          return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
@@ -153,7 +160,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/role/delete'),
+            url: this.$http.adornUrl('/api/v1/role/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {

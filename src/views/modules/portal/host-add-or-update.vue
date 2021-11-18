@@ -105,20 +105,6 @@
           this.$message.error(error.message)
         })
       },
-      searchTenant (query) {
-        if (query !== '') {
-          this.loading = true
-          this.$http({
-            url: this.$http.adornUrl('/api/v1/tenant/list'),
-            method: 'get',
-            params: this.$http.adornParams({'name': query})
-          }).then(({data}) => {
-            this.dataForm.tenants = data.list
-          }).catch((error) => {
-            this.$message.error(error.message)
-          })
-        }
-      },
       searchUser (query) {
         if (query !== '') {
           this.loading = true

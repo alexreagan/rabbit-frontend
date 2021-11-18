@@ -48,7 +48,6 @@
 
 <script>
   import { treeDataTranslate } from '@/utils'
-  import Icon from '@/icons'
   export default {
     data () {
       return {
@@ -61,9 +60,7 @@
           parentId: 0,
           caasServiceId: 0,
           perms: '',
-          icon: '',
-          desc: '',
-          iconList: []
+          desc: ''
         },
         dataRule: {
           name: [
@@ -92,7 +89,6 @@
       }
     },
     created () {
-      this.iconList = Icon.getNameList()
     },
     methods: {
       init (id) {
@@ -128,7 +124,7 @@
               this.dataForm.parentName = data.parentName
               this.dataForm.parentId = data.parentId
               this.dataForm.perms = data.perms
-              this.dataForm.icon = data.icon
+              this.dataForm.desc = data.desc
               // this.hostGroupTreeSetCurrentNode()
             }).catch((error) => {
               this.$message.error(error.message)
@@ -146,10 +142,6 @@
       hostGroupTreeSetCurrentNode () {
         this.$refs.hostGroupTree.setCurrentKey(this.dataForm.parentName)
         this.dataForm.parentName = (this.$refs.hostGroupTree.getCurrentNode() || {})['name']
-      },
-      // 图标选中
-      iconActiveHandle (iconName) {
-        this.dataForm.icon = iconName
       },
       // 搜索开阳服务
       searchCaasService (query) {
@@ -183,7 +175,6 @@
                 'parentId': this.dataForm.parentId,
                 'caasServiceId': this.dataForm.caasServiceId,
                 'perms': this.dataForm.perms,
-                'icon': this.dataForm.icon,
                 'desc': this.dataForm.desc
               })
             }).then(({data}) => {
@@ -207,46 +198,3 @@
     }
   }
 </script>
-
-<style lang="scss">
-  .mod-menu {
-    .menu-list__input,
-    .icon-list__input {
-       > .el-input__inner {
-        cursor: pointer;
-      }
-    }
-    &__icon-popover {
-      width: 458px;
-      overflow: hidden;
-    }
-    &__icon-inner {
-      width: 478px;
-      max-height: 258px;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-    &__icon-list {
-      width: 458px;
-      padding: 0;
-      margin: -8px 0 0 -8px;
-      > .el-button {
-        padding: 8px;
-        margin: 8px 0 0 8px;
-        > span {
-          display: inline-block;
-          vertical-align: middle;
-          width: 18px;
-          height: 18px;
-          font-size: 18px;
-        }
-      }
-    }
-    .icon-list__tips {
-      font-size: 18px;
-      text-align: center;
-      color: #e6a23c;
-      cursor: pointer;
-    }
-  }
-</style>

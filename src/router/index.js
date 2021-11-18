@@ -72,15 +72,36 @@ router.beforeEach((to, from, next) => {
         fnAddDynamicMenuRoutes(data.menus)
         router.options.isAddDynamicMenuRoutes = true
         sessionStorage.setItem('menuList', JSON.stringify(data.menus || '[]'))
-        sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
+        // sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
         next({ ...to, replace: true })
       } else {
         sessionStorage.setItem('menuList', '[]')
-        sessionStorage.setItem('permissions', '[]')
+        // sessionStorage.setItem('permissions', '[]')
         next()
       }
     }).catch((e) => {
       console.log(`%c${e} 请求菜单列表和权限失败，跳转至登录页！！`, 'color:blue')
+      router.push({ name: 'login' })
+    })
+
+    http({
+      url: http.adornUrl('/api/v1/perm/myself'),
+      method: 'get',
+      params: http.adornParams()
+    }).then(({data}) => {
+      if (data && data.perms) {
+        let perms = []
+        data.perms.forEach((perm) => {
+          perms.push(perm.name)
+        })
+        sessionStorage.setItem('permissions', JSON.stringify(perms || '[]'))
+        next({ ...to, replace: true })
+      } else {
+        sessionStorage.setItem('permissions', '[]')
+        next()
+      }
+    }).catch((e) => {
+      console.log(`%c${e} 请求权限失败，跳转至登录页！！`, 'color:blue')
       router.push({ name: 'login' })
     })
   }

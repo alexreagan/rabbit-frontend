@@ -5,8 +5,7 @@
         <el-input v-model="dataForm.ip" placeholder="机器IP" clearable></el-input>
       </el-form-item>
       <el-form-item>
-<!--        <el-input v-model="dataForm.physicalSystem" placeholder="物理子系统" clearable></el-input>-->
-        <el-select v-model="dataForm.physicalSystem" placeholder="请选择" clearable>
+        <el-select v-model="dataForm.physicalSystem" placeholder="物理子系统" clearable>
           <el-option
             v-for="item in physicalSystemChoices"
             :key="item.value"
@@ -61,9 +60,9 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
-        <el-button type="warning" @click="setGroupBatchHandle()" :disabled="dataListSelections.length <= 0">批量设置服务组</el-button>
+        <el-button v-if="isAuth('resource:host:create')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('resource:host:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button v-if="isAuth('resource:host:update')" type="warning" @click="setGroupBatchHandle()" :disabled="dataListSelections.length <= 0">批量设置服务组</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -149,8 +148,8 @@
         min-width="100"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button v-if="isAuth('resource:host:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button v-if="isAuth('resource:host:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

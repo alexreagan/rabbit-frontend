@@ -1,5 +1,5 @@
 <template>
-  <el-descriptions title="pod信息">
+  <el-descriptions title="pod详情">
     <el-descriptions-item v-for="(item, index) in podAttr" :key="index" :label="index">{{item}}</el-descriptions-item>
   </el-descriptions>
 </template>
@@ -16,7 +16,7 @@
     },
     methods: {
       getDataList () {
-        let id = this.$route.params.id || 1
+        let id = this.$route.params.id || 0
         this.$http({
           url: this.$http.adornUrl('/api/v1/caas/pod/' + id),
           method: 'get',

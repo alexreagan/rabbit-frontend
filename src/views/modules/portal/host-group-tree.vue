@@ -24,12 +24,14 @@
             <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ nodeName(node) }}
+            <el-button v-if="data.type === 'vmGroup' || data.type === 'containerGroup'" type="text" @click="groupClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
           </span>
           <span v-else>
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ nodeName(node) }}
+            <el-button v-if="data.type === 'vmGroup' || data.type === 'containerGroup'" type="text" @click="groupClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
           </span>
         </el-tooltip>
         <el-tooltip v-else :disabled="true" class="item" effect="dark" :content="data.desc" placement="right">
@@ -38,12 +40,14 @@
             <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ nodeName(node) }}
+            <el-button v-if="data.type === 'vmGroup' || data.type === 'containerGroup'" type="text" @click="groupClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
           </span>
           <span v-else>
             <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
             {{ nodeName(node) }}
+            <el-button v-if="data.type === 'vmGroup' || data.type === 'containerGroup'" type="text" @click="groupClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
           </span>
         </el-tooltip>
 <!--        <span>-->
@@ -112,11 +116,17 @@ export default {
     // },
     // 点击树形结构
     nodeClickHandle (node, checked, indeterminate) {
-      // console.log(node)
       if (node.type === 'host') {
         this.$router.push({ name: 'host-detail', params: {id: node.id} })
       } else if (node.type === 'pod') {
         this.$router.push({name: 'pod-detail', params: {id: node.id}})
+      }
+    },
+    groupClickHandle (node, data) {
+      if (data.type === 'vmGroup') {
+        this.$router.push({ name: 'portal-host', params: {group: data.path} })
+      } else if (data.type === 'containerGroup') {
+        this.$router.push({ name: 'caas-pod', params: {serviceId: data.caasServiceId} })
       }
     },
     dragStartHandle (node, ev) {

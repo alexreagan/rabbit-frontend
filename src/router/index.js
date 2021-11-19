@@ -36,7 +36,7 @@ const mainRoutes = {
     { path: '/home', component: _import('common/home'), name: 'home', meta: { title: '首页' } },
     { path: '/theme', component: _import('common/theme'), name: 'theme', meta: { title: '主题' } },
     { path: '/host-detail', component: _import('modules/portal/host-detail'), name: 'host-detail', meta: { title: '机器信息', isTab: true } },
-    { path: '/pod-detail', component: _import('modules/portal/pod-detail'), name: 'pod-detail', meta: { title: 'pod信息', isTab: true } },
+    { path: '/pod-detail', component: _import('modules/caas/pod-detail'), name: 'pod-detail', meta: { title: 'pod信息', isTab: true } },
     { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
     { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }
   ],

@@ -1,8 +1,14 @@
 <template>
-  <div class="mod-service">
+  <div class="mod-pod">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.serviceName" placeholder="服务" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.namespace" placeholder="项目空间" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.serviceName" placeholder="服务名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -22,11 +28,21 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="serviceName"
+        prop="name"
         header-align="center"
         align="center"
         min-width="150"
-        label="服务名称">
+        label="名称">
+        <template slot-scope="scope">
+          <a @click="clickNameHandle(scope.row.id)">{{scope.row.name}}</a>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="podIp"
+        header-align="center"
+        align="center"
+        min-width="150"
+        label="pod IP">
       </el-table-column>
       <el-table-column
         prop="namespace"
@@ -36,68 +52,46 @@
         label="项目空间">
       </el-table-column>
       <el-table-column
-        prop="workspaceName"
+        prop="serviceName"
         header-align="center"
         align="center"
         min-width="150"
-        label="组织空间">
+        label="服务名称">
       </el-table-column>
       <el-table-column
-        prop="clusterName"
+        prop="hostIp"
         header-align="center"
         align="center"
         min-width="150"
-        label="集群名称">
+        label="主机IP">
       </el-table-column>
       <el-table-column
-        prop="physicalSystemName"
+        prop="hostName"
         header-align="center"
         align="center"
         min-width="150"
-        label="物理子系统">
+        label="主机名">
       </el-table-column>
       <el-table-column
-        prop="imageName"
+        prop="status"
         header-align="center"
         align="center"
         min-width="150"
-        label="镜像名称">
+        label="状态">
       </el-table-column>
       <el-table-column
-        prop="imageTag"
+        prop="createTime"
         header-align="center"
         align="center"
-        label="镜像版本">
+        min-width="150"
+        label="创建时间">
       </el-table-column>
       <el-table-column
-        prop="replicas"
+        prop="updateTime"
         header-align="center"
         align="center"
-        label="副本数">
-      </el-table-column>
-      <el-table-column
-        prop="nowReplicas"
-        header-align="center"
-        align="center"
-        label="运行态副本数">
-      </el-table-column>
-      <el-table-column
-        prop="cpu"
-        header-align="center"
-        align="center"
-        label="cpu">
-      </el-table-column>
-      <el-table-column
-        prop="gpu"
-        header-align="center"
-        align="center"
-        label="gpu">
-      </el-table-column>
-      <el-table-column
-        prop="memory"
-        header-align="center"
-        align="center"
-        label="内存">
+        min-width="150"
+        label="数据更新时间">
       </el-table-column>
     </el-table>
     <el-pagination
@@ -117,6 +111,8 @@ export default {
   data () {
     return {
       dataForm: {
+        name: '',
+        namespace: '',
         serviceName: ''
       },
       orderBy: '',
@@ -133,19 +129,32 @@ export default {
   components: {
   },
   activated () {
-    // get data
-    this.getDataList()
+    let serviceId = this.$route.params.serviceId
+    if (serviceId) {
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/caas/service/info'),
+        method: 'get',
+        params: this.$http.adornParams({id: serviceId})
+      }).then(({data}) => {
+        this.dataForm.serviceName = data.serviceName
+        this.getDataList()
+      })
+    } else {
+      this.getDataList()
+    }
   },
   methods: {
     // 获取数据列表
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api/v1/caas/service/list'),
+        url: this.$http.adornUrl('/api/v1/caas/pod/list'),
         method: 'get',
         params: this.$http.adornParams({
           'page': this.pageIndex,
           'limit': this.pageSize,
+          'name': this.dataForm.name,
+          'namespace': this.dataForm.namespace,
           'serviceName': this.dataForm.serviceName,
           'orderBy': this.orderBy,
           'order': this.order
@@ -160,6 +169,9 @@ export default {
         }
         this.dataListLoading = false
       })
+    },
+    clickNameHandle (id) {
+      this.$router.push({ name: 'pod-detail', params: {id: id} })
     },
     // 每页数
     sizeChangeHandle (val) {

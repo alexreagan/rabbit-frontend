@@ -15,7 +15,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.group" placeholder="服务组名称" clearable></el-input>
+        <el-input v-model="dataForm.group" placeholder="服务组" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-input v-model="dataForm.cpuNumber" placeholder="CPU核数" clearable></el-input>
@@ -243,7 +243,13 @@ export default {
     SetGroupBatch
   },
   activated () {
+    this.dataForm.group = this.$route.params.group
     this.getDataList()
+  },
+  created () {
+    // this.dataForm.group = this.$route.params.group
+  },
+  mounted () {
   },
   methods: {
     // 获取数据列表
@@ -369,9 +375,6 @@ export default {
     //   this.getDataList()
     // },
     clickIPHandle (id) {
-      // this.$nextTick(() => {
-      //   this.$refs.Detail.init(id)
-      // })
       this.$router.push({ name: 'host-detail', params: {id: id} })
     },
     // 新增 / 修改
@@ -405,7 +408,7 @@ export default {
           method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({data}) => {
-          if (data && data.code === 0) {
+          if (data && !data.error) {
             this.$message({
               message: '操作成功',
               type: 'success',

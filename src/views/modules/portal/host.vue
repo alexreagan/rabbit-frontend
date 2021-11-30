@@ -15,13 +15,20 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.group" placeholder="服务组" clearable></el-input>
+        <el-select v-model="dataForm.tagIDs" placeholder="标签" clearable multiple>
+          <el-option
+            v-for="item in tagChoices"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-input v-model="dataForm.cpuNumber" placeholder="CPU核数" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="dataForm.areaName" placeholder="请选择" clearable>
+        <el-select v-model="dataForm.areaName" placeholder="请选择区域" clearable>
           <el-option
             v-for="item in areaNameChoices"
             :key="item.value"
@@ -49,9 +56,9 @@
         <el-input v-model="dataForm.memoryUsageUpperLimit" placeholder="内存使用率上限" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="dataForm.boundGroup" placeholder="请选择" clearable>
+        <el-select v-model="dataForm.relatedTag" placeholder="是否关联标签" clearable>
           <el-option
-            v-for="item in boundGroupChoices"
+            v-for="item in relatedTagChoices"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -62,7 +69,7 @@
         <el-button @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('resource:host:create')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <el-button v-if="isAuth('resource:host:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
-        <el-button v-if="isAuth('resource:host:update')" type="warning" @click="setGroupBatchHandle()" :disabled="dataListSelections.length <= 0">批量设置服务组</el-button>
+        <el-button v-if="isAuth('resource:host:update')" type="warning" @click="setTagBatchHandle()" :disabled="dataListSelections.length <= 0">批量设置标签</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -102,10 +109,13 @@
         label="物理子系统">
       </el-table-column>
       <el-table-column
-        prop="groups"
+        prop="tags"
         header-align="center"
         align="center"
-        label="服务组">
+        label="标签">
+        <template slot-scope="scope">
+          <el-tag v-for="(item, index) in scope.row.tags" :key="index" :label="index" size="small">{{item.name}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="areaName"
@@ -142,6 +152,22 @@
         :sortable="'custom'">
       </el-table-column>
       <el-table-column
+        prop="state"
+        header-align="center"
+        align="center"
+        label="状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.state=='offline'" size="small">已下线</el-tag>
+          <el-tag v-else size="small">服务中</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="updateTime"
+        header-align="center"
+        align="center"
+        label="更新时间">
+      </el-table-column>
+      <el-table-column
         fixed="right"
         header-align="center"
         align="center"
@@ -164,13 +190,13 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-    <set-group-batch v-if="setGroupBatchVisible" ref="setGroupBatch" @refreshDataList="getDataList"></set-group-batch>
+    <set-tag-batch v-if="setTagBatchVisible" ref="setTagBatch" @refreshDataList="getDataList"></set-tag-batch>
   </div>
 </template>
 
 <script>
 import AddOrUpdate from './host-add-or-update'
-import SetGroupBatch from './host-set-group-batch'
+import SetTagBatch from './host-set-tag-batch'
 import Detail from './host-detail'
 export default {
   data () {
@@ -186,46 +212,20 @@ export default {
         fsUsageLowerLimit: '',
         memoryUsageUpperLimit: '',
         memoryUsageLowerLimit: '',
-        group: '',
-        boundGroup: ''
+        tagIDs: [],
+        relatedTag: ''
       },
       orderBy: '',
       order: '',
+      tagChoices: [],
       physicalSystemChoices: [],
-      areaNameChoices: [{
-        value: '外部客户托管区',
-        label: '外部客户托管区'
+      areaNameChoices: [],
+      relatedTagChoices: [{
+        value: 'related',
+        label: '已关联标签'
       }, {
-        value: '环境内部管理区域',
-        label: '环境内部管理区域'
-      }, {
-        value: '公有云功能测试区',
-        label: '公有云功能测试区'
-      }, {
-        value: '开发区域',
-        label: '开发区域'
-      }, {
-        value: '管理工具运营区',
-        label: '管理工具运营区'
-      }, {
-        value: '功能测试区域',
-        label: '功能测试区域'
-      }, {
-        value: '环境特殊管理区域',
-        label: '环境特殊管理区域'
-      }, {
-        value: '子公司托管区',
-        label: '子公司托管区'
-      }, {
-        value: '非功能测试区域',
-        label: '非功能测试区域'
-      }],
-      boundGroupChoices: [{
-        value: 'bound',
-        label: '已关联服务组'
-      }, {
-        value: 'unbound',
-        label: '未关联服务组'
+        value: 'unrelated',
+        label: '未关联标签'
       }],
       dataList: [],
       pageIndex: 1,
@@ -234,20 +234,21 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
-      setGroupBatchVisible: false
+      setTagBatchVisible: false
     }
   },
   components: {
     AddOrUpdate,
     Detail,
-    SetGroupBatch
+    SetTagBatch
   },
   activated () {
-    this.dataForm.group = this.$route.params.group
+    if (this.$route.params.tagIDs) {
+      this.dataForm.tagIDs = JSON.parse(this.$route.params.tagIDs)
+    }
     this.getDataList()
   },
   created () {
-    // this.dataForm.group = this.$route.params.group
   },
   mounted () {
   },
@@ -265,6 +266,34 @@ export default {
         this.$message.error(error.message)
       })
       this.$http({
+        url: this.$http.adornUrl('/api/v1/tag/list'),
+        method: 'get',
+        params: this.$http.adornParams({
+          orderBy: 'name',
+          limit: 10000
+        })
+      }).then(({data}) => {
+        let tagChoices = []
+        data.list.forEach((tag) => {
+          tagChoices.push({
+            'label': tag.name + '(' + tag.cnName + ')',
+            'value': tag.id
+          })
+        })
+        this.tagChoices = tagChoices
+      }).catch((error) => {
+        this.$message.error(error.message)
+      })
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/host/area_choices'),
+        method: 'get',
+        params: this.$http.adornParams()
+      }).then(({data}) => {
+        this.areaNameChoices = data.list
+      }).catch(({error}) => {
+        this.$message.error(error)
+      })
+      this.$http({
         url: this.$http.adornUrl('/api/v1/host/list'),
         method: 'get',
         params: this.$http.adornParams({
@@ -280,21 +309,14 @@ export default {
           'fsUsageUpperLimit': this.dataForm.fsUsageUpperLimit,
           'memoryUsageLowerLimit': this.dataForm.memoryUsageLowerLimit,
           'memoryUsageUpperLimit': this.dataForm.memoryUsageUpperLimit,
-          'group': this.dataForm.group,
-          'boundGroup': this.dataForm.boundGroup,
+          'tagIDs': this.dataForm.tagIDs,
+          'relatedTag': this.dataForm.relatedTag,
           'orderBy': this.orderBy,
           'order': this.order
         })
       }).then(({data}) => {
         if (data && data.list) {
           data.list.forEach(function (value, index, array) {
-            if (value.groups === '') {
-              value.groups = '[]'
-            }
-            value.groups.forEach(function (val, idx, arr) {
-              arr[idx] = val.path
-            })
-            value.groups = value.groups.join(',')
             value.cpuUsage = value.cpuUsage + '%'
             value.fsUsage = value.fsUsage + '%'
             value.memoryUsage = value.memoryUsage + '%'
@@ -384,13 +406,14 @@ export default {
         this.$refs.addOrUpdate.init(id)
       })
     },
-    setGroupBatchHandle (id) {
+    // 批量设置标签
+    setTagBatchHandle (id) {
       var ids = id ? [id] : this.dataListSelections.map(item => {
         return item.id
       })
-      this.setGroupBatchVisible = true
+      this.setTagBatchVisible = true
       this.$nextTick(() => {
-        this.$refs.setGroupBatch.init(ids)
+        this.$refs.setTagBatch.init(ids)
       })
     },
     // 删除

@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-host-group">
+  <div class="mod-host-group-tree">
     <el-tree
       :props="props"
       :load="loadNode"
@@ -9,6 +9,7 @@
       ref="tree"
       :allow-drop="allowDrop"
       :allow-drag="allowDrag"
+      :expand-on-click-node="false"
       @node-click="nodeClickHandle"
       @node-drag-start="dragStartHandle"
       @node-drag-enter="dragEnterHandle"
@@ -16,54 +17,27 @@
       @node-drag-over="dragOverHandle"
       @node-drag-end="dragEndHandle"
       @node-drop="dropHandle"
+      @check-change="checkChangeHandle"
+      @node-collapse="nodeCollapseHandle"
+      @node-expand="nodeExpandHandle"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <el-tooltip v-if="data.desc" class="item" effect="dark" :content="data.desc" placement="right">
-          <span v-if="data.isWarning === true" class="box alarm">
-            <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
-            {{ nodeName(node) }}
-            <el-button v-if="data.type === 'vmGroup' || data.type === 'containerGroup'" type="text" @click="groupClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
-          </span>
-          <span v-else>
-            <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
-            {{ nodeName(node) }}
-            <el-button v-if="data.type === 'vmGroup' || data.type === 'containerGroup'" type="text" @click="groupClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
+        <el-tooltip v-if="data.remark" class="item" effect="dark" :content="data.remark" placement="right">
+          <span>
+            <icon-svg v-if="data.ip" name="computer" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else name="tag" class="site-sidebar__menu-icon"></icon-svg>
+            {{ nodeName(node, data) }}
+            <el-button v-if="data.ip === undefined" type="text" @click="tagClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
           </span>
         </el-tooltip>
-        <el-tooltip v-else :disabled="true" class="item" effect="dark" :content="data.desc" placement="right">
-          <span v-if="data.isWarning === true" class="box alarm">
-            <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
-            {{ nodeName(node) }}
-            <el-button v-if="data.type === 'vmGroup' || data.type === 'containerGroup'" type="text" @click="groupClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
-          </span>
-          <span v-else>
-            <icon-svg v-if="data.type === 'vmGroup'" name="group" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else-if="data.type === 'containerGroup'" name="docker" class="site-sidebar__menu-icon"></icon-svg>
-            <icon-svg v-else name="computer" class="site-sidebar__menu-icon"></icon-svg>
-            {{ nodeName(node) }}
-            <el-button v-if="data.type === 'vmGroup' || data.type === 'containerGroup'" type="text" @click="groupClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
+        <el-tooltip v-else disabled class="item" effect="dark" :content="data.remark" placement="right">
+          <span>
+            <icon-svg v-if="data.ip" name="computer" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else name="tag" class="site-sidebar__menu-icon"></icon-svg>
+            {{ nodeName(node, data) }}
+            <el-button v-if="data.ip === undefined" type="text" @click="tagClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
           </span>
         </el-tooltip>
-<!--        <span>-->
-<!--          <el-button-->
-<!--            type="text"-->
-<!--            size="mini"-->
-<!--            @click="() => append(data)">-->
-<!--            Append-->
-<!--          </el-button>-->
-<!--          <el-button-->
-<!--            type="text"-->
-<!--            size="mini"-->
-<!--            @click="() => remove(node, data)">-->
-<!--            Delete-->
-<!--          </el-button>-->
-<!--        </span>-->
       </span>
     </el-tree>
   </div>
@@ -80,7 +54,7 @@ export default {
       filterText: '',
       dataListLoading: false,
       props: {
-        children: 'children',
+        children: 'subTags',
         label: 'name'
       }
     }
@@ -96,38 +70,39 @@ export default {
     }
   },
   methods: {
-    // 获取数据列表
-    // getDataList () {
-    //   this.dataListLoading = true
-    //   this.$http({
-    //     url: this.$http.adornUrl('/api/v1/host_group/tree'),
-    //     method: 'get',
-    //     params: this.$http.adornParams({
-    //       'id': this.dataForm.id
-    //     })
-    //   }).then(({data}) => {
-    //     if (data && !data.error) {
-    //       this.dataList = data
-    //     } else {
-    //       this.dataList = []
-    //     }
-    //     this.dataListLoading = false
-    //   })
-    // },
     // 点击树形结构
     nodeClickHandle (node, checked, indeterminate) {
-      if (node.type === 'host') {
+      console.log('nodeClickHandle', node)
+      if (node.ip) {
         this.$router.push({ name: 'host-detail', params: {id: node.id} })
-      } else if (node.type === 'pod') {
-        this.$router.push({name: 'pod-detail', params: {id: node.id}})
       }
     },
-    groupClickHandle (node, data) {
-      if (data.type === 'vmGroup') {
-        this.$router.push({ name: 'portal-host', params: {group: data.path} })
-      } else if (data.type === 'containerGroup') {
-        this.$router.push({ name: 'caas-pod', params: {serviceId: data.caasServiceId} })
+    // 点击tag
+    tagClickHandle (node, data) {
+      let categoryIDs = []
+      let tagIDs = []
+      let n = node
+      while (n.data) {
+        categoryIDs.push(n.data.categoryID)
+        tagIDs.push(n.data.id)
+        if (n.parent) {
+          n = n.parent
+        } else {
+          break
+        }
       }
+      this.$router.push({ name: 'portal-host', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
+    },
+    checkChangeHandle (data, checked, node) {
+      console.log('checkChangeHandle')
+    },
+    nodeCollapseHandle (data, node, arg) {
+      console.log('nodeCollapseHandle')
+    },
+    nodeExpandHandle (data, node, arg) {
+      console.log('nodeExpandHandle')
+      node.loaded = false
+      node.expand()
     },
     dragStartHandle (node, ev) {
       // console.log(node, ev)
@@ -219,33 +194,53 @@ export default {
       return data.name.indexOf(value) !== -1
     },
     loadNode (node, resolve) {
+      console.log('loadNode', node)
+      if (node.data && node.data.ip) {
+        return resolve([])
+      }
       // console.log(node)
-      let id = 0
-      let type = 'vmGroup'
-      if (node && node.data) {
-        id = node.data.id
-        type = node.data.type
+      let categoryIDs = []
+      let tagIDs = []
+      let n = node
+      while (n.data) {
+        categoryIDs.push(n.data.categoryID)
+        tagIDs.push(n.data.id)
+        if (n.parent) {
+          n = n.parent
+        } else {
+          break
+        }
       }
       this.$http({
-        url: this.$http.adornUrl('/api/v1/tree'),
+        url: this.$http.adornUrl('/api/v2/tree'),
         method: 'get',
         params: this.$http.adornParams({
-          'id': id,
-          'type': type
+          'categoryIDs': categoryIDs.reverse(),
+          'tagIDs': tagIDs.reverse()
         })
       }).then(({data}) => {
+        if (!data) {
+          return resolve([])
+        }
         resolve(data)
       }).catch((error) => {
         this.$message.error(error.message)
       })
     },
-    nodeName (node) {
-      if (node.data.subGroupCount !== undefined) {
-        let subNodeCount = node.data.subGroupCount + node.data.relatedHostCount + node.data.relatedPodCount
-        return node.label + '(' + subNodeCount + ')'
+    nodeName (node, data) {
+      if (data.ip) {
+        // 机器
+        return data.ip
       } else {
-        return node.label
+        // 标签
+        return data.name
       }
+      // if (node.data.subGroupCount !== undefined) {
+      //   let subNodeCount = node.data.subGroupCount + node.data.relatedHostCount + node.data.relatedPodCount
+      //   return node.label + '(' + subNodeCount + ')'
+      // } else {
+      //   return node.label
+      // }
     },
     append (data) {
       const newChild = {label: '', children: []}

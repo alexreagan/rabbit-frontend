@@ -1,16 +1,20 @@
 <template>
   <el-row>
-    <el-button>共收纳机器<span>{{totalHostCount}}</span>台，共<span>{{totalCpuCount}}</span>核</el-button>
-    <el-button>已分配机器<span>{{usedHostCount}}</span>台，共<span>{{usedCpuCount}}</span>核</el-button>
-    <el-button>未分配机器<span>{{unUsedHostCount}}</span>台，共<span>{{unUsedCpuCount}}</span>核<br></el-button>
     <ul>
-      <li v-for="(item, index) in subStat" :key="index">
-        <el-button>物理子系统: {{item.name}}</el-button>
-        <el-button>共收纳机器<span>{{item.totalHostCount}}</span>台，共<span>{{item.totalCpuCount}}</span>核</el-button>
-        <el-button>已分配机器<span>{{item.usedHostCount}}</span>台，共<span>{{item.usedCpuCount}}</span>核</el-button>
-        <el-button>未分配机器<span>{{item.unUsedHostCount}}</span>台，共<span>{{item.unUsedCpuCount}}</span>核</el-button>
-      </li>
+      <li>共收纳机器<span>{{totalHostCount}}</span>台，共<span>{{totalCpuCount}}</span>核</li>
+      <li>已分配机器<span>{{usedHostCount}}</span>台，共<span>{{usedCpuCount}}</span>核</li>
+      <li>未分配机器<span>{{unUsedHostCount}}</span>台，共<span>{{unUsedCpuCount}}</span>核</li>
     </ul>
+
+    <el-table :data="subStat" stripe style="width: 100%">
+      <el-table-column prop="name" label="物理子系统"></el-table-column>
+      <el-table-column prop="totalHostCount" label="共收纳机器"></el-table-column>
+      <el-table-column prop="totalCpuCount" label="核数"></el-table-column>
+      <el-table-column prop="usedHostCount" label="已分配机器"></el-table-column>
+      <el-table-column prop="usedCpuCount" label="核数"></el-table-column>
+      <el-table-column prop="unUsedHostCount" label="未分配机器"></el-table-column>
+      <el-table-column prop="unUsedCpuCount" label="核数"></el-table-column>
+    </el-table>
   </el-row>
 </template>
 
@@ -39,7 +43,7 @@
           url: this.$http.adornUrl('/api/v1/chart/vm/stat'),
           method: 'get'
         }).then(({data}) => {
-          console.log(data)
+          // console.log(data)
           this.totalHostCount = data.totalHostCount
           this.usedHostCount = data.usedHostCount
           this.unUsedHostCount = data.unUsedHostCount

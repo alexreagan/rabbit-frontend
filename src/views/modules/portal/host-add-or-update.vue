@@ -96,7 +96,7 @@
             method: 'get',
             params: this.$http.adornParams({
               orderBy: 'name',
-              'limit': 10000
+              limit: 10000
             })
           }).then(({data}) => {
             let tagChoices = []

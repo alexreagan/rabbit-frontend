@@ -25,6 +25,7 @@
         <el-tooltip v-if="data.remark" class="item" effect="dark" :content="data.remark" placement="right">
           <span>
             <icon-svg v-if="data.ip" name="computer" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.podIp" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="tag" class="site-sidebar__menu-icon"></icon-svg>
             {{ nodeName(node, data) }}
             <el-button v-if="data.ip === undefined" type="text" @click="tagClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
@@ -33,6 +34,7 @@
         <el-tooltip v-else disabled class="item" effect="dark" :content="data.remark" placement="right">
           <span>
             <icon-svg v-if="data.ip" name="computer" class="site-sidebar__menu-icon"></icon-svg>
+            <icon-svg v-else-if="data.podIp" name="docker" class="site-sidebar__menu-icon"></icon-svg>
             <icon-svg v-else name="tag" class="site-sidebar__menu-icon"></icon-svg>
             {{ nodeName(node, data) }}
             <el-button v-if="data.ip === undefined" type="text" @click="tagClickHandle(node, data)" size="mini"><icon-svg name="eye"></icon-svg></el-button>
@@ -94,13 +96,13 @@ export default {
       this.$router.push({ name: 'portal-host', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
     },
     checkChangeHandle (data, checked, node) {
-      console.log('checkChangeHandle')
+      // console.log('checkChangeHandle')
     },
     nodeCollapseHandle (data, node, arg) {
-      console.log('nodeCollapseHandle')
+      // console.log('nodeCollapseHandle')
     },
     nodeExpandHandle (data, node, arg) {
-      console.log('nodeExpandHandle')
+      // console.log('nodeExpandHandle')
       node.loaded = false
       node.expand()
     },
@@ -194,8 +196,8 @@ export default {
       return data.name.indexOf(value) !== -1
     },
     loadNode (node, resolve) {
-      console.log('loadNode', node)
-      if (node.data && node.data.ip) {
+      // console.log('loadNode', node)
+      if ((node.data && node.data.ip) || (node.data && node.data.podIp)) {
         return resolve([])
       }
       // console.log(node)

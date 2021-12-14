@@ -19,8 +19,8 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('resource:host:create')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('resource:host:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('resource:host-apply:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -92,6 +92,34 @@
         align="center"
         label="状态">
       </el-table-column>
+      <el-table-column
+        prop="hosts"
+        header-align="center"
+        align="center"
+        label="机器">
+        <template slot-scope="scope">
+          <el-tag v-for="(item, index) in scope.row.hosts" :key="index" :label="index" size="small">{{item.ip}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="tags"
+        header-align="center"
+        align="center"
+        label="标签">
+        <template slot-scope="scope">
+          <el-tag v-for="(item, index) in scope.row.tags" :key="index" :label="index" size="small">{{item.name}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        fixed="right"
+        header-align="center"
+        align="center"
+        min-width="100"
+        label="操作">
+        <template slot-scope="scope">
+          <el-button v-if="isAuth('resource:host-apply:assign')" type="text" size="small" @click="assignHandle(scope.row.id)">处理</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       @size-change="sizeChangeHandle"
@@ -104,11 +132,13 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <assign v-if="assignVisible" ref="assign" @refreshDataList="getDataList"></assign>
   </div>
 </template>
 
 <script>
 import AddOrUpdate from './host-apply-add-or-update'
+import Assign from './host-apply-assign'
 export default {
   data () {
     return {
@@ -124,11 +154,13 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      addOrUpdateVisible: false
+      addOrUpdateVisible: false,
+      assignVisible: false
     }
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+    Assign
   },
   activated () {
     this.getDataList()
@@ -200,6 +232,13 @@ export default {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id)
+      })
+    },
+    // 处理
+    assignHandle (id) {
+      this.assignVisible = true
+      this.$nextTick(() => {
+        this.$refs.assign.init(id)
       })
     },
     // 删除

@@ -18,9 +18,11 @@
       getDataList () {
         let id = this.$route.params.id || 0
         this.$http({
-          url: this.$http.adornUrl('/api/v1/caas/pod/' + id),
+          url: this.$http.adornUrl('/api/v1/caas/pod/info'),
           method: 'get',
-          params: this.$http.adornParams()
+          params: this.$http.adornParams({
+            id: id
+          })
         }).then(({data}) => {
           this.podAttr = data
         }).catch((error) => {

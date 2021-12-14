@@ -1,17 +1,8 @@
 <template>
-  <div class="mod-namespace">
+  <div class="mod-app">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.namespace" placeholder="项目空间" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="dataForm.workspaceName" placeholder="组织空间" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="dataForm.clusterName" placeholder="集群" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="dataForm.physicalSystemName" placeholder="物理子系统" clearable></el-input>
+        <el-input v-model="dataForm.appName" placeholder="名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -31,71 +22,31 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="namespace"
+        prop="appName"
+        header-align="center"
+        align="center"
+        min-width="150"
+        label="应用名称">
+      </el-table-column>
+      <el-table-column
+        prop="description"
+        header-align="center"
+        align="center"
+        min-width="150"
+        label="描述">
+      </el-table-column>
+      <el-table-column
+        prop="namespaceName"
         header-align="center"
         align="center"
         min-width="150"
         label="项目空间">
       </el-table-column>
       <el-table-column
-        prop="workspaceName"
-        header-align="center"
-        align="center"
-        min-width="150"
-        label="组织空间">
-      </el-table-column>
-      <el-table-column
-        prop="clusterName"
-        header-align="center"
-        align="center"
-        label="集群">
-      </el-table-column>
-      <el-table-column
-        prop="phSubSystemName"
-        header-align="center"
-        align="center"
-        label="物理子系统">
-      </el-table-column>
-      <el-table-column
-        prop="cpu"
-        header-align="center"
-        align="center"
-        label="CPU配额"
-        :sortable="'custom'">
-      </el-table-column>
-      <el-table-column
-        prop="memory"
-        header-align="center"
-        align="center"
-        label="内存配额"
-        :sortable="'custom'">
-      </el-table-column>
-      <el-table-column
-        prop="gpu"
-        header-align="center"
-        align="center"
-        label="gpu配额"
-        :sortable="'custom'">
-      </el-table-column>
-      <el-table-column
-        prop="sharedVolume"
-        header-align="center"
-        align="center"
-        label="共享存储配额"
-        :sortable="'custom'">
-      </el-table-column>
-      <el-table-column
-        prop="localVolume"
-        header-align="center"
-        align="center"
-        min-width="100"
-        label="本地存储配额">
-      </el-table-column>
-      <el-table-column
         prop="updateTime"
         header-align="center"
         align="center"
-        min-width="100"
+        min-width="150"
         label="数据更新时间">
       </el-table-column>
     </el-table>
@@ -117,9 +68,7 @@ export default {
     return {
       dataForm: {
         namespace: '',
-        workspaceName: '',
-        clusterName: '',
-        physicalSystemName: ''
+        appName: ''
       },
       orderBy: '',
       order: '',
@@ -135,22 +84,31 @@ export default {
   components: {
   },
   activated () {
-    this.getDataList()
+    let appID = this.$route.params.appID
+    if (appID) {
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/caas/app/info'),
+        method: 'get',
+        params: this.$http.adornParams({id: appID})
+      }).then(({data}) => {
+        this.dataForm.appName = data.appName
+        this.getDataList()
+      })
+    } else {
+      this.getDataList()
+    }
   },
   methods: {
     // 获取数据列表
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api/v1/caas/namespace/list'),
+        url: this.$http.adornUrl('/api/v1/caas/app/list'),
         method: 'get',
         params: this.$http.adornParams({
           'page': this.pageIndex,
           'limit': this.pageSize,
-          'namespace': this.dataForm.namespace,
-          'physicalSystemName': this.dataForm.physicalSystemName,
-          'clusterName': this.dataForm.clusterName,
-          'workspaceName': this.dataForm.workspaceName,
+          'appName': this.dataForm.appName,
           'orderBy': this.orderBy,
           'order': this.order
         })

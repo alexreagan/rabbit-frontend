@@ -53,6 +53,12 @@
         align="center"
         label="项目空间数">
       </el-table-column>
+      <el-table-column
+        prop="updateTime"
+        header-align="center"
+        align="center"
+        label="数据更新时间">
+      </el-table-column>
     </el-table>
     <el-pagination
       @size-change="sizeChangeHandle"

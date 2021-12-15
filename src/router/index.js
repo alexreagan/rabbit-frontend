@@ -35,8 +35,10 @@ const mainRoutes = {
     // 提示: 如需要通过iframe嵌套展示内容, 但不通过tab打开, 请自行创建组件使用iframe处理!
     { path: '/home', component: _import('common/home'), name: 'home', meta: { title: '首页' } },
     { path: '/theme', component: _import('common/theme'), name: 'theme', meta: { title: '主题' } },
-    { path: '/host-detail', component: _import('modules/portal/host-detail'), name: 'host-detail', meta: { title: '机器信息', isTab: true } },
+    { path: '/host-detail', component: _import('modules/node/host-detail'), name: 'host-detail', meta: { title: '机器信息', isTab: true } },
     { path: '/pod-detail', component: _import('modules/caas/pod-detail'), name: 'pod-detail', meta: { title: 'pod信息', isTab: true } },
+    { path: '/template-detail', component: _import('modules/app/template-detail'), name: 'template-detail', meta: { title: '模板信息', isTab: true } },
+    { path: '/template-add-or-update', component: _import('modules/app/template-add-or-update'), name: 'template-add-or-update', meta: { title: '模板信息', isTab: true } },
     { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
     { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }
   ],
@@ -51,7 +53,8 @@ const mainRoutes = {
 }
 
 const router = new Router({
-  mode: 'hash',
+  // mode: 'hash',
+  mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   isAddDynamicMenuRoutes: false, // 是否已经添加动态(菜单)路由
   routes: globalRoutes.concat(mainRoutes)

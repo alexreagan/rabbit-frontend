@@ -1,16 +1,13 @@
 <template>
-  <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
-    :close-on-click-modal="false"
-    :visible.sync="visible">
+  <div class="mod-template-add-or-update">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
       <el-form-item label="名称" prop="name">
         <el-input v-if="dataForm.id" v-model="dataForm.name" placeholder="名称" :disabled="true"></el-input>
         <el-input v-else v-model="dataForm.name" placeholder="名称"></el-input>
       </el-form-item>
       <el-form-item label="描述" prop="remark">
-        <el-input v-if="dataForm.id" v-model="dataForm.remark" placeholder="描述" :disabled="true"></el-input>
-        <el-input v-else v-model="dataForm.remark" placeholder="描述"></el-input>
+        <el-input v-if="dataForm.id" type="textarea" v-model="dataForm.remark" placeholder="描述" :disabled="true"></el-input>
+        <el-input v-else type="textarea" v-model="dataForm.remark" placeholder="描述"></el-input>
       </el-form-item>
       <el-form-item label="状态" prop="state">
         <el-select v-model="dataForm.state" placeholder="状态" clearable>
@@ -27,7 +24,7 @@
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
-  </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -59,7 +56,17 @@
         }
       }
     },
+    watch: {
+      visible (val) {
+        console.log(val)
+        if (!val) {
+          this.$router.push({ name: 'app-template' })
+        }
+      }
+    },
     activated () {
+      console.log(1111111111, this.$route.params)
+      this.init(this.$route.params.id)
     },
     methods: {
       init (id) {
@@ -80,6 +87,11 @@
             }).catch((error) => {
               this.$message.error(error.message)
             })
+          } else {
+            this.dataForm.id = 0
+            this.dataForm.name = ''
+            this.dataForm.remark = ''
+            this.dataForm.state = 'disable'
           }
         })
       },

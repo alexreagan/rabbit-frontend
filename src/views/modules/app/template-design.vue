@@ -23,7 +23,7 @@
     },
     methods: {
       getData (data) {
-        console.log(1111111111, data)
+        console.log(data)
       }
     }
   }

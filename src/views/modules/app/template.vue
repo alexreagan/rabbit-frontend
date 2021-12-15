@@ -62,8 +62,9 @@
         min-width="100"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('resource:host:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button v-if="isAuth('resource:host:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button v-if="isAuth('app:template:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button v-if="isAuth('app:template:design')" type="text" size="small" @click="designHandle(scope.row.id)">设计</el-button>
+          <el-button v-if="isAuth('app:template:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -77,7 +78,7 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update> -->
   </div>
 </template>
 
@@ -165,11 +166,15 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {
-      this.addOrUpdateVisible = true
-      this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id)
-      })
-      // this.$router.push({ name: 'template-add-or-update', params: {id: id} })
+      // this.addOrUpdateVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.addOrUpdate.init(id)
+      // })
+      this.$router.push({ name: 'template-add-or-update', params: {id: id} })
+    },
+    // 设计
+    designHandle (id) {
+      this.$router.push({ name: 'template-design', params: {id: id} })
     },
     // 删除
     deleteHandle (id) {

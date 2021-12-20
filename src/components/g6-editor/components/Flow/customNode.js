@@ -1,7 +1,6 @@
-import G6 from '@antv/g6'
+import G6 from '@antv/g6/build/g6'
 import {uniqueId} from '../../utils'
-// import Shape from '@antv/g/src/shapes'
-
+import Shape from '@antv/g/src/shapes'
 const customNode = {
   init() {
     G6.registerNode('customNode', {
@@ -62,18 +61,7 @@ const customNode = {
           }
         })
         if (cfg.backImage) {
-          // const clip = new Shape.Rect({
-          //   attrs: {
-          //     x: offsetX,
-          //     y: offsetY,
-          //     width: width,
-          //     height: height,
-          //     fill: '#fff',
-          //     radius: 4
-          //   }
-          // })
-
-          const clip = group.addShape('rect', {
+          const clip = new Shape.Rect({
             attrs: {
               x: offsetX,
               y: offsetY,
@@ -83,7 +71,6 @@ const customNode = {
               radius: 4
             }
           })
-
           group.addShape('image', {
             attrs: {
               x: offsetX,

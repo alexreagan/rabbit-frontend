@@ -94,8 +94,7 @@
 
 <script>
 import eventBus from '../../utils/eventBus'
-import G6 from '@antv/g6'
-const Util = G6.Util
+import Util from '@antv/g6/src/util'
 import {uniqueId, getBox} from '../../utils'
 export default {
   data() {

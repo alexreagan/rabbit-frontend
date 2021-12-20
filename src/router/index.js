@@ -18,7 +18,8 @@ const _import = require('./import-' + process.env.NODE_ENV)
 // 全局路由(无需嵌套上左右整体布局)
 const globalRoutes = [
   { path: '/404', component: _import('common/404'), name: '404', meta: { title: '404未找到' } },
-  { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } }
+  { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } },
+  { path: '/g6-editor', component: _import('g6-editor/index'), name: 'g6-editor', meta: { title: 'g6-editor' } }
 ]
 
 // 主入口路由(需嵌套上左右整体布局)

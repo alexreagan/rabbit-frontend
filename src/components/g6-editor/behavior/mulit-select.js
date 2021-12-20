@@ -1,7 +1,8 @@
-import Util from '@antv/g6/src/util'
+import G6 from '@antv/g6'
+const Util = G6.Util
 import eventBus from '../utils/eventBus'
 import {uniqueId, getBox} from '../utils'
-import config from '../global'
+import config from '../utils/global'
 export default {
   getDefaultCfg() {
     return {}

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import G6 from '@antv/g6/build/g6'
+import G6 from '@antv/g6'
 import {initBehavors} from '../../behavior'
 export default {
   data() {

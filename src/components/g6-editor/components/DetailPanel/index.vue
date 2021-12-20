@@ -52,7 +52,6 @@
 
 <script>
 import eventBus from '../../utils/eventBus'
-import Grid from '@antv/g6/build/grid'
 export default {
   data() {
     return {
@@ -98,7 +97,7 @@ export default {
     },
     changeGridState(value) {
       if (value) {
-        this.grid = new Grid()
+        this.grid = new G6.Grid()
         this.graph.addPlugin(this.grid)
       } else {
         this.graph.removePlugin(this.grid)

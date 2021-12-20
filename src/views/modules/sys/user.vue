@@ -48,7 +48,7 @@
         label="AD用户名">
       </el-table-column>
       <el-table-column
-        prop="jgygUserId"
+        prop="jgygUserID"
         header-align="center"
         align="center"
         label="机构员工编号">

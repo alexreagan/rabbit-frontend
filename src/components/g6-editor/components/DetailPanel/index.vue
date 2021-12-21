@@ -87,8 +87,10 @@ export default {
   },
   watch: {
     node(val) {
+      if (!val) {
+        return
+      }
       const selectedNode = this.allTag.find(item => item.id === val.id)
-      console.log('selectedNode', selectedNode)
       if (selectedNode) {
         this.selectedNode = selectedNode
       }

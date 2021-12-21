@@ -88,7 +88,7 @@
       class="command iconfont icon-ungroup disable"
       title="解组"
     ></i>
-    <el-button @click="consoleData" type="primary">控制台输出数据</el-button>
+    <el-button @click="saveData" class="save" type="primary">保存</el-button>
   </div>
 </template>
 
@@ -300,8 +300,23 @@ export default {
       // this.graph.paint();
     },
 
-    consoleData() {
-      console.log(this.graph.save())
+    saveData() {
+      // console.log(this.graph.save())
+      const data = this.graph.save()
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/template/design'),
+        method: 'post',
+        data: this.$http.adornData({
+          ...data,
+          id: 2
+        })
+      }).then(({data}) => {
+        console.log('datadatadata', data)
+        if (data) {
+          this.$message.success('保存成功')
+        }
+
+      })
     }
   }
 }
@@ -342,4 +357,8 @@ export default {
   margin: 4px;
   border-left: 1px solid #e9e9e9;
 }
+.toolbar .save {
+  margin-top: -8px;
+}
 </style>
+  

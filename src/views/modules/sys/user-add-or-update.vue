@@ -65,7 +65,7 @@
         }).then(() => {
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/user/info`),
+              url: this.$http.adornUrl('/api/v1/user/info'),
               method: 'get',
               params: this.$http.adornParams({
                 'id': this.dataForm.id

@@ -29,7 +29,7 @@ import Page from '../Page'
 import Flow from '../Flow'
 import ContextMenu from '../ContextMenu'
 import Editor from '../../components/Base/Editor'
-import command from '../../command'
+import Command from '../../command'
 export default {
   name: 'G6Editor',
   components: {
@@ -67,7 +67,7 @@ export default {
   methods: {
     init() {
       this.editor = new Editor()
-      this.command = new command(this.editor)
+      this.command = new Command(this.editor)
     }
   }
 }

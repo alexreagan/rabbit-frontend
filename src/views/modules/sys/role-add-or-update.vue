@@ -78,7 +78,7 @@
 
         if (this.dataForm.id) {
           this.$http({
-            url: this.$http.adornUrl(`/api/v1/role/info`),
+            url: this.$http.adornUrl('/api/v1/role/info'),
             method: 'get',
             params: this.$http.adornParams({
               'id': this.dataForm.id

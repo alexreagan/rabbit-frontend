@@ -49,7 +49,7 @@
         this.dataForm.id = id || 0
         if (this.dataForm.id) {
           this.$http({
-            url: this.$http.adornUrl(`/api/v1/perm/info`),
+            url: this.$http.adornUrl('/api/v1/perm/info'),
             method: 'get',
             params: this.$http.adornParams({
               'id': this.dataForm.id

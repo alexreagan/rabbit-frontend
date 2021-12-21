@@ -17,12 +17,17 @@
           "libraryName": "element-ui"
         }
       ]
-    ]
+    ],
+    "transform-object-rest-spread"
   ],
   "env": {
     "test": {
       "presets": ["env", "stage-2"],
-      "plugins": ["transform-es2015-modules-commonjs", "dynamic-import-node"]
+      "plugins": [
+        "transform-es2015-modules-commonjs",
+        "dynamic-import-node",
+        "transform-object-rest-spread"
+      ]
     }
   }
 }

@@ -40,6 +40,7 @@ const mainRoutes = {
     { path: '/pod-detail', component: _import('modules/caas/pod-detail'), name: 'pod-detail', meta: { title: 'pod信息', isTab: true } },
     { path: '/template-detail', component: _import('modules/app/template-detail'), name: 'template-detail', meta: { title: '模板信息', isTab: true } },
     { path: '/template-add-or-update', component: _import('modules/app/template-add-or-update'), name: 'template-add-or-update', meta: { title: '模板信息', isTab: true } },
+    // { path: '/template-design', component: _import('modules/app/template-design'), name: 'template-design', meta: { title: '模板设计', isTab: true } },
     { path: '/template-design', component: _import('modules/app/template-design'), name: 'template-design', meta: { title: '模板设计', isTab: true } },
     { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
     { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }

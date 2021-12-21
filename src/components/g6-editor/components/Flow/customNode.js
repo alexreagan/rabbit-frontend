@@ -132,6 +132,30 @@ const customNode = {
                 opacity: 0
               }
             })
+            group.addShape('circle', {
+              attrs: {
+                id: 'circle' + uniqueId(),
+                parent: id,
+                x: x + offsetX - 84,
+                y: y + offsetY + 16,
+                r: 10,
+                isInPointOut: true,
+                fill: '#1890ff',
+                opacity: 0
+              }
+            })
+            group.addShape('circle', {
+              attrs: {
+                id: id,
+                x: x + offsetX - 84,
+                y: y + offsetY + 16,
+                r: 3,
+                isInPoint: true,
+                fill: '#fff',
+                stroke: '#1890ff',
+                opacity: 0
+              }
+            })
           }
         }
         if (cfg.outPoints) {
@@ -163,6 +187,18 @@ const customNode = {
                 id: id,
                 x: x + offsetX,
                 y: y + offsetY,
+                r: 3,
+                isOutPoint: true,
+                fill: '#fff',
+                stroke: '#1890ff',
+                opacity: 0
+              }
+            })
+            group.addShape('circle', {
+              attrs: {
+                id: id + uniqueId(),
+                x: x + offsetX + 86,
+                y: y + offsetY - 20,
                 r: 3,
                 isOutPoint: true,
                 fill: '#fff',

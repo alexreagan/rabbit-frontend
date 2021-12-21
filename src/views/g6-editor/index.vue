@@ -1,6 +1,6 @@
 <template>
   <div>
-    <G6Editor mode="edit"> </G6Editor>
+    <G6Editor mode="edit" :data="templateInfo"> </G6Editor>
   </div>
 </template>
 
@@ -9,11 +9,39 @@ import G6Editor from '../../components/g6-editor/components/G6Editor'
 export default {
   components: {G6Editor},
   data() {
-    return {}
+    return {
+      templateInfo: null
+    }
+  },
+  watch: {
   },
   computed: {},
-  created() {},
+  created() {
+    this.getData()
+  },
   mounted() {},
-  methods: {}
+  methods: {
+    getData() {
+      const id = this.$route.query.id || 0
+      this.$http({
+        url: this.$http.adornUrl(`/api/v1/template/info?id=${id}`),
+        method: 'get'
+      }).then(({data}) => {
+        if (data) {
+          const content = JSON.parse(data.content)
+          const edges = []
+          content.edges.forEach(item => {
+            edges.push({
+              ...item,
+              source: item.source + '',
+              target: item.target + ''
+            })
+          })
+          content.edges = edges
+          this.templateInfo = content
+        }
+      })
+    }
+  }
 }
 </script>

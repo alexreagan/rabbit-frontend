@@ -36,6 +36,12 @@ export default {
       this.init()
     })
   },
+  watch: {
+    data(val) {
+      console.log('data', val)
+      this.readData()
+    }
+  },
   methods: {
     init() {
       const height = this.height - 42
@@ -64,13 +70,12 @@ export default {
       })
       const {editor, command} = this.$parent
       editor.emit('afterAddPage', {graph: this.graph, command})
-
       this.readData()
     },
     readData() {
       let data = this.data
       if (data) {
-        this.graph.read(data)
+        this.graph.read(data, false)
       }
     }
   }

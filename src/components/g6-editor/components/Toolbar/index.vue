@@ -301,8 +301,8 @@ export default {
     },
 
     saveData() {
-      // console.log(this.graph.save())
       const data = this.graph.save()
+
       this.$http({
         url: this.$http.adornUrl('/api/v1/template/design'),
         method: 'post',
@@ -311,11 +311,9 @@ export default {
           id: 2
         })
       }).then(({data}) => {
-        console.log('datadatadata', data)
         if (data) {
           this.$message.success('保存成功')
         }
-
       })
     }
   }
@@ -361,4 +359,3 @@ export default {
   margin-top: -8px;
 }
 </style>
-  

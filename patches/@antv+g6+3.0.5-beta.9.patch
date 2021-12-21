@@ -1,0 +1,15 @@
+diff --git a/node_modules/@antv/g6/src/util/graphic.js b/node_modules/@antv/g6/src/util/graphic.js
+index 62aec0b..7ef3999 100644
+--- a/node_modules/@antv/g6/src/util/graphic.js
++++ b/node_modules/@antv/g6/src/util/graphic.js
+@@ -237,7 +237,9 @@ const GraphicUtil = {
+       }
+       return {
+         rotate: rad,
+-        ...result
++        x: point.x,
++        y: point.y,
++        angle: rad
+       };
+     }
+     return result;

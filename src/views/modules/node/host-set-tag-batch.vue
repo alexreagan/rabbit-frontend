@@ -16,7 +16,7 @@
       </el-form-item>
       <el-form-item label="开发负责人">
         <el-select v-model="dataForm.devOwner" filterable remote placeholder="请选择" :remote-method="searchUser">
-          <el-option v-for="item in devOwners" :key="item.jgygUserId" :label="userInfo(item.cnName, item.jgygUserId)" :value="item.jgygUserId"></el-option>
+          <el-option v-for="item in devOwners" :key="item.jgygUserID" :label="userInfo(item.cnName, item.jgygUserID)" :value="item.jgygUserID"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -57,11 +57,10 @@
 
         this.$nextTick(() => {
           this.$http({
-            url: this.$http.adornUrl('/api/v1/tag/list'),
+            url: this.$http.adornUrl('/api/v1/tag/all'),
             method: 'get',
             params: this.$http.adornParams({
-              orderBy: 'name',
-              limit: 10000
+              orderBy: 'name'
             })
           }).then(({data}) => {
             let tagChoices = []

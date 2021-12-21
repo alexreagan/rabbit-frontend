@@ -26,7 +26,7 @@
       </el-form-item>
       <el-form-item label="负责人" prop="applier">
         <el-select v-model="dataForm.applier" filterable remote placeholder="请选择" :remote-method="searchUser">
-          <el-option v-for="item in appliers" :key="item.jgygUserId" :label="userInfo(item.cnName, item.jgygUserId)" :value="item.jgygUserId"></el-option>
+          <el-option v-for="item in appliers" :key="item.jgygUserID" :label="userInfo(item.cnName, item.jgygUserID)" :value="item.jgygUserID"></el-option>
         </el-select>
       </el-form-item>
     </el-form>

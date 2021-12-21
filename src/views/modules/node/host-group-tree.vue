@@ -93,7 +93,7 @@ export default {
           break
         }
       }
-      this.$router.push({ name: 'portal-host', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
+      this.$router.push({ name: 'node-host', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
     },
     checkChangeHandle (data, checked, node) {
       // console.log('checkChangeHandle')
@@ -132,9 +132,9 @@ export default {
         url: this.$http.adornUrl('/api/v1/tree/dragging'),
         method: 'post',
         params: this.$http.adornParams({
-          'draggingNodeId': draggingNode.data.id,
+          'draggingNodeID': draggingNode.data.id,
           'draggingNodeType': draggingNode.data.type,
-          'dropNodeId': dropNode.data.id,
+          'dropNodeID': dropNode.data.id,
           'dropNodeType': dropNode.data.type
         })
       }).then(() => {
@@ -164,8 +164,8 @@ export default {
       //     url: this.$http.adornUrl('/api/v1/host_group/bind_host'),
       //     method: 'post',
       //     params: this.$http.adornParams({
-      //       'hostId': draggingNode.data.id,
-      //       'groupId': dropNode.data.id
+      //       'hostID': draggingNode.data.id,
+      //       'groupID': dropNode.data.id
       //     })
       //   }).then(() => {
       //     dropNode.loaded = false

@@ -147,11 +147,10 @@
             })
 
             this.$http({
-              url: this.$http.adornUrl('/api/v1/tag/list'),
+              url: this.$http.adornUrl('/api/v1/tag/all'),
               method: 'get',
               params: this.$http.adornParams({
-                orderBy: 'name',
-                'limit': 10000
+                orderBy: 'name'
               })
             }).then(({data}) => {
               let tagChoices = []

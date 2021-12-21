@@ -9,7 +9,7 @@
       </el-form-item>
       <el-form-item label="开发负责人" prop="devOwner">
         <el-select v-model="dataForm.devOwner" filterable remote placeholder="请选择" :remote-method="searchUser">
-          <el-option v-for="item in dataForm.devOwners" :key="item.jgygUserId" :label="userInfo(item.cnName, item.jgygUserId)" :value="item.jgygUserId"></el-option>
+          <el-option v-for="item in dataForm.devOwners" :key="item.jgygUserID" :label="userInfo(item.cnName, item.jgygUserID)" :value="item.jgygUserID"></el-option>
         </el-select>
       </el-form-item>
     </el-form>

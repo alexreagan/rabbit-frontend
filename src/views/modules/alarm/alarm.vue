@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-alert">
+  <div class="mod-alarm">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input v-model="dataForm.ip" placeholder="机器IP" clearable></el-input>
@@ -154,7 +154,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api/v1/alert/physical_system_choices'),
+        url: this.$http.adornUrl('/api/v1/alarm/physical_system_choices'),
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
@@ -163,7 +163,7 @@ export default {
         this.$message.error(error.message)
       })
       this.$http({
-        url: this.$http.adornUrl('/api/v1/alert/list'),
+        url: this.$http.adornUrl('/api/v1/alarm/list'),
         method: 'get',
         params: this.$http.adornParams({
           'page': this.pageIndex,

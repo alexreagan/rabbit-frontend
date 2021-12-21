@@ -65,10 +65,9 @@
           this.$refs['dataForm'].resetFields()
           // 获取所有的tag类别
           this.$http({
-            url: this.$http.adornUrl(`/api/v1/tag_category/list`),
+            url: this.$http.adornUrl(`/api/v1/tag_category/all`),
             method: 'get',
             params: this.$http.adornParams({
-              'limit': 10000
             })
           }).then(({data}) => {
             let categoryChoices = []

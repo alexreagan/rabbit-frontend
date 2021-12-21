@@ -23,7 +23,7 @@
 <script>
 import eventBus from '../../utils/eventBus'
 import okSvg from '../../assets/icons/ok.svg'
-import bgImg from '../../assets/bg.jpg'
+import tagItemSvg from '../../assets/icons/tag-item.svg'
 export default {
   data() {
     return {
@@ -31,111 +31,39 @@ export default {
       command: null,
       offsetX: 0,
       offsetY: 0,
-      list: [
-        {
-          id: 111,
-          name: '测试节点',
-          label: '测试节点',
-          size: '170*34',
-          type: 'node',
-          x: 0,
-          y: 0,
-          shape: 'customNode',
-          color: '#1890ff',
-          image:
-            'https://gw.alipayobjects.com/zos/rmsportal/czNEJAmyDpclFaSucYWB.svg',
-          stateImage: okSvg,
-          inPoints: [[0, 0.5]],
-          outPoints: [[1, 0.5]]
-        },
-        {
-          name: '背景图片节点',
-          label: '背景图片节点',
-          size: '170*34',
-          type: 'node',
-          x: 0,
-          y: 0,
-          shape: 'customNode',
-          color: '#1890ff',
-          image:
-            'https://gw.alipayobjects.com/zos/rmsportal/czNEJAmyDpclFaSucYWB.svg',
-          stateImage: okSvg,
-          backImage: bgImg,
-          inPoints: [[0, 0.5]],
-          outPoints: [[1, 0.5]]
-        },
-        {
-          name: '双输出节点',
-          label: '双输出节点',
-          size: '170*34',
-          type: 'node',
-          x: 0,
-          y: 0,
-          shape: 'customNode',
-          color: '#1890ff',
-          image:
-            'https://gw.alipayobjects.com/zos/rmsportal/czNEJAmyDpclFaSucYWB.svg',
-          stateImage: okSvg,
-          inPoints: [[0, 0.5]],
-          outPoints: [
-            [1, 0.4],
-            [1, 0.6]
-          ]
-        },
-        {
-          name: '大型节点',
-          label: '大型节点',
-          size: '340*34',
-          type: 'node',
-          x: 0,
-          y: 0,
-          shape: 'customNode',
-          color: '#1890ff',
-          image:
-            'https://gw.alipayobjects.com/zos/rmsportal/czNEJAmyDpclFaSucYWB.svg',
-          stateImage: okSvg,
-          inPoints: [[0, 0.5]],
-          outPoints: [[1, 0.5]]
-        },
-        {
-          name: '动画开始节点',
-          label: '动画开始',
-          size: '170*34',
-          type: 'node',
-          x: 0,
-          y: 0,
-          shape: 'customNode',
-          color: '#1890ff',
-          image:
-            'https://gw.alipayobjects.com/zos/rmsportal/czNEJAmyDpclFaSucYWB.svg',
-          stateImage: okSvg,
-          inPoints: [[0, 0.5]],
-          outPoints: [[1, 0.5]],
-          isDoingStart: true
-        },
-        {
-          name: '动画结束节点',
-          label: '动画结束',
-          size: '170*34',
-          type: 'node',
-          x: 0,
-          y: 0,
-          shape: 'customNode',
-          color: '#1890ff',
-          image:
-            'https://gw.alipayobjects.com/zos/rmsportal/czNEJAmyDpclFaSucYWB.svg',
-          stateImage: okSvg,
-          inPoints: [[0, 0.5]],
-          outPoints: [[1, 0.5]],
-          isDoingEnd: true
-        }
-      ]
+      list: []
     }
   },
   created() {
     this.bindEvent()
+    this.getAllTag()
   },
   methods: {
+    getAllTag() {
+      // 获取所有节点
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/tag/all'),
+        method: 'get'
+      }).then(({data}) => {
+        if (data && data.totalCount > 0) {
+          const res = data.list.map(item => {
+            return {
+              ...item,
+              label: item.name,
+              size: '170*34',
+              color: '#1890ff',
+              image: tagItemSvg,
+              stateImage: okSvg,
+              inPoints: [[0, 0.5]],
+              outPoints: [[1, 0.5]]
+            }
+          })
+          this.list = res
+        } else {
+          this.list = []
+        }
+      })
+    },
     handleDragstart(e) {
       this.offsetX = e.offsetX
       this.offsetY = e.offsetY

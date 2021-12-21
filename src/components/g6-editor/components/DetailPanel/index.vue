@@ -11,12 +11,13 @@
           <el-row :gutter="10">
             <el-col :span="8">名称</el-col>
             <el-col :span="16">
-              <el-input v-model="node.label" @change="handleChangeName" />
+              <!-- <el-input v-model="node.label" @change="handleChangeName" /> -->
+              {{node.label}}
             </el-col>
-            <el-col :span="8">任意属性</el-col>
+            <!-- <el-col :span="8">任意属性</el-col>
             <el-col :span="16">
               <el-input v-model="node.xxx" />
-            </el-col>
+            </el-col> -->
           </el-row>
         </div>
       </div>

@@ -1,0 +1,38 @@
+diff --git a/node_modules/@antv/g/src/core/mixin/animation.js b/node_modules/@antv/g/src/core/mixin/animation.js
+index f954623..e452184 100644
+--- a/node_modules/@antv/g/src/core/mixin/animation.js
++++ b/node_modules/@antv/g/src/core/mixin/animation.js
+@@ -93,14 +93,16 @@ module.exports = {
+     } else {
+       easing = easing ? easing : 'easeLinear';
+     }
++    const startTime = timeline.getTime()
++    const id = Util.uniqueId()
+     let animator = {
+       repeat: toProps.repeat,
+       duration,
+       easing,
+       callback,
+       delay,
+-      startTime: timeline.getTime(),
+-      id: Util.uniqueId()
++      startTime,
++      id
+     };
+     if (toProps.onFrame) {
+       animator.onFrame = toProps.onFrame;
+@@ -111,7 +113,13 @@ module.exports = {
+         toAttrs: formatProps.attrs,
+         fromMatrix: Util.clone(self.getMatrix()),
+         toMatrix: formatProps.matrix,
+-        ...animator
++        repeat: toProps.repeat,
++        duration,
++        easing,
++        callback,
++        delay,
++        startTime,
++        id
+       };
+     }
+     // 如果动画队列中已经有这个图形了

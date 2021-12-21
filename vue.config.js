@@ -5,6 +5,6 @@
  */
 module.exports = {
  transpileDependencies: [
-  'rt-vue-g6-editor'
- ] 
+  // 'rt-vue-g6-editor'
+ ]
 }

@@ -170,11 +170,11 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs.addOrUpdate.init(id)
       // })
-      this.$router.push({ name: 'template-add-or-update', params: {id: id} })
+      this.$router.push({ name: 'template-add-or-update', query: {id: id} })
     },
     // 设计
     designHandle (id) {
-      this.$router.push({ name: 'template-design', params: {id: id} })
+      this.$router.push({ name: 'template-design', query: {id: id} })
     },
     // 删除
     deleteHandle (id) {

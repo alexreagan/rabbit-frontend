@@ -302,13 +302,14 @@ export default {
 
     saveData() {
       const data = this.graph.save()
+      const id = this.$route.query.id
 
       this.$http({
         url: this.$http.adornUrl('/api/v1/template/design'),
         method: 'post',
         data: this.$http.adornData({
           ...data,
-          id: 2
+          id: id ? id - 0 : 0
         })
       }).then(({data}) => {
         if (data) {

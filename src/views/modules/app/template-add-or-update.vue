@@ -65,8 +65,7 @@
       }
     },
     activated () {
-      console.log(1111111111, this.$route.params)
-      this.init(this.$route.params.id)
+      this.init(this.$route.query.id)
     },
     methods: {
       init (id) {

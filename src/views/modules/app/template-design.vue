@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <G6Editor mode="edit" :data="templateInfo"> </G6Editor>
+  <div style="height: 100%;">
+    <G6Editor mode="edit" :data="templateInfo" :height="height"> </G6Editor>
   </div>
 </template>
 
@@ -10,13 +10,17 @@ export default {
   components: {G6Editor},
   data() {
     return {
-      templateInfo: null
+      templateInfo: null,
+      height: 0
     }
   },
   watch: {
   },
   computed: {},
   created() {
+  },
+  activated() {
+    this.height = document.documentElement.clientHeight - 150
     this.getData()
   },
   mounted() {},

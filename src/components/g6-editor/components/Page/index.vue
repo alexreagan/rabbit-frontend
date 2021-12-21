@@ -38,7 +38,6 @@ export default {
   },
   watch: {
     data(val) {
-      console.log('data', val)
       this.readData()
     }
   },

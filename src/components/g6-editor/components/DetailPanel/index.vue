@@ -9,15 +9,28 @@
         <div class="pannel-title">模型详情</div>
         <div class="block-container">
           <el-row :gutter="10">
-            <el-col :span="8">名称</el-col>
+            <el-col :span="8">中文名</el-col>
             <el-col :span="16">
-              <!-- <el-input v-model="node.label" @change="handleChangeName" /> -->
-              {{node.label}}
+              {{selectedNode.cnName}}
             </el-col>
-            <!-- <el-col :span="8">任意属性</el-col>
+          </el-row>
+          <el-row :gutter="10">
+            <el-col :span="8">英文名</el-col>
             <el-col :span="16">
-              <el-input v-model="node.xxx" />
-            </el-col> -->
+              {{selectedNode.name}}
+            </el-col>
+          </el-row>
+          <el-row :gutter="10">
+            <el-col :span="8">类别</el-col>
+            <el-col :span="16">
+              {{selectedNode.categoryName}}
+            </el-col>
+          </el-row>
+          <el-row :gutter="10">
+            <el-col :span="8">描述</el-col>
+            <el-col :span="16">
+              {{selectedNode.remark}}
+            </el-col>
           </el-row>
         </div>
       </div>
@@ -63,12 +76,23 @@ export default {
       graph: {},
       item: {},
       node: {},
-      grid: null
+      grid: null,
+      allTag: [],
+      selectedNode: {}
     }
   },
   created() {
     this.init()
     this.bindEvent()
+  },
+  watch: {
+    node(val) {
+      const selectedNode = this.allTag.find(item => item.id === val.id)
+      console.log('selectedNode', selectedNode)
+      if (selectedNode) {
+        this.selectedNode = selectedNode
+      }
+    }
   },
   methods: {
     init() {},
@@ -88,6 +112,10 @@ export default {
             self.node = null
           }
         })
+      })
+
+      eventBus.$on('allTag', list => {
+        self.allTag = list
       })
     },
     handleChangeName(e) {

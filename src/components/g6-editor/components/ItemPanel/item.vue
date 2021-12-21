@@ -59,6 +59,7 @@ export default {
             }
           })
           this.list = res
+          eventBus.$emit('allTag', res)
         } else {
           this.list = []
         }
@@ -69,7 +70,7 @@ export default {
       this.offsetY = e.offsetY
     },
     handleDragEnd(e, item) {
-      let data = {}
+      let data = {...item}
       Object.assign(data, item)
       data.offsetX = this.offsetX
       data.offsetY = this.offsetY

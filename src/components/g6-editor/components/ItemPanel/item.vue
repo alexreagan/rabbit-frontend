@@ -77,6 +77,7 @@ export default {
               size: '170*34',
               color: '#1890ff',
               image: tagItemSvg,
+              shape: 'customNode',
               stateImage: okSvg,
               inPoints: [[0, 0.5]],
               outPoints: [[1, 0.5]]

@@ -77,6 +77,7 @@ export default {
 .editor {
   position: relative;
   width: 100%;
+  height: 100%;
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -84,5 +85,6 @@ export default {
 }
 .bottom-container {
   position: relative;
+  height: calc(100% - 100px);
 }
 </style>

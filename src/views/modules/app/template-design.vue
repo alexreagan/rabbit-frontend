@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 100%;">
-    <G6Editor mode="edit" :data="templateInfo" :height="height"> </G6Editor>
+  <div>
+    <G6Editor mode="edit" :data="templateInfo" :height="height" :style="`height:${height}px;`"> </G6Editor>
   </div>
 </template>
 
@@ -18,6 +18,7 @@ export default {
   },
   computed: {},
   created() {
+    this.height = document.documentElement.clientHeight - 150
   },
   activated() {
     this.height = document.documentElement.clientHeight - 150

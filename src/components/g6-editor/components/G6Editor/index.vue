@@ -84,5 +84,6 @@ export default {
 }
 .bottom-container {
   position: relative;
+  height: calc(100% - 100px);
 }
 </style>

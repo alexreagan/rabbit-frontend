@@ -1,23 +1,32 @@
 <template>
-  <ul>
-    <li
-      v-for="(item, index) in list"
-      :key="index"
-      class="getItem"
-      :data-shape="item.shape"
-      :data-type="item.type"
-      :data-size="item.size"
-      draggable
-      @dragstart="handleDragstart"
-      @dragend="handleDragEnd($event, item)"
-    >
-      <span
-        class="pannel-type-icon"
-        :style="{background: 'url(' + item.image + ')'}"
-      ></span>
-      {{ item.name }}
-    </li>
-  </ul>
+  <div class="itempannel">
+    <el-input
+      placeholder="搜索"
+      v-model="searchKey"
+      size="small"
+      prefix-icon="el-icon-search"
+      clearable>
+    </el-input>
+    <ul>
+      <li
+        v-for="(item, index) in filteredList"
+        :key="index"
+        class="getItem"
+        :data-shape="item.shape"
+        :data-type="item.type"
+        :data-size="item.size"
+        draggable
+        @dragstart="handleDragstart"
+        @dragend="handleDragEnd($event, item)"
+      >
+        <span
+          class="pannel-type-icon"
+          :style="{background: 'url(' + item.image + ')'}"
+        ></span>
+        {{ item.name }}
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -31,7 +40,23 @@ export default {
       command: null,
       offsetX: 0,
       offsetY: 0,
-      list: []
+      list: [],
+      filteredList: [],
+      searchKey: ''
+    }
+  },
+  watch: {
+    list(val) {
+      this.filteredList = val
+    },
+    searchKey(val) {
+      if (val) {
+        const res = this.list.filter(item => item.cnName.indexOf(val) > -1 || item.name.indexOf(val) > -1)
+        this.filteredList = res
+      } else {
+        this.filteredList = this.list
+      }
+
     }
   },
   created() {
@@ -103,17 +128,19 @@ export default {
   z-index: 2;
   background: #f7f9fb;
   width: 200px;
-  padding-top: 8px;
   border-right: 1px solid #e6e9ed;
+  overflow: auto;
+  padding: 8px 10px 10px 10px;
 }
 .itempannel ul {
   padding: 0px;
-  padding-left: 16px;
+  /* padding-left: 16px; */
 }
 .itempannel li {
+  box-sizing: border-box;
   color: rgba(0, 0, 0, 0.65);
   border-radius: 4px;
-  width: 160px;
+  width: 170px;
   height: 28px;
   line-height: 26px;
   padding-left: 8px;
@@ -132,5 +159,20 @@ export default {
   display: inline-block;
   vertical-align: middle;
   margin-right: 8px;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+  background-color: rgba(55, 55, 55, 0.1);
+}
+
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  border-radius: 30px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(14, 48, 88, 0.4);
 }
 </style>

@@ -31,7 +31,7 @@ const globalRoutes = [
   },
   {
     path: '/g6-editor',
-    component: _import('g6-editor/index'),
+    component: _import('modules/app/template-design'),
     name: 'g6-editor',
     meta: {title: 'g6-editor'}
   }
@@ -118,7 +118,7 @@ const mainRoutes = {
 const router = new Router({
   mode: 'hash',
   // mode: 'history',
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({y: 0}),
   isAddDynamicMenuRoutes: false, // 是否已经添加动态(菜单)路由
   routes: globalRoutes.concat(mainRoutes)
 })

@@ -1,10 +1,10 @@
 <template>
   <div class="toolbar">
-    <link
+    <!-- <link
       rel="stylesheet"
       type="text/css"
-      href="//at.alicdn.com/t/font_598462_3xve1872wizzolxr.css"
-    />
+      href="../../assets/font/font_598462_3xve1872wizzolxr.css"
+    /> -->
     <i
       class="command iconfont icon-undo"
       title="撤销"
@@ -174,7 +174,7 @@ export default {
       if (this.redoList.length > 0) this.command.redo()
     },
     handleDelete() {
-      if (this.selectedItem.length > 0) {
+      if (this.selectedItem && this.selectedItem.length > 0) {
         this.command.executeCommand('delete', this.selectedItem)
         this.selectedItem = null
       }

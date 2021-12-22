@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div :id="pageId" class="graph-container" style="position: relative;"></div>
+    <div :id="pageId" class="graph-container" style="position: relative;z-index: 1;"></div>
   </div>
 </template>
 

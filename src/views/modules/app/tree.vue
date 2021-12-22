@@ -59,8 +59,9 @@ export default {
         layout: {
           type: 'compactBox',
           direction: 'LR',
+          radial: true,
           defalutPosition: [],
-          getId: function getId (d) {
+          getId: (d) => {
             console.log('ddd', d)
             return d.name
           },

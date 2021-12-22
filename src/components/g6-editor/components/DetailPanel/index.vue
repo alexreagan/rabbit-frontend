@@ -124,13 +124,14 @@ export default {
       const model = {
         label: e
       }
-
       this.graph.update(this.item, model)
     },
     changeGridState(value) {
       if (value) {
-        this.grid = new Grid()
-        this.graph.addPlugin(this.grid)
+        const grid = new Grid()
+        this.grid = grid
+        console.log('initPlugin', grid.initPlugin)
+        this.graph.addPlugin(grid)
       } else {
         this.graph.removePlugin(this.grid)
       }

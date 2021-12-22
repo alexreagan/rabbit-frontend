@@ -13,17 +13,114 @@ export default {
     this.render()
   },
   methods: {
-    getTreeNodes(tagIDs) {
-      return this.$http({
-        url: this.$http.adornUrl('/api/v3/tree/node?tagIDs=' + tagIDs),
-        method: 'get'
-      })
-    },
-    async render () {
-      const nodes = await this.getTreeNodes()
-      console.log('nodes', nodes)
-      const data = nodes.data
-      data.name = '根节点'
+    render () {
+      const data = {
+        'id': 'Modeling Methods',
+        'children': [
+          {
+            'id': 'Classification',
+            'children': [
+              {
+                'id': 'Logistic regression'
+              },
+              {
+                'id': 'Linear discriminant analysis'
+              },
+              {
+                'id': 'Rules'
+              },
+              {
+                'id': 'Decision trees'
+              },
+              {
+                'id': 'Naive Bayes'
+              },
+              {
+                'id': 'K nearest neighbor'
+              },
+              {
+                'id': 'Probabilistic neural network'
+              },
+              {
+                'id': 'Support vector machine'
+              }
+            ]
+          },
+          {
+            'id': 'Consensus',
+            'children': [
+              {
+                'id': 'Models diversity',
+                'children': [
+                  {
+                    'id': 'Different initializations'
+                  },
+                  {
+                    'id': 'Different parameter choices'
+                  },
+                  {
+                    'id': 'Different architectures'
+                  },
+                  {
+                    'id': 'Different modeling methods'
+                  },
+                  {
+                    'id': 'Different training sets'
+                  },
+                  {
+                    'id': 'Different feature sets'
+                  }
+                ]
+              },
+              {
+                'id': 'Methods',
+                'children': [
+                  {
+                    'id': 'Classifier selection'
+                  },
+                  {
+                    'id': 'Classifier fusion'
+                  }
+                ]
+              },
+              {
+                'id': 'Common',
+                'children': [
+                  {
+                    'id': 'Bagging'
+                  },
+                  {
+                    'id': 'Boosting'
+                  },
+                  {
+                    'id': 'AdaBoost'
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            'id': 'Regression',
+            'children': [
+              {
+                'id': 'Multiple linear regression'
+              },
+              {
+                'id': 'Partial least squares'
+              },
+              {
+                'id': 'Multi-layer feedforward neural network'
+              },
+              {
+                'id': 'General regression neural network'
+              },
+              {
+                'id': 'Support vector regression'
+              }
+            ]
+          }
+        ]
+      }
 
       const container = document.getElementById('container')
       const width = container.scrollWidth
@@ -61,8 +158,7 @@ export default {
           direction: 'LR',
           defalutPosition: [],
           getId: function getId (d) {
-            console.log('ddd', d)
-            return d.name
+            return d.id
           },
           getHeight: () => {
             return 16

@@ -27,6 +27,9 @@
         align="center"
         min-width="150"
         label="服务名称">
+        <template slot-scope="scope">
+          <a @click="clickServiceHandle(scope.row.namespace, scope.row.type)">{{scope.row.namespace}}</a>
+        </template>
       </el-table-column>
       <el-table-column
         prop="namespace"
@@ -211,6 +214,10 @@ export default {
       this.orderBy = prop
       this.order = order.replace('ending', '')
       this.getDataList()
+    },
+    //
+    clickServiceHandle (namespace, typ) {
+      window.open(window.SITE_CONFIG['caasUrl'] + '/paas/service-mgmt/service/' + namespace + '?type=' + typ, '_blank')
     }
   }
 }

@@ -50,7 +50,7 @@
 
           let toTime = new Date().getTime()
           let fromTime = new Date(toTime - 24 * 60 * 60 * 1000).getTime()
-          this.detailSrc = 'http://128.194.223.5:33000/d/dz3vRJIGz/singlevm?orgId=1&var-cloudPoolName=' +
+          this.detailSrc = window.SITE_CONFIG['grafanaUrl'] + '/d/dz3vRJIGz/singlevm?orgId=1&var-cloudPoolName=' +
             data.cloudPoolName + '&var-prodIp=' + data.ip + '&from=' + fromTime + '&to=' + toTime
           this.src = this.detailSrc + '&kiosk'
         }).catch((error) => {

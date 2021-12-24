@@ -131,6 +131,13 @@
         :sortable="'custom'">
       </el-table-column>
       <el-table-column
+        prop="memorySize"
+        header-align="center"
+        align="center"
+        label="内存"
+        :sortable="'custom'">
+      </el-table-column>
+      <el-table-column
         prop="cpuUsage"
         header-align="center"
         align="center"

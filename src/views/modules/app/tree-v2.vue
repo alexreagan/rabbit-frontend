@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-host-group-tree">
+  <div class="mod-tree-v2">
     <el-tree
       :props="props"
       :load="loadNode"
@@ -214,7 +214,7 @@ export default {
         }
       }
       this.$http({
-        url: this.$http.adornUrl('/api/v2/tree'),
+        url: this.$http.adornUrl('/api/v2/tree/children'),
         method: 'get',
         params: this.$http.adornParams({
           'categoryIDs': categoryIDs.reverse(),
@@ -237,12 +237,6 @@ export default {
         // 标签
         return data.name
       }
-      // if (node.data.subGroupCount !== undefined) {
-      //   let subNodeCount = node.data.subGroupCount + node.data.relatedHostCount + node.data.relatedPodCount
-      //   return node.label + '(' + subNodeCount + ')'
-      // } else {
-      //   return node.label
-      // }
     },
     append (data) {
       const newChild = {label: '', children: []}

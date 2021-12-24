@@ -171,7 +171,7 @@ export default {
       })
     },
     clickNameHandle (id) {
-      this.$router.push({ name: 'pod-detail', params: {id: id} })
+      this.$router.push({ name: 'pod-detail', query: {id: id} })
     },
     // 每页数
     sizeChangeHandle (val) {

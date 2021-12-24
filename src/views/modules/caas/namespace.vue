@@ -36,6 +36,9 @@
         align="center"
         min-width="150"
         label="项目空间">
+        <template slot-scope="scope">
+          <a @click="clickNameSpaceHandle(scope.row.id)">{{scope.row.namespace}}</a>
+        </template>
       </el-table-column>
       <el-table-column
         prop="workspaceName"
@@ -188,6 +191,10 @@ export default {
       this.orderBy = prop
       this.order = order.replace('ending', '')
       this.getDataList()
+    },
+    // 点击项目空间名称
+    clickNameSpaceHandle (id) {
+      window.open(window.SITE_CONFIG['caasUrl'] + '/omp/namespace-management/namespace/' + id, '_blank')
     }
   }
 }

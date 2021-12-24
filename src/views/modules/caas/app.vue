@@ -27,6 +27,9 @@
         align="center"
         min-width="150"
         label="应用名称">
+        <template slot-scope="scope">
+          <a @click="clickAppHandle(scope.row.id)">{{scope.row.appName}}</a>
+        </template>
       </el-table-column>
       <el-table-column
         prop="description"
@@ -146,6 +149,10 @@ export default {
       this.orderBy = prop
       this.order = order.replace('ending', '')
       this.getDataList()
+    },
+    // 点击应用名称
+    clickAppHandle (id) {
+      window.open(window.SITE_CONFIG['caasUrl'] + '/paas/service-mgmt/application/' + id, '_blank')
     }
   }
 }

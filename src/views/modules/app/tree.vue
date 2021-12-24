@@ -1,17 +1,36 @@
 <template>
   <div class="tree-page">
-    <vue2-org-tree
-      :data="data"
-      :props="{label: 'name', children: 'children', expand: 'expand'}"
-      :horizontal="horizontal"
-      :collapsable="collapsable"
-      :label-class-name="labelClassName"
-      :render-content="renderContent"
-      selected-class-name="bg-tomato"
-      selected-key="selectedKey"
-      @on-expand="onExpand"
-      @on-node-click="onNodeClick"
-    />
+    <div class="select">
+      <el-select
+        v-model="selectTemplate"
+        filterable
+        remote
+        reserve-keyword
+        placeholder="请输入关键词"
+        :remote-method="getTemplateList"
+        :loading="tmpLoading">
+        <el-option
+          v-for="item in templateList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+      </el-select>
+    </div>
+    <div class="tree">
+      <vue2-org-tree
+        :data="data"
+        :props="{label: 'name', children: 'children', expand: 'expand'}"
+        :horizontal="horizontal"
+        :collapsable="collapsable"
+        :label-class-name="labelClassName"
+        :render-content="renderContent"
+        selected-class-name="bg-tomato"
+        selected-key="selectedKey"
+        @on-expand="onExpand"
+        @on-node-click="onNodeClick"
+      />
+    </div>
   </div>
 </template>
 
@@ -28,7 +47,10 @@ export default {
       data: {},
       expandAll: false,
       horizontal: true,
-      collapsable: true
+      collapsable: true,
+      templateList: [],
+      selectTemplate: 0,
+      tmpLoading: false
     }
   },
   activated () {
@@ -38,14 +60,29 @@ export default {
     // this.render()
   },
   watch: {
+    async selectTemplate(val) {
+      console.log('this.selectTemplate', this.selectTemplate)
+      const nodes = await this.getTreeNodes([], this.selectTemplate)
+      const treeNodes = nodes.data
+      this.initNodes(treeNodes)
+      if (nodes && nodes.data) {
+        // 模板名称
+        nodes.data.cnName = '测试模板'
+        nodes.data.name = 'test tmp'
+        nodes.data.tagIds = [nodes.data.id]
+        nodes.data.expand = true
+        this.data = nodes.data
+      }
+    }
   },
   methods: {
-    getTreeNodes(tagIDs = '') {
+    getTreeNodes(tagIDs = '', templateID = '') {
       return this.$http({
         url: this.$http.adornUrl('/api/v3/tree/node'),
         method: 'get',
         params: this.$http.adornParams({
-          'tagIDs': tagIDs
+          tagIDs,
+          templateID
         })
       })
     },
@@ -63,17 +100,7 @@ export default {
       }
     },
     async render () {
-      const nodes = await this.getTreeNodes()
-      const treeNodes = nodes.data
-      this.initNodes(treeNodes)
-      if (nodes && nodes.data) {
-        // 模板名称
-        nodes.data.cnName = '测试模板'
-        nodes.data.name = 'test tmp'
-        nodes.data.tagIds = [nodes.data.id]
-        nodes.data.expand = true
-        this.data = nodes.data
-      }
+      this.getTemplateList('', true)
     },
     labelClassName: function(data) {
       return 'clickable-node'
@@ -147,6 +174,27 @@ export default {
           _this.toggleExpand(data.children, val)
         }
       }
+    },
+    async getTemplateList (query = '', init) {
+      this.tmpLoading = true
+      const {data} = await this.$http({
+        url: this.$http.adornUrl('/api/v1/template/all'),
+        method: 'get',
+        params: this.$http.adornParams({
+          'page': 1,
+          'limit': 20,
+          'name': query
+        })
+      })
+      if (data && data.list) {
+        this.templateList = data.list
+        if (init && data.list.length > 0) {
+          this.selectTemplate = data.list[0].id
+        }
+      } else {
+        this.templateList = []
+      }
+      this.tmpLoading = false
     }
   }
 }
@@ -169,5 +217,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-
+.select {
+  margin-bottom: 20px;
+}
 </style>

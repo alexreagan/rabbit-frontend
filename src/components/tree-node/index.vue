@@ -23,7 +23,7 @@ export default {
       return this.selected.type + this.selected.id === this.node.type + this.node.id
     },
     iconName() {
-      let res = 'tag'
+      let res = 'dir'
       if (this.node.type === 'UnTaggedHost') {
         res = 'computer2'
       } else if (this.node.type === 'UnTaggedPod') {

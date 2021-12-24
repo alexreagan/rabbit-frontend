@@ -1,16 +1,46 @@
 <template>
-  <div id='container' class='mod-host-apply'>
+  <div class="tree-page">
+    <vue2-org-tree
+      :data="data"
+      :props="{label: 'name', children: 'children', expand: 'expand'}"
+      :horizontal="horizontal"
+      :collapsable="collapsable"
+      :label-class-name="labelClassName"
+      :render-content="renderContent"
+      selected-class-name="bg-tomato"
+      selected-key="selectedKey"
+      @on-expand="onExpand"
+      @on-node-click="onNodeClick"
+    />
   </div>
 </template>
 
 <script>
-import G6 from '@antv/g6'
+import Vue2OrgTree from 'vue2-org-tree'
+import 'vue2-org-tree/dist/style.css'
 export default {
+  components: {Vue2OrgTree},
   data () {
-    return {}
+    return {
+      selectedKey: '',
+      props: {label: 'name', children: 'children', expand: 'expand'},
+      data: {},
+      expandAll: false,
+      horizontal: true,
+      collapsable: true
+    }
   },
   activated () {
     this.render()
+  },
+  mounted() {
+    this.render()
+  },
+  watch: {
+    selectedKey(val) {
+      console.log('selectedKey', this.selectedKey)
+      // 根据点击选中的节点，获取子节点数据
+    }
   },
   methods: {
     getTreeNodes(tagIDs) {
@@ -20,126 +50,119 @@ export default {
       })
     },
     async render () {
-      const nodes = await this.getTreeNodes()
-      console.log('nodes', nodes)
-      const data = nodes.data
-      data.name = '根节点'
+      // const nodes = await this.getTreeNodes()
+      // console.log('nodes', nodes)
+      this.data = this.mockData()
+    },
+    labelClassName: function(data) {
+      return 'clickable-node'
+    },
+    renderContent: function(h, data) {
+      return data.name
+    },
+    onExpand: function(e, data) {
+      if ('expand' in data) {
+        data.expand = !data.expand
 
-      const container = document.getElementById('container')
-      const width = container.scrollWidth
-      const height = container.scrollHeight || 800
-      const graph = new G6.TreeGraph({
-        container: 'container',
-        width,
-        height,
-        modes: {
-          default: [
-            {
-              type: 'collapse-expand',
-              onChange: function onChange (item, collapsed) {
-                const data = item.get('model')
-                data.collapsed = collapsed
-                return true
-              }
-            },
-            'drag-canvas',
-            'zoom-canvas'
-          ]
-        },
-        defaultNode: {
-          size: 26,
-          anchorPoints: [
-            [0, 0.5],
-            [1, 0.5]
-          ]
-        },
-        defaultEdge: {
-          type: 'cubic-horizontal'
-        },
-        layout: {
-          type: 'compactBox',
-          direction: 'LR',
-          radial: true,
-          defalutPosition: [],
-          getId: (d) => {
-            console.log('ddd', d)
-            return d.name
-          },
-          getHeight: () => {
-            return 16
-          },
-          getWidth: () => {
-            return 16
-          },
-          getVGap: () => {
-            return 10
-          },
-          getHGap: () => {
-            return 50
-          },
-          getSide: () => {
-            return 'right'
-          }
+        if (!data.expand && data.children) {
+          this.collapse(data.children)
         }
+      } else {
+        this.$set(data, 'expand', true)
+      }
+    },
+    onNodeClick: function(e, data) {
+      console.log('onNodeClick: %o', data)
+      this.selectedKey = data.id
+      this.$set(data, 'selectedKey', !data.selectedKey)
+    },
+    collapse: function(list) {
+      var _this = this
+      list.forEach(function(child) {
+        if (child.expand) {
+          child.expand = false
+        }
+
+        child.children && _this.collapse(child.children)
       })
-
-      let centerX = 0
-      graph.node(function (node) {
-        if (node.id === 'Modeling Methods') {
-          centerX = node.x
-        }
-
-        return {
-          label: node.id,
-          labelCfg: {
-            position:
-              node.children && node.children.length > 0
-                ? 'left'
-                : node.x > centerX
-                ? 'right'
-                : 'left',
-            offset: 5
+    },
+    expandChange: function() {
+      this.toggleExpand(this.data, this.expandAll)
+    },
+    toggleExpand: function(data, val) {
+      var _this = this
+      if (Array.isArray(data)) {
+        data.forEach(function(item) {
+          _this.$set(item, 'expand', val)
+          if (item.children) {
+            _this.toggleExpand(item.children, val)
           }
+        })
+      } else {
+        this.$set(data, 'expand', val)
+        if (data.children) {
+          _this.toggleExpand(data.children, val)
         }
-      })
-
-      graph.data(data)
-      graph.render()
-      graph.fitView()
-
-      let count = 0
-      graph.on('node:click', function (evt) {
-        const item = evt.item
-
-        const nodeId = item.get('id')
-        const model = item.getModel()
-        const children = model.children
-        if (!children || children.length === 0) {
-          const childData = {
-            id: 'child-data-' + count,
-            type: 'rect',
-            children: [
+      }
+    },
+    mockData() {
+      return {
+        "id": 1,
+        "name": "TEST1",
+        "cnName": "测试1",
+        // "shape": "treeNode",
+        "children": [
+          {
+            "id": 2,
+            "name": "TEST2",
+            "cnName": "测试2",
+            // "shape": "treeNode",
+            "children": [
               {
-                id: 'x-' + count
+                "id": 4,
+                "name": "TEST4",
+                "cnName": "测试4",
+                // "shape": "treeNode",
+                "children": []
               },
               {
-                id: 'y-' + count
+                "id": 5,
+                "name": "TEST5",
+                "cnName": "测试5",
+                // "shape": "treeNode",
+                "children": []
               }
             ]
+          },
+          {
+            "id": 3,
+            "name": "TEST3",
+            "cnName": "测试3",
+            // "shape": "treeNode",
+            "children": []
           }
-          graph.addChild(childData, nodeId)
-          count++
-        }
-      })
-
-      if (typeof window !== 'undefined') {
-        window.onresize = () => {
-          if (!graph || graph.get('destroyed')) return
-          if (!container || !container.scrollWidth || !container.scrollHeight) return
-          graph.changeSize(container.scrollWidth, container.scrollHeight)
-        }
+        ]
       }
     }
   }
 }
 </script>
+<style>
+.org-tree-node-label-inner {
+  border-radius: 20px;
+}
+.clickable-node {
+  cursor: pointer;
+}
+.bg-tomato {
+  /* background-color: tomato;
+  color: #ffffff; */
+}
+</style>
+<style scoped>
+.tree-page {
+  width: 100%;
+  height: 100%;
+}
+
+</style>

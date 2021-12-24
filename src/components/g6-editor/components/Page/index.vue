@@ -73,6 +73,7 @@ export default {
     readData() {
       let data = this.data
       if (data) {
+        console.log('data', data)
         this.graph.read(data, false)
       }
     }

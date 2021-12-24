@@ -14,6 +14,10 @@ import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/a
 import {isAuth} from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 
+// import Vue2OrgTree from 'vue2-org-tree'
+// import 'vue2-org-tree/dist/style.css'
+// Vue.use(Vue2OrgTree)
+
 // Vue.use(ElementUI)
 Vue.use(VueCookie)
 Vue.config.productionTip = false

@@ -34,7 +34,7 @@ export default {
     this.render()
   },
   mounted() {
-    this.render()
+    // this.render()
   },
   watch: {
     selectedKey(val) {
@@ -43,22 +43,52 @@ export default {
     }
   },
   methods: {
-    getTreeNodes(tagIDs) {
+    getTreeNodes(tagIDs = '') {
+      console.log('tagIDstagIDs', tagIDs)
       return this.$http({
-        url: this.$http.adornUrl('/api/v3/tree/node?tagIDs=' + tagIDs),
+        url: this.$http.adornUrl('/api/v3/tree/node' + (tagIDs ? `?tagIDs[]=${tagIDs || ''}` : '')),
         method: 'get'
       })
     },
+    initNodes(treeNodes) {
+      if (treeNodes && treeNodes.children) {
+        treeNodes.children.map(item => {
+          const parentTagIds = treeNodes.tagIds || []
+          item.tagIds = [...parentTagIds, item.id]
+          item.expand = true
+          if (item.children && item.children.length > 0) {
+            this.initNodes(item)
+          }
+          return item
+        })
+      }
+    },
     async render () {
-      // const nodes = await this.getTreeNodes()
-      // console.log('nodes', nodes)
-      this.data = this.mockData()
+      const nodes = await this.getTreeNodes()
+      console.log('nodes', nodes.data)
+      const treeNodes = nodes.data
+      this.initNodes(treeNodes)
+      console.log('treeNodes', treeNodes)
+      if (nodes && nodes.data) {
+        // 模板名称
+        nodes.data.cnName = '测试模板'
+        nodes.data.name = 'test tmp'
+        nodes.data.tagIds = [nodes.data.id]
+        nodes.data.expand = true
+        this.data = nodes.data
+      }
     },
     labelClassName: function(data) {
       return 'clickable-node'
     },
     renderContent: function(h, data) {
-      return data.name
+      if (data.type === 'UnTaggedHost') {
+        return `${data.ip}`
+      } else if (data.type === 'UnTaggedPod') {
+        return `${data.hostName}(${data.hostIp})`
+      } else {
+        return `${data.cnName}`
+      }
     },
     onExpand: function(e, data) {
       if ('expand' in data) {
@@ -75,6 +105,16 @@ export default {
       console.log('onNodeClick: %o', data)
       this.selectedKey = data.id
       this.$set(data, 'selectedKey', !data.selectedKey)
+      if (!data.children || data.children.length === 0) {
+        this.getTreeNodes(data.tagIds || []).then(res => {
+          if (res && res.data) {
+            const addNodes = res.data
+            this.initNodes(addNodes)
+            console.log('addNodesaddNodes', addNodes)
+            this.$set(data, 'children', addNodes.children)
+          }
+        })
+      }
     },
     collapse: function(list) {
       var _this = this
@@ -103,45 +143,6 @@ export default {
         if (data.children) {
           _this.toggleExpand(data.children, val)
         }
-      }
-    },
-    mockData() {
-      return {
-        "id": 1,
-        "name": "TEST1",
-        "cnName": "测试1",
-        // "shape": "treeNode",
-        "children": [
-          {
-            "id": 2,
-            "name": "TEST2",
-            "cnName": "测试2",
-            // "shape": "treeNode",
-            "children": [
-              {
-                "id": 4,
-                "name": "TEST4",
-                "cnName": "测试4",
-                // "shape": "treeNode",
-                "children": []
-              },
-              {
-                "id": 5,
-                "name": "TEST5",
-                "cnName": "测试5",
-                // "shape": "treeNode",
-                "children": []
-              }
-            ]
-          },
-          {
-            "id": 3,
-            "name": "TEST3",
-            "cnName": "测试3",
-            // "shape": "treeNode",
-            "children": []
-          }
-        ]
       }
     }
   }

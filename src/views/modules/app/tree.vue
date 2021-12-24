@@ -107,7 +107,6 @@ export default {
       }
     },
     onNodeClick: function(e, data) {
-      console.log('onNodeClick: %o', data)
       this.selected = data
       this.$set(data, 'selectedKey', !data.selectedKey)
       if (data.type === 'Children' && (!data.children || data.children.length === 0)) {

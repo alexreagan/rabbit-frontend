@@ -23,7 +23,6 @@ export default {
       return this.selected.type + this.selected.id === this.node.type + this.node.id
     },
     iconName() {
-      console.log('this.selected', this.node)
       let res = 'tag'
       if (this.node.type === 'UnTaggedHost') {
         res = 'computer2'

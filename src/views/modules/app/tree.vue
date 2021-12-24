@@ -66,9 +66,9 @@ export default {
       const treeNodes = nodes.data
       this.initNodes(treeNodes)
       if (nodes && nodes.data) {
+        const finded = this.templateList.find(item => item.id === this.selectTemplate) || {}
         // 模板名称
-        nodes.data.cnName = '测试模板'
-        nodes.data.name = 'test tmp'
+        nodes.data.cnName = finded.name
         nodes.data.tagIds = [nodes.data.id]
         nodes.data.expand = true
         this.data = nodes.data

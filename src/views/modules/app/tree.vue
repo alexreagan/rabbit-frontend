@@ -61,7 +61,6 @@ export default {
   },
   watch: {
     async selectTemplate(val) {
-      console.log('this.selectTemplate', this.selectTemplate)
       const nodes = await this.getTreeNodes([], this.selectTemplate)
       const treeNodes = nodes.data
       this.initNodes(treeNodes)

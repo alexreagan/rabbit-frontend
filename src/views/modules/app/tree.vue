@@ -18,11 +18,12 @@
 <script>
 import Vue2OrgTree from 'vue2-org-tree'
 import 'vue2-org-tree/dist/style.css'
+import TreeNode from '@/components/tree-node'
 export default {
   components: {Vue2OrgTree},
   data () {
     return {
-      selectedKey: '',
+      selected: {},
       props: {label: 'name', children: 'children', expand: 'expand'},
       data: {},
       expandAll: false,
@@ -37,17 +38,15 @@ export default {
     // this.render()
   },
   watch: {
-    selectedKey(val) {
-      console.log('selectedKey', this.selectedKey)
-      // 根据点击选中的节点，获取子节点数据
-    }
   },
   methods: {
     getTreeNodes(tagIDs = '') {
-      console.log('tagIDstagIDs', tagIDs)
       return this.$http({
-        url: this.$http.adornUrl('/api/v3/tree/node' + (tagIDs ? `?tagIDs[]=${tagIDs || ''}` : '')),
-        method: 'get'
+        url: this.$http.adornUrl('/api/v3/tree/node'),
+        method: 'get',
+        params: this.$http.adornParams({
+          'tagIDs': tagIDs
+        })
       })
     },
     initNodes(treeNodes) {
@@ -65,10 +64,8 @@ export default {
     },
     async render () {
       const nodes = await this.getTreeNodes()
-      console.log('nodes', nodes.data)
       const treeNodes = nodes.data
       this.initNodes(treeNodes)
-      console.log('treeNodes', treeNodes)
       if (nodes && nodes.data) {
         // 模板名称
         nodes.data.cnName = '测试模板'
@@ -82,13 +79,21 @@ export default {
       return 'clickable-node'
     },
     renderContent: function(h, data) {
+      let label = ''
       if (data.type === 'UnTaggedHost') {
-        return `${data.ip}`
+        label = `${data.ip}`
       } else if (data.type === 'UnTaggedPod') {
-        return `${data.hostName}(${data.hostIp})`
+        label = `${data.hostName}(${data.hostIp})`
       } else {
-        return `${data.cnName}`
+        label = `${data.cnName}`
       }
+      data.label = label
+      return h(TreeNode, {
+        props: {
+          node: data,
+          selected: this.selected
+        }
+      })
     },
     onExpand: function(e, data) {
       if ('expand' in data) {
@@ -103,14 +108,13 @@ export default {
     },
     onNodeClick: function(e, data) {
       console.log('onNodeClick: %o', data)
-      this.selectedKey = data.id
+      this.selected = data
       this.$set(data, 'selectedKey', !data.selectedKey)
-      if (!data.children || data.children.length === 0) {
+      if (data.type === 'Children' && (!data.children || data.children.length === 0)) {
         this.getTreeNodes(data.tagIds || []).then(res => {
           if (res && res.data) {
-            const addNodes = res.data
+            const addNodes = {...data, ...res.data}
             this.initNodes(addNodes)
-            console.log('addNodesaddNodes', addNodes)
             this.$set(data, 'children', addNodes.children)
           }
         })
@@ -150,7 +154,8 @@ export default {
 </script>
 <style>
 .org-tree-node-label-inner {
-  border-radius: 20px;
+  border-radius: 20px !important;
+  padding: 0 !important;
 }
 .clickable-node {
   cursor: pointer;

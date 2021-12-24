@@ -6,6 +6,7 @@
 import customNode from './customNode'
 import customEdge from './customEdge'
 import teamNode from './teamNode'
+import treeNode from './treeNode'
 export default {
   name: 'Flow',
   data() {
@@ -21,6 +22,7 @@ export default {
       customNode.init()
       customEdge.init()
       teamNode.init()
+      treeNode.init()
     }
   }
 }

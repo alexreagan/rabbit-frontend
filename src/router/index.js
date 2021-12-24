@@ -28,13 +28,13 @@ const globalRoutes = [
     component: _import('common/login'),
     name: 'login',
     meta: {title: '登录'}
-  },
-  {
-    path: '/g6-editor',
-    component: _import('modules/app/template-design'),
-    name: 'g6-editor',
-    meta: {title: 'g6-editor'}
   }
+  // {
+  //   path: '/app-tree',
+  //   component: _import('modules/app/tree'),
+  //   name: 'app-tree',
+  //   meta: {title: 'app-tree'}
+  // }
 ]
 
 // 主入口路由(需嵌套上左右整体布局)

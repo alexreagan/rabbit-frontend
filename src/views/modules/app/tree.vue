@@ -1,144 +1,222 @@
 <template>
-  <div id='container' class='mod-host-apply'>
+  <div class="tree-page">
+    <div class="select">
+      <el-select
+        v-model="selectTemplate"
+        filterable
+        remote
+        reserve-keyword
+        placeholder="请输入关键词"
+        :remote-method="getTemplateList"
+        :loading="tmpLoading">
+        <el-option
+          v-for="item in templateList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+      </el-select>
+    </div>
+    <div class="tree">
+      <vue2-org-tree
+        :data="data"
+        :props="{label: 'name', children: 'children', expand: 'expand'}"
+        :horizontal="horizontal"
+        :collapsable="collapsable"
+        :label-class-name="labelClassName"
+        :render-content="renderContent"
+        selected-class-name="bg-tomato"
+        selected-key="selectedKey"
+        @on-expand="onExpand"
+        @on-node-click="onNodeClick"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import G6 from '@antv/g6'
+import Vue2OrgTree from 'vue2-org-tree'
+import 'vue2-org-tree/dist/style.css'
+import TreeNode from '@/components/tree-node'
 export default {
+  components: {Vue2OrgTree},
   data () {
-    return {}
+    return {
+      selected: {},
+      props: {label: 'name', children: 'children', expand: 'expand'},
+      data: {},
+      expandAll: false,
+      horizontal: true,
+      collapsable: true,
+      templateList: [],
+      selectTemplate: 0,
+      tmpLoading: false
+    }
   },
   activated () {
     this.render()
   },
+  mounted() {
+    // this.render()
+  },
+  watch: {
+    async selectTemplate(val) {
+      const nodes = await this.getTreeNodes([], this.selectTemplate)
+      const treeNodes = nodes.data
+      this.initNodes(treeNodes)
+      if (nodes && nodes.data) {
+        const finded = this.templateList.find(item => item.id === this.selectTemplate) || {}
+        // 模板名称
+        nodes.data.cnName = finded.name
+        nodes.data.tagIds = [nodes.data.id]
+        nodes.data.expand = true
+        this.data = nodes.data
+      }
+    }
+  },
   methods: {
-    getTreeNodes(tagIDs) {
+    getTreeNodes(tagIDs = '', templateID = '') {
       return this.$http({
-        url: this.$http.adornUrl('/api/v3/tree/node?tagIDs=' + tagIDs),
-        method: 'get'
+        url: this.$http.adornUrl('/api/v3/tree/node'),
+        method: 'get',
+        params: this.$http.adornParams({
+          tagIDs,
+          templateID
+        })
       })
     },
+    initNodes(treeNodes) {
+      if (treeNodes && treeNodes.children) {
+        treeNodes.children.map(item => {
+          const parentTagIds = treeNodes.tagIds || []
+          item.tagIds = [...parentTagIds, item.id]
+          item.expand = true
+          if (item.children && item.children.length > 0) {
+            this.initNodes(item)
+          }
+          return item
+        })
+      }
+    },
     async render () {
-      const nodes = await this.getTreeNodes()
-      console.log('nodes', nodes)
-      const data = nodes.data
-      data.name = '根节点'
-
-      const container = document.getElementById('container')
-      const width = container.scrollWidth
-      const height = container.scrollHeight || 800
-      const graph = new G6.TreeGraph({
-        container: 'container',
-        width,
-        height,
-        modes: {
-          default: [
-            {
-              type: 'collapse-expand',
-              onChange: function onChange (item, collapsed) {
-                const data = item.get('model')
-                data.collapsed = collapsed
-                return true
-              }
-            },
-            'drag-canvas',
-            'zoom-canvas'
-          ]
-        },
-        defaultNode: {
-          size: 26,
-          anchorPoints: [
-            [0, 0.5],
-            [1, 0.5]
-          ]
-        },
-        defaultEdge: {
-          type: 'cubic-horizontal'
-        },
-        layout: {
-          type: 'compactBox',
-          direction: 'LR',
-          defalutPosition: [],
-          getId: function getId (d) {
-            console.log('ddd', d)
-            return d.name
-          },
-          getHeight: () => {
-            return 16
-          },
-          getWidth: () => {
-            return 16
-          },
-          getVGap: () => {
-            return 10
-          },
-          getHGap: () => {
-            return 50
-          },
-          getSide: () => {
-            return 'right'
-          }
+      this.getTemplateList('', true)
+    },
+    labelClassName: function(data) {
+      return 'clickable-node'
+    },
+    renderContent: function(h, data) {
+      let label = ''
+      if (data.type === 'UnTaggedHost') {
+        label = `${data.ip}`
+      } else if (data.type === 'UnTaggedPod') {
+        label = `${data.hostName}(${data.hostIp})`
+      } else {
+        label = `${data.cnName}`
+      }
+      data.label = label
+      return h(TreeNode, {
+        props: {
+          node: data,
+          selected: this.selected
         }
       })
+    },
+    onExpand: function(e, data) {
+      if ('expand' in data) {
+        data.expand = !data.expand
 
-      let centerX = 0
-      graph.node(function (node) {
-        if (node.id === 'Modeling Methods') {
-          centerX = node.x
+        if (!data.expand && data.children) {
+          this.collapse(data.children)
         }
-
-        return {
-          label: node.id,
-          labelCfg: {
-            position:
-              node.children && node.children.length > 0
-                ? 'left'
-                : node.x > centerX
-                ? 'right'
-                : 'left',
-            offset: 5
+      } else {
+        this.$set(data, 'expand', true)
+      }
+    },
+    onNodeClick: function(e, data) {
+      this.selected = data
+      this.$set(data, 'selectedKey', !data.selectedKey)
+      if (data.type === 'Children' && (!data.children || data.children.length === 0)) {
+        this.getTreeNodes(data.tagIds || []).then(res => {
+          if (res && res.data) {
+            const addNodes = {...data, ...res.data}
+            this.initNodes(addNodes)
+            this.$set(data, 'children', addNodes.children)
           }
+        })
+      }
+    },
+    collapse: function(list) {
+      var _this = this
+      list.forEach(function(child) {
+        if (child.expand) {
+          child.expand = false
         }
+
+        child.children && _this.collapse(child.children)
       })
-
-      graph.data(data)
-      graph.render()
-      graph.fitView()
-
-      let count = 0
-      graph.on('node:click', function (evt) {
-        const item = evt.item
-
-        const nodeId = item.get('id')
-        const model = item.getModel()
-        const children = model.children
-        if (!children || children.length === 0) {
-          const childData = {
-            id: 'child-data-' + count,
-            type: 'rect',
-            children: [
-              {
-                id: 'x-' + count
-              },
-              {
-                id: 'y-' + count
-              }
-            ]
+    },
+    expandChange: function() {
+      this.toggleExpand(this.data, this.expandAll)
+    },
+    toggleExpand: function(data, val) {
+      var _this = this
+      if (Array.isArray(data)) {
+        data.forEach(function(item) {
+          _this.$set(item, 'expand', val)
+          if (item.children) {
+            _this.toggleExpand(item.children, val)
           }
-          graph.addChild(childData, nodeId)
-          count++
-        }
-      })
-
-      if (typeof window !== 'undefined') {
-        window.onresize = () => {
-          if (!graph || graph.get('destroyed')) return
-          if (!container || !container.scrollWidth || !container.scrollHeight) return
-          graph.changeSize(container.scrollWidth, container.scrollHeight)
+        })
+      } else {
+        this.$set(data, 'expand', val)
+        if (data.children) {
+          _this.toggleExpand(data.children, val)
         }
       }
+    },
+    async getTemplateList (query = '', init) {
+      this.tmpLoading = true
+      const {data} = await this.$http({
+        url: this.$http.adornUrl('/api/v1/template/all'),
+        method: 'get',
+        params: this.$http.adornParams({
+          'page': 1,
+          'limit': 20,
+          'name': query
+        })
+      })
+      if (data && data.list) {
+        this.templateList = data.list
+        if (init && data.list.length > 0) {
+          this.selectTemplate = data.list[0].id
+        }
+      } else {
+        this.templateList = []
+      }
+      this.tmpLoading = false
     }
   }
 }
 </script>
+<style>
+.org-tree-node-label-inner {
+  border-radius: 20px !important;
+  padding: 0 !important;
+}
+.clickable-node {
+  cursor: pointer;
+}
+.bg-tomato {
+  /* background-color: tomato;
+  color: #ffffff; */
+}
+</style>
+<style scoped>
+.tree-page {
+  width: 100%;
+  height: 100%;
+}
+.select {
+  margin-bottom: 20px;
+}
+</style>

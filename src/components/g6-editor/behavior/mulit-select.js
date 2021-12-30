@@ -1,4 +1,4 @@
-import Util from '@antv/g6/src/util'
+import { each } from '@antv/util'
 import eventBus from '../utils/eventBus'
 import {uniqueId, getBox} from '../utils'
 import config from '../utils/global'
@@ -54,7 +54,7 @@ export default {
     const canvas = document.getElementById('graph-container').children[0]
     canvas.style.cursor = 'default'
     const selected = this.graph.findAllByState('node', 'selected')
-    Util.each(selected, node => {
+    each(selected, node => {
       this.graph.setItemState(node, 'selected', false)
       eventBus.$emit('nodeselectchange', {target: node, select: false})
     })

@@ -57,7 +57,7 @@
         this.visible = true
         this.dataForm.ids = ids || 0
         this.$http({
-          url: this.$http.adornUrl('/api/v1/tree'),
+          url: this.$http.adornUrl('/api/v1/tree/children'),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {

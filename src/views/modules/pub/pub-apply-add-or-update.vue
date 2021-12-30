@@ -1,8 +1,5 @@
 <template>
-  <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
-    :close-on-click-modal="false"
-    :visible.sync="visible">
+  <div class="mod-template-add-or-update">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
       <el-form-item label="部署单元" prop="deployUnitID">
         <el-select v-model="dataForm.deployUnitID" clearable>
@@ -25,10 +22,14 @@
         <el-input v-model="dataForm.pubContent" type="textarea" placeholder="版本内容"></el-input>
       </el-form-item>
       <el-form-item label="发布步骤" prop="pubStep">
-        <el-input v-model="dataForm.pubStep" type="textarea" placeholder="发布步骤"></el-input>
+        <!-- <el-input v-model="dataForm.pubStep" type="textarea" placeholder="发布步骤"></el-input> -->
+        <!-- <script :id="pubStepEditorID" class="ueditor-box" type="text/plain" style="width: 100%; height: 260px;"></script> -->
+        <VueUeditorWrap v-model="dataForm.pubStep" :config="editorConfig"/>
       </el-form-item>
       <el-form-item label="回滚步骤" prop="rollbackStep">
-        <el-input v-model="dataForm.rollbackStep" type="textarea" placeholder="回滚步骤"></el-input>
+        <!-- <el-input v-model="dataForm.rollbackStep" type="textarea" placeholder="回滚步骤"></el-input> -->
+        <!-- <script :id="rollbackStepEditorID" class="ueditor-box" type="text/plain" style="width: 100%; height: 260px;"></script> -->
+        <VueUeditorWrap v-model="dataForm.rollbackStep" :config="editorConfig"/>
       </el-form-item>
       <el-form-item label="需求说明书" prop="requirement">
         <el-input v-model="dataForm.requirement" type="textarea" placeholder="需求说明书"></el-input>
@@ -148,13 +149,33 @@
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
-  </el-dialog>
+  </div>
 </template>
 
 <script>
+  // import ueditor from 'ueditor'
+  import VueUeditorWrap from 'vue-ueditor-wrap'
   export default {
     data () {
+      // var validatePubStep = (rule, value, callback) => {
+      //   if (!/\S/.test(this.pubStepEditor.getContent())) {
+      //     callback(new Error('发布步骤不能为空'))
+      //   } else {
+      //     callback()
+      //   }
+      // }
+      // var validateRollbackStep = (rule, value, callback) => {
+      //   if (!/\S/.test(this.rollbackStepEditor.getContent())) {
+      //     callback(new Error('回滚步骤不能为空'))
+      //   } else {
+      //     callback()
+      //   }
+      // }
       return {
+        // pubStepEditor: null,
+        // rollbackStepEditor: null,
+        // pubStepEditorID: `pubEditor_ueditorBox_${new Date().getTime()}`,
+        // rollbackStepEditorID: `rollbackEditor_ueditorBox_${new Date().getTime()}`,
         loading: false,
         visible: false,
         dataForm: {
@@ -192,6 +213,11 @@
           'label': '裁剪',
           'value': 'trim'
         }],
+        editorConfig: {
+          autoHeightEnabled: false,
+          initialFrameHeight: 300,
+          initialFrameWidth: '100%'
+        },
         dataRule: {
           deployUnitID: [
             { required: true, message: '部署单元', trigger: 'blur' }
@@ -203,11 +229,34 @@
             { required: true, message: '版本内容', trigger: 'blur' }
           ],
           pubStep: [
-            { required: true, message: '发布步骤', trigger: 'blur' }
+            { required: false, message: '发布步骤', trigger: 'blur' }
+            // { validator: validatePubStep, trigger: 'blur' }
           ],
           rollbackStep: [
-            { required: true, message: '回滚步骤', trigger: 'blur' }
+            { required: false, message: '回滚步骤', trigger: 'blur' }
+            // { validator: validateRollbackStep, trigger: 'blur' }
           ]
+        }
+      }
+    },
+    components: {
+      VueUeditorWrap
+    },
+    mounted () {
+      // this.pubStepEditor = ueditor.getEditor(this.pubStepEditorID, {
+      //   zIndex: 3000
+      // })
+      // this.rollbackStepEditor = ueditor.getEditor(this.rollbackStepEditorID, {
+      //   zIndex: 3000
+      // })
+    },
+    activated () {
+      this.init(this.$route.query.id)
+    },
+    watch: {
+      visible (val) {
+        if (!val) {
+          this.$router.push({ name: 'pub-pub-apply' })
         }
       }
     },
@@ -297,6 +346,8 @@
                 'deployUnitID': this.dataForm.deployUnitID,
                 'versionDate': this.dataForm.versionDate,
                 'pubContent': this.dataForm.pubContent,
+                'pubStep': this.dataForm.pubStep,
+                'rollbackStep': this.dataForm.rollbackStep,
                 'requirement': this.dataForm.requirement,
                 'appDesign': this.dataForm.appDesign,
                 'appAssemblyTestDesign': this.dataForm.appAssemblyTestDesign,

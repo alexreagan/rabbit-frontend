@@ -14,8 +14,8 @@ export default {
   nodeEvent: null,
   getDefaultCfg() {
     return {
-      updateEdge: true,
-      delegate: true,
+      //   updateEdge: true,
+      //   delegate: true,
       delegateStyle: {}
     }
   },
@@ -38,6 +38,10 @@ export default {
     this.nodeEvent = e
     const {item} = e
     const graph = this.graph
+
+    if (!item) {
+      return
+    }
 
     this.targets = []
 
@@ -159,6 +163,9 @@ export default {
     }
   },
   _update(item, e, nodeEvent, force) {
+    if (!item) {
+      return
+    }
     const origin = this.origin
     const model = item.get('model')
     const nodeId = item.get('id')

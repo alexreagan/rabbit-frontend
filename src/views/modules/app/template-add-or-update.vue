@@ -58,7 +58,6 @@
     },
     watch: {
       visible (val) {
-        console.log(val)
         if (!val) {
           this.$router.push({ name: 'app-template' })
         }

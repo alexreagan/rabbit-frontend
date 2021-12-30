@@ -215,7 +215,7 @@ export default {
       this.order = order.replace('ending', '')
       this.getDataList()
     },
-    //
+    // 点击服务名
     clickServiceHandle (namespace, typ) {
       window.open(window.SITE_CONFIG['caasUrl'] + '/paas/service-mgmt/service/' + namespace + '?type=' + typ, '_blank')
     }

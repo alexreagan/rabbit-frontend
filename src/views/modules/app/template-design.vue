@@ -38,8 +38,8 @@ export default {
           content.edges.forEach(item => {
             edges.push({
               ...item,
-              source: item.source + '',
-              target: item.target + ''
+              source: '' + item.source,
+              target: '' + item.target
             })
           })
           content.edges = edges

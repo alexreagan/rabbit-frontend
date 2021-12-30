@@ -1,6 +1,6 @@
-import G6 from '@antv/g6/build/g6'
+import G6 from '@antv/g6'
 import {uniqueId} from '../../utils'
-import Shape from '@antv/g/src/shapes'
+import Rect from '@antv/g-base/esm/bbox/rect.js'
 const treeNode = {
   init() {
     G6.registerNode('treeNode', {
@@ -61,7 +61,7 @@ const treeNode = {
           }
         })
         if (cfg.backImage) {
-          const clip = new Shape.Rect({
+          const clip = new Rect({
             attrs: {
               x: offsetX,
               y: offsetY,

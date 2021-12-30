@@ -93,6 +93,12 @@ const mainRoutes = {
       meta: {title: '模板设计', isTab: true}
     },
     {
+      path: '/pub-apply-add-or-update',
+      component: _import('modules/pub/pub-apply-add-or-update'),
+      name: 'pub-apply-add-or-update',
+      meta: {title: '发布单', isTab: true}
+    },
+    {
       path: '/demo-echarts',
       component: _import('demo/echarts'),
       name: 'demo-echarts',

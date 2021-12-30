@@ -202,7 +202,7 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update> -->
     <assign v-if="assignVisible" ref="assign" @refreshDataList="getDataList"></assign>
   </div>
 </template>
@@ -224,7 +224,7 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      addOrUpdateVisible: false,
+      // addOrUpdateVisible: false,
       assignVisible: false
     }
   },
@@ -289,10 +289,11 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {
-      this.addOrUpdateVisible = true
-      this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id)
-      })
+      this.$router.push({ name: 'pub-apply-add-or-update', query: {id: id} })
+      // this.addOrUpdateVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.addOrUpdate.init(id)
+      // })
     }
   }
 }

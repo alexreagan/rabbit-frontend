@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import G6 from '@antv/g6/build/g6'
+import G6 from "@antv/g6"
 import {initBehavors} from '../../behavior'
 export default {
   data() {
@@ -73,7 +73,6 @@ export default {
     readData() {
       let data = this.data
       if (data) {
-        console.log('data', data)
         this.graph.read(data, false)
       }
     }

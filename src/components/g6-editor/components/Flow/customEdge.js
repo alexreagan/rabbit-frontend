@@ -1,6 +1,6 @@
-import G6 from '@antv/g6/build/g6'
+import G6 from '@antv/g6'
 import {uniqueId} from '../../utils'
-const MIN_ARROW_SIZE = 3
+// const MIN_ARROW_SIZE = 3
 
 const customEdge = {
   init() {
@@ -86,18 +86,19 @@ const customEdge = {
             ['L', end.x, end.y]
           ]
         }
-        let lineWidth = 1
-        lineWidth = lineWidth > MIN_ARROW_SIZE ? lineWidth : MIN_ARROW_SIZE
-        const width = (lineWidth * 10) / 3
-        const halfHeight = (lineWidth * 4) / 3
-        const radius = lineWidth * 4
-        const endArrowPath = [
-          ['M', -width, halfHeight],
-          ['L', 0, 0],
-          ['L', -width, -halfHeight],
-          ['A', radius, radius, 0, 0, 1, -width, halfHeight],
-          ['Z']
-        ]
+        // let lineWidth = 1
+        // lineWidth = lineWidth > MIN_ARROW_SIZE ? lineWidth : MIN_ARROW_SIZE
+        // const width = (lineWidth * 10) / 3
+        // const halfHeight = (lineWidth * 4) / 3
+        // const radius = lineWidth * 4
+        // const endArrowPath = [
+        //   ['M', -width, halfHeight],
+        //   ['L', 0, 0],
+        //   ['L', -width, -halfHeight],
+        //   ['A', radius, radius, 0, 0, 1, -width, halfHeight],
+        //   ['Z']
+        // ]
+        const endArrowPath = G6.Arrow.vee(4, 10, 0)
         const keyShape = group.addShape('path', {
           attrs: {
             id: 'edge' + uniqueId(),

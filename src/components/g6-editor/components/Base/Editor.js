@@ -1,4 +1,4 @@
-import { uniqueId } from '../../utils'
+import {uniqueId} from '../../utils'
 import eventBus from '../../utils/eventBus'
 
 export default class Editor {
@@ -22,7 +22,11 @@ export default class Editor {
     }
   }
   add(type, item) {
-    this.graph.add(type, item)
+    let model = {
+      ...item,
+      type: item.shape
+    }
+    this.graph.add(type, model)
   }
   update(item, model) {
     this.graph.update(item, model)

@@ -71,6 +71,7 @@ export default {
       }).then(({data}) => {
         if (data && data.totalCount > 0) {
           const res = data.list.map(item => {
+            item.id = '' + item.id
             return {
               ...item,
               label: item.name,

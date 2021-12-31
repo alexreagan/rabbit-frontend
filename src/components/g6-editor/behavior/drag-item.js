@@ -21,12 +21,18 @@ export default {
   },
   getEvents() {
     return {
+      'node:mouseup': 'onMouseup',
       'node:mousedown': 'onMousedown',
+      mousedown: 'onMousedown',
       mousemove: 'onMousemove',
       mouseup: 'onMouseup',
-      // 'node:dragstart': 'onDragStart',
-      // 'node:drag': 'onDrag',
-      // 'node:dragend': 'onDragEnd',
+      'node:dragstart': 'onDragStart',
+      'node:drag': 'onDrag',
+      'node:dragend': 'onDragEnd',
+      'node:dragenter': 'onDragEnter',
+      'node:dragleave': 'onDragLeave',
+      'node:dragover': 'onDragOver',
+      'node:drop': 'onDrop',
       'canvas:mouseleave': 'onOutOfRange'
     }
   },
@@ -34,14 +40,14 @@ export default {
     if (!this.shouldBegin.call(this, e)) {
       return
     }
+    if (!e.item) {
+      return
+    }
+
     this.isDrag = true
     this.nodeEvent = e
     const {item} = e
     const graph = this.graph
-
-    if (!item) {
-      return
-    }
 
     this.targets = []
 
@@ -79,6 +85,21 @@ export default {
     this.originPoint = {}
   },
   onMousemove(e) {
+    // console.log('drag-item: onMousemove')
+  },
+  onMousedown(e) {
+    // console.log('drag-item: onMousedown')
+  },
+  onMouseup(e) {
+    // console.log('drag-item: onMouseup')
+  },
+  onDragStart(e) {
+    // 当节点开始被拖拽的时候触发的事件，此事件作用在被拖曳节点上
+    // console.log('drag-item: onDragStart')
+  },
+  onDrag(e) {
+    // 当节点在拖动过程中时触发的事件，此事件作用于被拖拽节点上
+    // console.log('drag-item: onDrag')
     if (!this.origin) {
       this.getNode(e)
     }
@@ -86,6 +107,9 @@ export default {
       return
     }
     if (!this.get('shouldUpdate').call(this, e)) {
+      return
+    }
+    if (!this.targets && !this.target) {
       return
     }
     // 当targets中元素时，则说明拖动的是多个选中的元素
@@ -96,7 +120,9 @@ export default {
       this._update(this.target, e, this.nodeEvent, true)
     }
   },
-  onMouseup(e) {
+  onDragEnd(e) {
+    // 当拖拽完成后触发的事件，此事件作用在被拖曳节点上
+    // console.log('drag-item: onDragEnd')
     if (this.shape) {
       this.shape.remove()
       this.shape = null
@@ -148,8 +174,25 @@ export default {
     this.nodeEvent = null
     this.graph.setMode('default')
   },
+  onDragEnter(e) {
+    // 当拖曳节点进入目标元素的时候触发的事件，此事件作用在目标元素上
+    // console.log('drag-item: onDragEnter')
+  },
+  onDragLeave(e) {
+    // 当拖曳节点离开目标元素的时候触发的事件，此事件作用在目标元素上
+    // console.log('drag-item: onDragLeave')
+  },
+  onDragOver(e) {
+    // 当拖曳节点在另一目标元素上移动时触发此事件，此事件作用在目标元素上
+    // console.log('drag-item: onDragOver')
+  },
+  onDrop(e) {
+    // 被拖拽的节点在目标元素上同时鼠标放开触发的事件，此事件作用在目标元素上
+    // console.log('drag-item: onDrop')
+  },
   // 若在拖拽时，鼠标移出画布区域，此时放开鼠标无法终止 drag 行为。在画布外监听 mouseup 事件，放开则终止
   onOutOfRange(e) {
+    // console.log('drag-item: onOutOfRange')
     const self = this
     if (this.origin) {
       const canvasElement = self.graph.get('canvas').get('el')
@@ -163,9 +206,6 @@ export default {
     }
   },
   _update(item, e, nodeEvent, force) {
-    if (!item) {
-      return
-    }
     const origin = this.origin
     const model = item.get('model')
     const nodeId = item.get('id')

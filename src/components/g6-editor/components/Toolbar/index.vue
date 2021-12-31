@@ -304,6 +304,17 @@ export default {
       const data = this.graph.save()
       const id = this.$route.query.id
 
+      // 数据格式转换
+      data.edges.forEach((edge) => {
+        edge.source = parseInt(edge.source)
+        edge.sourceId = parseInt(edge.sourceId)
+        edge.target = parseInt(edge.target)
+        edge.targetId = parseInt(edge.targetId)
+      })
+      data.nodes.forEach((node) => {
+        node.id = parseInt(node.id)
+      })
+
       this.$http({
         url: this.$http.adornUrl('/api/v1/template/design'),
         method: 'post',

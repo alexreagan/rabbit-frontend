@@ -67,11 +67,14 @@ export default {
       // 获取所有节点
       this.$http({
         url: this.$http.adornUrl('/api/v1/tag/all'),
-        method: 'get'
+        method: 'get',
+        params: this.$http.adornParams({
+          orderBy: 'name'
+        })
       }).then(({data}) => {
         if (data && data.totalCount > 0) {
           const res = data.list.map(item => {
-            item.id = '' + item.id
+            item.id = item.id.toString()
             return {
               ...item,
               label: item.name,

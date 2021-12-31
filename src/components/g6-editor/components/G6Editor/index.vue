@@ -1,7 +1,7 @@
 <template>
   <div id="mountNode" :style="{width: width}">
     <div class="editor">
-      <context-menu />
+      <!-- <context-menu /> -->
       <!--toolbar-->
       <toolbar />
       <div style="height: 42px;"></div>
@@ -27,7 +27,7 @@ import DetailPanel from '../DetailPanel'
 import Minimap from '../Minimap'
 import Page from '../Page'
 import Flow from '../Flow'
-import ContextMenu from '../ContextMenu'
+// import ContextMenu from '../ContextMenu'
 import Editor from '../../components/Base/Editor'
 import Command from '../../command'
 export default {
@@ -38,7 +38,7 @@ export default {
     DetailPanel,
     Minimap,
     Page,
-    ContextMenu,
+    // ContextMenu,
     Flow
   },
   props: {

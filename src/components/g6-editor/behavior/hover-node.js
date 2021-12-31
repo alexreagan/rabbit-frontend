@@ -3,10 +3,13 @@ export default {
     return {
       'node:mouseover': 'onMouseover',
       'node:mouseleave': 'onMouseleave',
-      'node:mousedown': 'onMousedown'
+      'node:mousedown': 'onMousedown',
+      'node:mouseup': 'onMouseup',
+      mouseup: 'onMouseup'
     }
   },
   onMouseover(e) {
+    // console.log('hover-node: onMouseover')
     const self = this
     const item = e.item
     const graph = self.graph
@@ -44,6 +47,7 @@ export default {
     graph.paint()
   },
   onMouseleave(e) {
+    // console.log('hover-node: onMouseleave')
     const self = this
     const item = e.item
     const graph = self.graph
@@ -59,10 +63,16 @@ export default {
     graph.paint()
   },
   onMousedown(e) {
+    // 鼠标按钮在节点上按下（左键或者右键）时触发，不能通过键盘触发
+    // console.log('hover-node: onMousedown')
     if (e.target.attrs.isOutPoint || e.target.attrs.isOutPointOut) {
       this.graph.setMode('addEdge')
     } else {
       this.graph.setMode('moveNode')
     }
+  },
+  onMouseup(e) {
+    // 节点上按下的鼠标按钮被释放弹起时触发，不能通过键盘触发
+    // console.log('hover-node: onMouseup')
   }
 }

@@ -159,9 +159,9 @@ export default {
     },
     // 初始化
     init() {
-      const container = document.getElementById('tree')
+      const container = document.getElementById('container')
       const width = container.scrollWidth
-      const height = container.scrollHeight || 800
+      const height = container.scrollHeight
       this.graph = new G6.TreeGraph({
         container: 'tree',
         fitView: true,
@@ -276,3 +276,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+#container {
+  width: 100%;
+  height: calc(100vh - 100px);
+}
+</style>

@@ -240,6 +240,9 @@ export default {
         const item = evt.item
         const nodeId = item.get('id')
         const model = item.getModel()
+        if (model.classify !== 'Children') {
+          return
+        }
         const children = model.children
         if (!children || children.length === 0) {
           self
@@ -252,8 +255,7 @@ export default {
               })
             })
             .then(({data}) => {
-              console.log('datadata', data)
-              // let node = self.transNodes(data)
+              self.transNodes(data)
               data.children.forEach(child => {
                 self.graph.addChild(child, nodeId)
               })

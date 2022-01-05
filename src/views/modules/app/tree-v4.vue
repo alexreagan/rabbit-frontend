@@ -34,16 +34,19 @@ export default {
       counter: 0
     }
   },
-  activated () {
+  mounted () {
     this.init()
+  },
+  activated () {
     this.getTemplateList('', true)
   },
   watch: {
     async selectTemplate(val) {
       const {data} = await this.getTreeNodes([], this.selectTemplate)
       this.data = data
+      this.counter = 0
       this.transNodes(this.data)
-      this.refresh()
+      this.renderData()
     },
     data(val) {
       this.graph.read(this.data)
@@ -83,6 +86,51 @@ export default {
       }
       this.tmpLoading = false
     },
+    getChildren(node) {
+      let children = []
+      if (node.next) {
+          // 有子节点
+        Object.values(node.next).forEach((element) => {
+          element.id = 'Children-' + element.id
+          element.type = 'Children'
+          children.push(element)
+        })
+        if (node.unTaggedHosts) {
+          node.unTaggedHosts.forEach((element) => {
+            // element.id = 'UnTaggedHost-' + element.id
+            element.type = 'UnTaggedHost'
+            children.push(element)
+          })
+        }
+        if (node.unTaggedPods) {
+          node.unTaggedPods.forEach((element) => {
+            // element.id = 'UnTaggedPod-' + element.id
+            element.type = 'UnTaggedPod'
+            children.push(element)
+          })
+        }
+      } else {
+          // 没有子节点
+        if (node.relatedHosts) {
+          node.relatedHosts.forEach((element) => {
+            // element.id = 'RelatedHost-' + element.id
+            element.type = 'RelatedHost'
+            children.push(element)
+          })
+        }
+        if (node.relatedPods) {
+          node.relatedPods.forEach((element) => {
+            // element.id = 'RelatedPod-' + element.id
+            element.type = 'RelatedPod'
+            children.push(element)
+          })
+        }
+      }
+      children.forEach((element) => {
+        this.transNodes(element)
+      })
+      return children
+    },
     // 将节点数据格式转换为g6能够识别的数据格式
     transNodes(node) {
       if (node.name === '') {
@@ -90,33 +138,11 @@ export default {
       }
       this.counter += 1
       node.ID = node.id
-      node.id = node.name + '-' + this.counter
-      let children = []
-      if (node.next) {
-        Object.values(node.next).forEach((element) => {
-          element.type = 'Children'
-          children.push(element)
-        })
-      }
-      if (node.unTaggedHosts) {
-        node.unTaggedHosts.forEach((element) => {
-          element.type = 'UnTaggedHost'
-          children.push(element)
-        })
-      }
-      if (node.unTaggedPods) {
-        node.unTaggedPods.forEach((element) => {
-          element.type = 'UnTaggedPods'
-          children.push(element)
-        })
-      }
-      children.forEach((element) => {
-        this.transNodes(element)
-      })
-      node.children = children
+      node.id = '' + this.counter + '-' + node.name
+      node.children = this.getChildren(node)
     },
     // 渲染
-    refresh() {
+    renderData() {
       this.graph.data(this.data)
       this.graph.render()
     },
@@ -181,12 +207,12 @@ export default {
 
       let centerX = 0
       this.graph.node(function (node) {
-        if (node.name === '') {
+        if (node.name === 'ROOT') {
           centerX = node.x
         }
 
         return {
-          label: node.id,
+          label: node.name,
           labelCfg: {
             position:
               node.children && node.children.length > 0
@@ -204,22 +230,24 @@ export default {
     //   this.graph.render()
     //   this.graph.fitView()
 
+      let self = this
       this.graph.on('node:click', function (evt) {
         const item = evt.item
         const nodeId = item.get('id')
         const model = item.getModel()
         const children = model.children
         if (!children || children.length === 0) {
-          this.$http({
-            url: this.$http.adornUrl('/api/v3/tree/node'),
+          self.$http({
+            url: self.$http.adornUrl('/api/v3/tree/node'),
             method: 'get',
-            params: this.$http.adornParams({
-              tagIDs: item.path,
-              templateID: this.selectTemplate
+            params: self.$http.adornParams({
+              tagIDs: model.path,
+              templateID: self.selectTemplate
             })
-          }).then((data) => {
-            data.list.forEach((node) => {
-              this.graph.addChild(node, nodeId)
+          }).then(({data}) => {
+            let node = self.transNodes(data)
+            node.children.forEach((child) => {
+              self.graph.addChild(child, nodeId)
             })
           })
         }

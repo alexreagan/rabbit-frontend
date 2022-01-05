@@ -1,11 +1,15 @@
 <template>
   <div class="page">
-    <div :id="pageId" class="graph-container" style="position: relative;z-index: 1;"></div>
+    <div
+      :id="pageId"
+      class="graph-container"
+      style="position: relative;z-index: 1;"
+    ></div>
   </div>
 </template>
 
 <script>
-import G6 from "@antv/g6"
+import G6 from '@antv/g6'
 import {initBehavors} from '../../behavior'
 export default {
   data() {

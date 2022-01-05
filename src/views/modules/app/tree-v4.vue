@@ -1,5 +1,5 @@
 <template>
-  <div id='container' class='mod-app-tree-v4'>
+  <div id="container" class="mod-app-tree-v4">
     <div class="select">
       <el-select
         v-model="selectTemplate"
@@ -8,23 +8,33 @@
         reserve-keyword
         placeholder="请输入关键词"
         :remote-method="getTemplateList"
-        :loading="tmpLoading">
+        :loading="tmpLoading"
+      >
         <el-option
           v-for="item in templateList"
           :key="item.id"
           :label="item.name"
-          :value="item.id">
+          :value="item.id"
+        >
         </el-option>
       </el-select>
     </div>
-    <div id='tree'></div>
+    <Flow />
+    <div id="tree"></div>
   </div>
 </template>
 
 <script>
+import Flow from '@/components/g6-editor/components/Flow/index.vue'
 import G6 from '@antv/g6'
+import iconDir from './icon/dir.png'
+import iconDocker from './icon/docker.png'
+import iconTag from './icon/tag.png'
 export default {
-  data () {
+  components: {
+    Flow
+  },
+  data() {
     return {
       data: {},
       graph: null,
@@ -34,10 +44,10 @@ export default {
       counter: 0
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   },
-  activated () {
+  activated() {
     this.getTemplateList('', true)
   },
   watch: {
@@ -65,15 +75,15 @@ export default {
       })
     },
     // 模版
-    async getTemplateList (query = '', init) {
+    async getTemplateList(query = '', init) {
       this.tmpLoading = true
       const {data} = await this.$http({
         url: this.$http.adornUrl('/api/v1/template/all'),
         method: 'get',
         params: this.$http.adornParams({
-          'page': 1,
-          'limit': 20,
-          'name': query
+          page: 1,
+          limit: 20,
+          name: query
         })
       })
       if (data && data.list) {
@@ -89,44 +99,44 @@ export default {
     getChildren(node) {
       let children = []
       if (node.next) {
-          // 有子节点
-        Object.values(node.next).forEach((element) => {
-          element.id = 'Children-' + element.id
-          element.type = 'Children'
+        // 有子节点
+        Object.values(node.next).forEach(element => {
+          element.classify = 'Children'
+          element.img = iconDir
           children.push(element)
         })
         if (node.unTaggedHosts) {
-          node.unTaggedHosts.forEach((element) => {
-            // element.id = 'UnTaggedHost-' + element.id
-            element.type = 'UnTaggedHost'
+          node.unTaggedHosts.forEach(element => {
+            element.classify = 'UnTaggedHost'
+            element.img = iconTag
             children.push(element)
           })
         }
         if (node.unTaggedPods) {
-          node.unTaggedPods.forEach((element) => {
-            // element.id = 'UnTaggedPod-' + element.id
-            element.type = 'UnTaggedPod'
+          node.unTaggedPods.forEach(element => {
+            element.classify = 'UnTaggedPod'
+            element.img = iconDocker
             children.push(element)
           })
         }
       } else {
-          // 没有子节点
+        // 没有子节点
         if (node.relatedHosts) {
-          node.relatedHosts.forEach((element) => {
-            // element.id = 'RelatedHost-' + element.id
-            element.type = 'RelatedHost'
+          node.relatedHosts.forEach(element => {
+            element.classify = 'RelatedHost'
+            element.img = iconTag
             children.push(element)
           })
         }
         if (node.relatedPods) {
-          node.relatedPods.forEach((element) => {
-            // element.id = 'RelatedPod-' + element.id
-            element.type = 'RelatedPod'
+          node.relatedPods.forEach(element => {
+            element.classify = 'RelatedPod'
+            element.img = iconDocker
             children.push(element)
           })
         }
       }
-      children.forEach((element) => {
+      children.forEach(element => {
         this.transNodes(element)
       })
       return children
@@ -140,6 +150,7 @@ export default {
       node.ID = node.id
       node.id = '' + this.counter + '-' + node.name
       node.children = this.getChildren(node)
+      node.type = 'treeNode'
     },
     // 渲染
     renderData() {
@@ -160,7 +171,7 @@ export default {
           default: [
             {
               type: 'collapse-expand',
-              onChange: function onChange (item, collapsed) {
+              onChange: function onChange(item, collapsed) {
                 const data = item.get('model')
                 data.collapsed = collapsed
                 return true
@@ -171,7 +182,6 @@ export default {
           ]
         },
         defaultNode: {
-          size: 26,
           anchorPoints: [
             [0, 0.5],
             [1, 0.5]
@@ -184,7 +194,7 @@ export default {
           type: 'compactBox',
           direction: 'LR',
           defalutPosition: [],
-          getId: function getId (d) {
+          getId: function getId(d) {
             return d.id
           },
           getHeight: () => {
@@ -206,7 +216,7 @@ export default {
       })
 
       let centerX = 0
-      this.graph.node(function (node) {
+      this.graph.node(function(node) {
         if (node.name === 'ROOT') {
           centerX = node.x
         }
@@ -225,38 +235,38 @@ export default {
         }
       })
 
-    //   console.log('render...', this.data)
-    //   this.graph.data(this.data)
-    //   this.graph.render()
-    //   this.graph.fitView()
-
       let self = this
-      this.graph.on('node:click', function (evt) {
+      this.graph.on('node:click', function(evt) {
         const item = evt.item
         const nodeId = item.get('id')
         const model = item.getModel()
         const children = model.children
         if (!children || children.length === 0) {
-          self.$http({
-            url: self.$http.adornUrl('/api/v3/tree/node'),
-            method: 'get',
-            params: self.$http.adornParams({
-              tagIDs: model.path,
-              templateID: self.selectTemplate
+          self
+            .$http({
+              url: self.$http.adornUrl('/api/v3/tree/node'),
+              method: 'get',
+              params: self.$http.adornParams({
+                tagIDs: model.path,
+                templateID: self.selectTemplate
+              })
             })
-          }).then(({data}) => {
-            let node = self.transNodes(data)
-            node.children.forEach((child) => {
-              self.graph.addChild(child, nodeId)
+            .then(({data}) => {
+              console.log('datadata', data)
+              // let node = self.transNodes(data)
+              data.children.forEach(child => {
+                self.graph.addChild(child, nodeId)
+              })
             })
-          })
         }
       })
 
       if (typeof window !== 'undefined') {
         window.onresize = () => {
           if (!this.graph || this.graph.get('destroyed')) return
-          if (!container || !container.scrollWidth || !container.scrollHeight) return
+          if (!container || !container.scrollWidth || !container.scrollHeight) {
+            return
+          }
           this.graph.changeSize(container.scrollWidth, container.scrollHeight)
         }
       }

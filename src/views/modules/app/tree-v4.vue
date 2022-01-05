@@ -56,7 +56,7 @@ export default {
       this.data = data
       this.counter = 0
       this.transNodes(this.data)
-      this.renderData()
+      this.renderData(this.data)
     },
     data(val) {
       this.graph.read(this.data)
@@ -153,8 +153,8 @@ export default {
       node.type = 'treeNode'
     },
     // 渲染
-    renderData() {
-      this.graph.data(this.data)
+    renderData(data) {
+      this.graph.data(data)
       this.graph.render()
     },
     // 初始化

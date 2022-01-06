@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-host-group">
+  <div class="mod-node-group">
     <el-form :inline="true" :model="dataForm">
       <el-form-item>
         <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-  import AddOrUpdate from './host-group-add-or-update'
+  import AddOrUpdate from './node-group-add-or-update'
   // import { treeDataTranslate } from '@/utils'
   export default {
     data () {
@@ -102,7 +102,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/api/v1/host_group/list'),
+          url: this.$http.adornUrl('/api/v1/node_group/list'),
           method: 'get',
           params: this.$http.adornParams({
             'name': this.dataForm.name,
@@ -168,7 +168,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl(`/api/v1/host_group/delete/${id}`),
+            url: this.$http.adornUrl(`/api/v1/node_group/delete/${id}`),
             method: 'post',
             data: this.$http.adornData()
           }).then(({data}) => {

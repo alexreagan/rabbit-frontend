@@ -24,7 +24,7 @@ export default {
     },
     iconName() {
       let res = 'dir'
-      if (this.node.type === 'UnTaggedHost') {
+      if (this.node.type === 'UnTaggedNode') {
         res = 'computer2'
       } else if (this.node.type === 'UnTaggedPod') {
         res = 'docker'

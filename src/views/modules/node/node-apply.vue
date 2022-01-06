@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-host-apply">
+  <div class="mod-node-apply">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input v-model="dataForm.applier" placeholder="申请人" clearable></el-input>
@@ -19,8 +19,8 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('resource:host-apply:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary" @click="addOrUpdateHandle()">新建申请单</el-button>
+        <el-button v-if="isAuth('resource:node-apply:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -63,13 +63,13 @@
         label="备注">
       </el-table-column>
       <el-table-column
-        prop="creator"
+        prop="creatorName"
         header-align="center"
         align="center"
         label="创建人">
       </el-table-column>
       <el-table-column
-        prop="applier"
+        prop="applierName"
         header-align="center"
         align="center"
         label="申请人">
@@ -91,14 +91,19 @@
         header-align="center"
         align="center"
         label="状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.state=='success'" size="small">已分配</el-tag>
+          <el-tag v-else-if="scope.row.state=='failure'" size="small">未通过</el-tag>
+          <el-tag v-else size="small">待分配</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="hosts"
+        prop="nodes"
         header-align="center"
         align="center"
         label="机器">
         <template slot-scope="scope">
-          <el-tag v-for="(item, index) in scope.row.hosts" :key="index" :label="index" size="small">{{item.ip}}</el-tag>
+          <el-tag v-for="(item, index) in scope.row.nodes" :key="index" :label="index" size="small">{{item.ip}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -117,7 +122,7 @@
         min-width="100"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('resource:host-apply:assign')" type="text" size="small" @click="assignHandle(scope.row.id)">处理</el-button>
+          <el-button v-if="isAuth('resource:node-apply:assign') && scope.row.state=='submitted'" type="text" size="small" @click="assignHandle(scope.row.id)">处理</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -132,13 +137,13 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-    <assign v-if="assignVisible" ref="assign" @refreshDataList="getDataList"></assign>
+    <!-- <assign v-if="assignVisible" ref="assign" @refreshDataList="getDataList"></assign> -->
   </div>
 </template>
 
 <script>
-import AddOrUpdate from './host-apply-add-or-update'
-import Assign from './host-apply-assign'
+import AddOrUpdate from './node-apply-add-or-update'
+import Assign from './node-apply-assign'
 export default {
   data () {
     return {
@@ -154,8 +159,8 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      addOrUpdateVisible: false,
-      assignVisible: false
+      addOrUpdateVisible: false
+    //   assignVisible: false
     }
   },
   components: {
@@ -174,7 +179,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api/v1/host/area_choices'),
+        url: this.$http.adornUrl('/api/v1/node/area_choices'),
         method: 'get',
         params: this.$http.adornParams()
       }).then(({data}) => {
@@ -183,7 +188,7 @@ export default {
         this.$message.error(error)
       })
       this.$http({
-        url: this.$http.adornUrl('/api/v1/host_apply_request/list'),
+        url: this.$http.adornUrl('/api/v1/node_apply_request/list'),
         method: 'get',
         params: this.$http.adornParams({
           'page': this.pageIndex,
@@ -236,10 +241,11 @@ export default {
     },
     // 处理
     assignHandle (id) {
-      this.assignVisible = true
-      this.$nextTick(() => {
-        this.$refs.assign.init(id)
-      })
+    //   this.assignVisible = true
+    //   this.$nextTick(() => {
+    //     this.$refs.assign.init(id)
+    //   })
+      this.$router.push({ name: 'node-node-apply-assign', query: {id: id} })
     },
     // 删除
     deleteHandle (id) {
@@ -252,7 +258,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/api/v1/host_apply_request/delete'),
+          url: this.$http.adornUrl('/api/v1/node_apply_request/delete'),
           method: 'post',
           data: this.$http.adornData(ids, false)
         }).then(({data}) => {

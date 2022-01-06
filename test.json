@@ -8,10 +8,10 @@
   "createAt": "",
   "type": "",
   "path": null,
-  "relatedHosts": null,
-  "relatedHostsCount": 0,
-  "unTaggedHosts": null,
-  "unTaggedHostsCount": 0,
+  "relatedNodes": null,
+  "relatedNodesCount": 0,
+  "unTaggedNodes": null,
+  "unTaggedNodesCount": 0,
   "relatedPods": null,
   "relatedPodsCount": 0,
   "unTaggedPods": null,
@@ -27,7 +27,7 @@
       "createAt": "",
       "type": "",
       "path": [3],
-      "relatedHosts": [
+      "relatedNodes": [
         {
           "id": 1,
           "name": "M128.192.184.4",
@@ -289,9 +289,9 @@
           "type": ""
         }
       ],
-      "relatedHostsCount": 5,
-      "unTaggedHosts": null,
-      "unTaggedHostsCount": 0,
+      "relatedNodesCount": 5,
+      "unTaggedNodes": null,
+      "unTaggedNodesCount": 0,
       "relatedPods": [
         {
           "id": 1,
@@ -337,7 +337,7 @@
           "createAt": "",
           "type": "",
           "path": [3, 18],
-          "relatedHosts": [
+          "relatedNodes": [
             {
               "id": 9,
               "name": "node1",
@@ -443,8 +443,8 @@
               "type": ""
             }
           ],
-          "relatedHostsCount": 2,
-          "unTaggedHosts": [
+          "relatedNodesCount": 2,
+          "unTaggedNodes": [
             {
               "id": 9,
               "name": "node1",
@@ -550,7 +550,7 @@
               "type": ""
             }
           ],
-          "unTaggedHostsCount": 2,
+          "unTaggedNodesCount": 2,
           "relatedPods": [],
           "relatedPodsCount": 0,
           "unTaggedPods": null,
@@ -567,7 +567,7 @@
           "createAt": "",
           "type": "",
           "path": [3, 7],
-          "relatedHosts": [
+          "relatedNodes": [
             {
               "id": 11,
               "name": "M128.194.224.111",
@@ -673,9 +673,9 @@
               "type": ""
             }
           ],
-          "relatedHostsCount": 2,
-          "unTaggedHosts": null,
-          "unTaggedHostsCount": 0,
+          "relatedNodesCount": 2,
+          "unTaggedNodes": null,
+          "unTaggedNodesCount": 0,
           "relatedPods": [],
           "relatedPodsCount": 0,
           "unTaggedPods": null,
@@ -691,7 +691,7 @@
               "createAt": "",
               "type": "",
               "path": [3, 7, 10],
-              "relatedHosts": [
+              "relatedNodes": [
                 {
                   "id": 11,
                   "name": "M128.194.224.111",
@@ -797,8 +797,8 @@
                   "type": ""
                 }
               ],
-              "relatedHostsCount": 2,
-              "unTaggedHosts": [
+              "relatedNodesCount": 2,
+              "unTaggedNodes": [
                 {
                   "id": 11,
                   "name": "M128.194.224.111",
@@ -904,7 +904,7 @@
                   "type": ""
                 }
               ],
-              "unTaggedHostsCount": 2,
+              "unTaggedNodesCount": 2,
               "relatedPods": [],
               "relatedPodsCount": 0,
               "unTaggedPods": null,
@@ -923,7 +923,7 @@
           "createAt": "",
           "type": "",
           "path": [3, 8],
-          "relatedHosts": [
+          "relatedNodes": [
             {
               "id": 1,
               "name": "M128.192.184.4",
@@ -1029,8 +1029,8 @@
               "type": ""
             }
           ],
-          "relatedHostsCount": 2,
-          "unTaggedHosts": [
+          "relatedNodesCount": 2,
+          "unTaggedNodes": [
             {
               "id": 12,
               "name": "M128.194.224.112",
@@ -1084,7 +1084,7 @@
               "type": ""
             }
           ],
-          "unTaggedHostsCount": 1,
+          "unTaggedNodesCount": 1,
           "relatedPods": [],
           "relatedPodsCount": 0,
           "unTaggedPods": null,
@@ -1100,7 +1100,7 @@
               "createAt": "",
               "type": "",
               "path": [3, 8, 9],
-              "relatedHosts": [
+              "relatedNodes": [
                 {
                   "id": 1,
                   "name": "M128.192.184.4",
@@ -1154,8 +1154,8 @@
                   "type": ""
                 }
               ],
-              "relatedHostsCount": 1,
-              "unTaggedHosts": [
+              "relatedNodesCount": 1,
+              "unTaggedNodes": [
                 {
                   "id": 1,
                   "name": "M128.192.184.4",
@@ -1209,7 +1209,7 @@
                   "type": ""
                 }
               ],
-              "unTaggedHostsCount": 1,
+              "unTaggedNodesCount": 1,
               "relatedPods": [],
               "relatedPodsCount": 0,
               "unTaggedPods": null,

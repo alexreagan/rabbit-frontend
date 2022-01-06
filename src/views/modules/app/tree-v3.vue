@@ -76,7 +76,7 @@ export default {
     nodeClickHandle (node, checked, indeterminate) {
       console.log('nodeClickHandle', node)
       if (node.ip) {
-        this.$router.push({ name: 'host-detail', params: {id: node.id} })
+        this.$router.push({ name: 'node-detail', params: {id: node.id} })
       }
     },
     // 点击tag
@@ -93,7 +93,7 @@ export default {
           break
         }
       }
-      this.$router.push({ name: 'node-host', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
+      this.$router.push({ name: 'node-node', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
     },
     checkChangeHandle (data, checked, node) {
       // console.log('checkChangeHandle')
@@ -150,10 +150,10 @@ export default {
         return false
       }
       if (dropNode.data.type && !dropNode.data.children) {
-        // 拖到host group节点
+        // 拖到node group节点
         return true
       } else {
-        // 拖到host节点
+        // 拖到node节点
         return false
       }
     },

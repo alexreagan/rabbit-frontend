@@ -37,12 +37,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="机器列表" prop="hostIDs">
-        <el-select v-model="dataForm.hostIDs" placeholder="请输入关键词" multiple clearable  filterable
+      <el-form-item label="机器列表" prop="nodeIDs">
+        <el-select v-model="dataForm.nodeIDs" placeholder="请输入关键词" multiple clearable  filterable
                    reserve-keyword remote :remote-method="remoteHandler" :loading="loading"
                    style="width: 100%;">
           <el-option
-            v-for="item in hostChoices"
+            v-for="item in nodeChoices"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -70,7 +70,7 @@
 <script>
   export default {
     data () {
-      var validateHostIDs = (rule, value, callback) => {
+      var validateNodeIDs = (rule, value, callback) => {
         if (this.dataForm.state === 'success' && !/\S/.test(value)) {
           callback(new Error('机器不能为空'))
         } else {
@@ -95,7 +95,7 @@
           remark: '',
           applier: '',
           releaseAt: '',
-          hostIDs: [],
+          nodeIDs: [],
           tagIDs: [],
           state: ''
         },
@@ -106,13 +106,13 @@
           value: 'failure',
           label: '不通过'
         }],
-        hostChoices: [],
+        nodeChoices: [],
         titleChoices: ['待选择', '已选择'],
         tagChoices: [],
         appliers: [],
         dataRule: {
-          hostIDs: [
-            { validator: validateHostIDs, trigger: 'blur' }
+          nodeIDs: [
+            { validator: validateNodeIDs, trigger: 'blur' }
           ],
           tagIDs: [
             { validator: validateTagIDs, trigger: 'blur' }
@@ -130,7 +130,7 @@
         this.$nextTick(() => {
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/host_apply_request/info`),
+              url: this.$http.adornUrl(`/api/v1/node_apply_request/info`),
               method: 'get',
               params: this.$http.adornParams({
                 'id': this.dataForm.id
@@ -166,19 +166,19 @@
             })
 
             this.$http({
-              url: this.$http.adornUrl('/api/v1/host/select'),
+              url: this.$http.adornUrl('/api/v1/node/select'),
               method: 'get',
               params: this.$http.adornParams({
               })
             }).then(({data}) => {
-              let hostChoices = []
-              data.list.forEach((host) => {
-                hostChoices.push({
-                  value: host.id,
-                  label: host.ip + '(' + host.physicalSystem + ')'
+              let nodeChoices = []
+              data.list.forEach((node) => {
+                nodeChoices.push({
+                  value: node.id,
+                  label: node.ip + '(' + node.physicalSystem + ')'
                 })
               })
-              this.hostChoices = hostChoices
+              this.nodeChoices = nodeChoices
             }).catch((error) => {
               this.$message.error(error.message)
             })
@@ -186,23 +186,23 @@
         })
       },
       remoteHandler (query) {
-        this.hostChoices = []
+        this.nodeChoices = []
         if (query !== '') {
           this.$http({
-            url: this.$http.adornUrl('/api/v1/host/select'),
+            url: this.$http.adornUrl('/api/v1/node/select'),
             method: 'get',
             params: this.$http.adornParams({
               query: query
             })
           }).then(({data}) => {
-            let hostChoices = []
-            data.list.forEach((host) => {
-              hostChoices.push({
-                value: host.id,
-                label: host.ip + '(' + host.physicalSystem + ')'
+            let nodeChoices = []
+            data.list.forEach((node) => {
+              nodeChoices.push({
+                value: node.id,
+                label: node.ip + '(' + node.physicalSystem + ')'
               })
             })
-            this.hostChoices = hostChoices
+            this.nodeChoices = nodeChoices
           }).catch((error) => {
             this.$message.error(error.message)
           })
@@ -213,11 +213,11 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/host_apply_request/assign`),
+              url: this.$http.adornUrl(`/api/v1/node_apply_request/assign`),
               method: 'put',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
-                'hostIDs': this.dataForm.hostIDs,
+                'nodeIDs': this.dataForm.nodeIDs,
                 'tagIDs': this.dataForm.tagIDs,
                 'state': this.dataForm.state
               })

@@ -106,7 +106,7 @@ export default {
     },
     renderContent: function(h, data) {
       let label = ''
-      if (data.type === 'UnTaggedHost') {
+      if (data.type === 'UnTaggedNode') {
         label = `${data.ip}`
       } else if (data.type === 'UnTaggedPod') {
         label = `${data.hostName}(${data.hostIp})`

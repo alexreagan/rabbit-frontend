@@ -210,7 +210,7 @@ export default {
       this.getDataList()
     },
     clickIPHandle (ip) {
-      this.$router.push({ name: 'host-detail', params: {ip: ip} })
+      this.$router.push({ name: 'node-detail', params: {ip: ip} })
     }
   }
 }

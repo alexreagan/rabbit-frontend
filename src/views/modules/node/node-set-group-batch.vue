@@ -4,19 +4,12 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
-      <el-form-item label="标签">
-        <el-select v-model="dataForm.tagIDs" placeholder="标签" multiple clearable>
-          <el-option
-            v-for="item in tagChoices"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+      <el-form-item label="服务组" prop="groups">
+        <el-cascader ref="groupCascader" v-model="dataForm.groups" :options="dataForm.groupOptions" :props="dataForm.groupProps" @change="groupChangeHandle" placeholder="请选择" clearable></el-cascader>
       </el-form-item>
-      <el-form-item label="开发负责人">
+      <el-form-item label="开发负责人" prop="devOwner">
         <el-select v-model="dataForm.devOwner" filterable remote placeholder="请选择" :remote-method="searchUser">
-          <el-option v-for="item in devOwners" :key="item.jgygUserID" :label="userInfo(item.cnName, item.jgygUserID)" :value="item.jgygUserID"></el-option>
+          <el-option v-for="item in dataForm.devOwners" :key="item.jgygUserID" :label="userInfo(item.cnName, item.jgygUserID)" :value="item.jgygUserID"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -35,14 +28,23 @@
         visible: false,
         dataForm: {
           ids: [],
-          tagIDs: [],
-          devOwner: ''
+          groups: [],
+          groupIds: [],
+          devOwner: '',
+          groupProps: {
+            value: 'name',
+            label: 'name',
+            children: 'children',
+            checkStrictly: true,
+            multiple: true
+          },
+          path: [],
+          groupOptions: [],
+          devOwners: []
         },
-        tagChoices: [],
-        devOwners: [],
         dataRule: {
-          tagIDs: [
-            { required: true, message: '所属标签不能为空', trigger: 'blur' }
+          groups: [
+            { required: true, message: '所属组不能为空', trigger: 'blur' }
           ],
           devOwner: [
             { required: true, message: '开发负责人不能为空', trigger: 'blur' }
@@ -54,26 +56,14 @@
       init (ids) {
         this.visible = true
         this.dataForm.ids = ids || 0
-
-        this.$nextTick(() => {
-          this.$http({
-            url: this.$http.adornUrl('/api/v1/tag/all'),
-            method: 'get',
-            params: this.$http.adornParams({
-              orderBy: 'name'
-            })
-          }).then(({data}) => {
-            let tagChoices = []
-            data.list.forEach((tag) => {
-              tagChoices.push({
-                'label': tag.name + '(' + tag.cnName + ')',
-                'value': tag.id
-              })
-            })
-            this.tagChoices = tagChoices
-          }).catch((error) => {
-            this.$message.error(error.message)
-          })
+        this.$http({
+          url: this.$http.adornUrl('/api/v1/tree/children'),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          this.dataForm.groupOptions = data
+        }).catch((error) => {
+          this.$message.error(error.message)
         })
       },
       searchUser (query) {
@@ -84,12 +74,18 @@
             method: 'get',
             params: this.$http.adornParams({'username': query})
           }).then(({data}) => {
-            console.log(data.list)
-            this.devOwners = data.list
+            this.dataForm.devOwners = data.list
           }).catch((error) => {
             this.$message.error(error.message)
           })
         }
+      },
+      groupChangeHandle (nodes) {
+        this.dataForm.groupIds = []
+        let that = this
+        this.$refs.groupCascader.getCheckedNodes().forEach(function (value, index, array) {
+          that.dataForm.groupIds.push(value.data.id)
+        })
       },
       userInfo (name, other) {
         return name + '(' + other + ')'
@@ -99,11 +95,12 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/host/batch/update`),
+              url: this.$http.adornUrl(`/api/v1/node/batch/update`),
               method: 'put',
               data: this.$http.adornData({
                 'ids': this.dataForm.ids || undefined,
-                'tagIDs': this.dataForm.tagIDs,
+                'groups': this.dataForm.groups,
+                'groupIds': this.dataForm.groupIds,
                 'devOwner': this.dataForm.devOwner
               })
             }).then(({data}) => {

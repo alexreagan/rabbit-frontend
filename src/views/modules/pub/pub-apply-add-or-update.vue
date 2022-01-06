@@ -22,13 +22,9 @@
         <el-input v-model="dataForm.pubContent" type="textarea" placeholder="版本内容"></el-input>
       </el-form-item>
       <el-form-item label="发布步骤" prop="pubStep">
-        <!-- <el-input v-model="dataForm.pubStep" type="textarea" placeholder="发布步骤"></el-input> -->
-        <!-- <script :id="pubStepEditorID" class="ueditor-box" type="text/plain" style="width: 100%; height: 260px;"></script> -->
         <VueUeditorWrap v-model="dataForm.pubStep" :config="editorConfig"/>
       </el-form-item>
       <el-form-item label="回滚步骤" prop="rollbackStep">
-        <!-- <el-input v-model="dataForm.rollbackStep" type="textarea" placeholder="回滚步骤"></el-input> -->
-        <!-- <script :id="rollbackStepEditorID" class="ueditor-box" type="text/plain" style="width: 100%; height: 260px;"></script> -->
         <VueUeditorWrap v-model="dataForm.rollbackStep" :config="editorConfig"/>
       </el-form-item>
       <el-form-item label="需求说明书" prop="requirement">

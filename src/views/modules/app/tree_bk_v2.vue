@@ -1,7 +1,7 @@
 <template>
   <div>
     TEST
-    <div id='container' class='mod-host-apply'>
+    <div id='container' class='mod-node-apply'>
     </div>
     <Flow/>
   </div>

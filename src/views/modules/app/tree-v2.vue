@@ -76,7 +76,7 @@ export default {
     nodeClickHandle (node, checked, indeterminate) {
       console.log('nodeClickHandle', node)
       if (node.ip) {
-        this.$router.push({ name: 'host-detail', params: {id: node.id} })
+        this.$router.push({ name: 'node-detail', params: {id: node.id} })
       }
     },
     // 点击tag
@@ -93,7 +93,7 @@ export default {
           break
         }
       }
-      this.$router.push({ name: 'node-host', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
+      this.$router.push({ name: 'node-node', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
     },
     checkChangeHandle (data, checked, node) {
       // console.log('checkChangeHandle')
@@ -144,7 +144,7 @@ export default {
         this.$message.error(error.message)
       })
       // if (draggingNode.data.parent) {
-      //   // 拖动host group节点
+      //   // 拖动node group节点
       //   this.$http({
       //     url: this.$http.adornUrl('/api/v1/tree/move'),
       //     method: 'post',
@@ -159,12 +159,12 @@ export default {
       //     this.$message.error(error.message)
       //   })
       // } else {
-      //   // 拖动host节点
+      //   // 拖动node节点
       //   this.$http({
-      //     url: this.$http.adornUrl('/api/v1/host_group/bind_host'),
+      //     url: this.$http.adornUrl('/api/v1/node_group/bind_node'),
       //     method: 'post',
       //     params: this.$http.adornParams({
-      //       'hostID': draggingNode.data.id,
+      //       'nodeID': draggingNode.data.id,
       //       'groupID': dropNode.data.id
       //     })
       //   }).then(() => {
@@ -181,10 +181,10 @@ export default {
         return false
       }
       if (dropNode.data.type && !dropNode.data.children) {
-        // 拖到host group节点
+        // 拖到node group节点
         return true
       } else {
-        // 拖到host节点
+        // 拖到node节点
         return false
       }
     },

@@ -19,21 +19,21 @@
       </el-form-item>
       <el-form-item label="上级服务组" prop="parentName">
         <el-popover
-          ref="hostGroupPopover"
+          ref="nodeGroupPopover"
           placement="bottom-start"
           trigger="click">
           <el-tree
-            :data="hostGroup"
-            :props="hostGroupTreeProps"
+            :data="nodeGroup"
+            :props="nodeGroupTreeProps"
             node-key="id"
-            ref="hostGroupTree"
-            @current-change="hostGroupTreeCurrentChangeHandle"
+            ref="nodeGroupTree"
+            @current-change="nodeGroupTreeCurrentChangeHandle"
             :default-expand-all="false"
             :highlight-current="true"
             :expand-on-click-node="false">
           </el-tree>
         </el-popover>
-        <el-input v-model="dataForm.parentName" v-popover:hostGroupPopover :readonly="true" placeholder="点击选择上级群组" class="menu-list__input"></el-input>
+        <el-input v-model="dataForm.parentName" v-popover:nodeGroupPopover :readonly="true" placeholder="点击选择上级群组" class="menu-list__input"></el-input>
       </el-form-item>
       <el-form-item :label="'描述'" prop="desc">
         <el-input type="textarea" v-model="dataForm.desc" :placeholder="'描述'" maxlength="255" show-word-limit></el-input>
@@ -80,8 +80,8 @@
           value: 'containerGroup',
           label: '容器'
         }],
-        hostGroup: [],
-        hostGroupTreeProps: {
+        nodeGroup: [],
+        nodeGroupTreeProps: {
           label: 'name',
           children: 'children'
         },
@@ -94,11 +94,11 @@
       init (id) {
         this.dataForm.id = id || 0
         this.$http({
-          url: this.$http.adornUrl('/api/v1/host_group/all'),
+          url: this.$http.adornUrl('/api/v1/node_group/all'),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          this.hostGroup = treeDataTranslate(data.list, 'id', 'parentId')
+          this.nodeGroup = treeDataTranslate(data.list, 'id', 'parentId')
         }).then(() => {
           this.visible = true
           this.$nextTick(() => {
@@ -107,11 +107,11 @@
         }).then(() => {
           if (!this.dataForm.id) {
             // 新增
-            this.hostGroupTreeSetCurrentNode()
+            this.nodeGroupTreeSetCurrentNode()
           } else {
             // 修改
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/host_group/get`),
+              url: this.$http.adornUrl(`/api/v1/node_group/get`),
               method: 'get',
               params: this.$http.adornParams({
                 'id': id
@@ -125,7 +125,7 @@
               this.dataForm.parentId = data.parentId
               this.dataForm.perms = data.perms
               this.dataForm.desc = data.desc
-              // this.hostGroupTreeSetCurrentNode()
+              // this.nodeGroupTreeSetCurrentNode()
             }).catch((error) => {
               this.$message.error(error.message)
             })
@@ -133,15 +133,15 @@
         })
       },
       // 服务树选中
-      hostGroupTreeCurrentChangeHandle (data, node) {
+      nodeGroupTreeCurrentChangeHandle (data, node) {
         // console.log(data, node)
         this.dataForm.parentName = data.name
         this.dataForm.parentId = data.id
       },
       // 服务组树设置当前选中节点
-      hostGroupTreeSetCurrentNode () {
-        this.$refs.hostGroupTree.setCurrentKey(this.dataForm.parentName)
-        this.dataForm.parentName = (this.$refs.hostGroupTree.getCurrentNode() || {})['name']
+      nodeGroupTreeSetCurrentNode () {
+        this.$refs.nodeGroupTree.setCurrentKey(this.dataForm.parentName)
+        this.dataForm.parentName = (this.$refs.nodeGroupTree.getCurrentNode() || {})['name']
       },
       // 搜索开阳服务
       searchCaasService (query) {
@@ -165,7 +165,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/host_group/${!this.dataForm.id ? 'create' : 'update'}`),
+              url: this.$http.adornUrl(`/api/v1/node_group/${!this.dataForm.id ? 'create' : 'update'}`),
               method: !this.dataForm.id ? 'post' : 'put',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,

@@ -105,9 +105,9 @@ export default {
           element.img = iconDir
           children.push(element)
         })
-        if (node.unTaggedHosts) {
-          node.unTaggedHosts.forEach(element => {
-            element.classify = 'UnTaggedHost'
+        if (node.unTaggedNodes) {
+          node.unTaggedNodes.forEach(element => {
+            element.classify = 'UnTaggedNode'
             element.img = iconTag
             children.push(element)
           })
@@ -121,9 +121,9 @@ export default {
         }
       } else {
         // 没有子节点
-        if (node.relatedHosts) {
-          node.relatedHosts.forEach(element => {
-            element.classify = 'RelatedHost'
+        if (node.relatedNodes) {
+          node.relatedNodes.forEach(element => {
+            element.classify = 'RelatedNode'
             element.img = iconTag
             children.push(element)
           })

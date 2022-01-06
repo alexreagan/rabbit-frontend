@@ -62,9 +62,9 @@ const mainRoutes = {
       meta: {title: '主题'}
     },
     {
-      path: '/host-detail',
-      component: _import('modules/node/host-detail'),
-      name: 'host-detail',
+      path: '/node-detail',
+      component: _import('modules/node/node-detail'),
+      name: 'node-detail',
       meta: {title: '机器信息', isTab: true}
     },
     {
@@ -97,6 +97,12 @@ const mainRoutes = {
       component: _import('modules/pub/pub-apply-add-or-update'),
       name: 'pub-apply-add-or-update',
       meta: {title: '发布单', isTab: true}
+    },
+    {
+      path: '/node-node-apply-assign',
+      component: _import('modules/node/node-apply-assign'),
+      name: 'node-node-apply-assign',
+      meta: {title: '资源分配', isTab: true}
     },
     {
       path: '/demo-echarts',

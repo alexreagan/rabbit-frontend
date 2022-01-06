@@ -38,7 +38,7 @@
         let id = this.$route.params.id
         let ip = this.$route.params.ip
         this.$http({
-          url: this.$http.adornUrl('/api/v1/host/detail'),
+          url: this.$http.adornUrl('/api/v1/node/detail'),
           method: 'get',
           params: this.$http.adornParams({
             'id': id,

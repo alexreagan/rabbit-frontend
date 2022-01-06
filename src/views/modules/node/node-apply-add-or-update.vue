@@ -73,7 +73,7 @@
         this.$nextTick(() => {
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/host_apply_request/info`),
+              url: this.$http.adornUrl(`/api/v1/node_apply_request/info`),
               method: 'get',
               params: this.$http.adornParams({
                 'id': this.dataForm.id
@@ -113,7 +113,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/api/v1/host_apply_request/${!this.dataForm.id ? 'create' : 'update'}`),
+              url: this.$http.adornUrl(`/api/v1/node_apply_request/${!this.dataForm.id ? 'create' : 'update'}`),
               method: !this.dataForm.id ? 'post' : 'put',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,

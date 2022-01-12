@@ -28,7 +28,7 @@
 import Flow from '@/components/g6-editor/components/Flow/index.vue'
 import G6 from '@antv/g6'
 import iconDir from './icon/black_dir.svg'
-import iconDocker from './icon/docker.png'
+import iconDocker from './icon/docker.svg'
 import iconComputer from './icon/computer.svg'
 // import iconTag from './icon/tag.png'
 export default {
@@ -163,7 +163,6 @@ export default {
     },
     // 将节点数据格式转换为g6能够识别的数据格式
     transNodes(node) {
-      console.log(node)
       if (node.name === '') {
         node.name = 'ROOT'
       }
@@ -171,7 +170,7 @@ export default {
     //   node.ID = node.id
     //   node.id = '' + this.counter + '-' + node.name
       node.children = this.getChildren(node)
-    //   node.type = 'treeNode'
+      node.type = 'treeNode'
     },
     // 渲染
     renderData(data) {

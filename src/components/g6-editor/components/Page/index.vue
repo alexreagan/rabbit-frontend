@@ -67,7 +67,7 @@ export default {
           ],
           mulitSelect: ['mulit-select'],
           addEdge: ['add-edge'],
-          moveNode: ['drag-item']
+          moveNode: ['drag-item', 'select-node']
         }
       })
       const {editor, command} = this.$parent

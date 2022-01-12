@@ -14,18 +14,19 @@ export default {
   nodeEvent: null,
   getDefaultCfg() {
     return {
-      //   updateEdge: true,
+      updateEdge: true,
       //   delegate: true,
       delegateStyle: {}
     }
   },
   getEvents() {
     return {
-      'node:mouseup': 'onMouseup',
-      'node:mousedown': 'onMousedown',
-      mousedown: 'onMousedown',
-      mousemove: 'onMousemove',
-      mouseup: 'onMouseup',
+      //   'node:mouseup': 'onMouseup',
+      //   'node:mousedown': 'onMousedown',
+      //   mousedown: 'onMousedown',
+      //   mousemove: 'onMousemove',
+      //   mouseup: 'onMouseup',
+      'node:click': 'onClick',
       'node:dragstart': 'onDragStart',
       'node:drag': 'onDrag',
       'node:dragend': 'onDragEnd',
@@ -84,6 +85,9 @@ export default {
     this.point = {}
     this.originPoint = {}
   },
+  onClick(e) {
+    // console.log('drag-item: onClick')
+  },
   onMousemove(e) {
     // console.log('drag-item: onMousemove')
   },
@@ -99,7 +103,6 @@ export default {
   },
   onDrag(e) {
     // 当节点在拖动过程中时触发的事件，此事件作用于被拖拽节点上
-    // console.log('drag-item: onDrag')
     if (!this.origin) {
       this.getNode(e)
     }

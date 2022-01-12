@@ -2,10 +2,8 @@ import G6 from '@antv/g6'
 import {uniqueId} from '../../utils'
 const treeNode = {
   init() {
-    console.log('ggggggggggg')
     G6.registerNode('treeNode', {
       draw(cfg, group) {
-        console.log('eeeeeeeeee', cfg)
         let size = cfg.size
         if (!size) {
           size = [80, 20]

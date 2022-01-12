@@ -15,7 +15,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="dataForm.tagIDs" placeholder="标签" clearable multiple>
+        <el-select v-model="dataForm.tagIDs" placeholder="标签" filterable clearable multiple>
           <el-option
             v-for="item in tagChoices"
             :key="item.value"
@@ -25,7 +25,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.cpuNumber" placeholder="CPU核数" clearable></el-input>
+        <el-input v-model="dataForm.cpuCount" placeholder="CPU核数" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="dataForm.areaName" placeholder="请选择区域" clearable>
@@ -38,22 +38,22 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.cpuUsageLowerLimit" placeholder="CPU使用率下限" clearable></el-input>
+        <el-input v-model="dataForm.cpuAvailableLowerLimit" placeholder="CPU使用率下限" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.cpuUsageUpperLimit" placeholder="CPU使用率上限" clearable></el-input>
+        <el-input v-model="dataForm.cpuAvailableUpperLimit" placeholder="CPU使用率上限" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.fsUsageLowerLimit" placeholder="磁盘使用率下限" clearable></el-input>
+        <el-input v-model="dataForm.fsAvailableLowerLimit" placeholder="磁盘使用率下限" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.fsUsageUpperLimit" placeholder="磁盘使用率上限" clearable></el-input>
+        <el-input v-model="dataForm.fsAvailableUpperLimit" placeholder="磁盘使用率上限" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.memoryUsageLowerLimit" placeholder="内存使用率下限" clearable></el-input>
+        <el-input v-model="dataForm.memAvailableLowerLimit" placeholder="内存使用率下限" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.memoryUsageUpperLimit" placeholder="内存使用率上限" clearable></el-input>
+        <el-input v-model="dataForm.memAvailableUpperLimit" placeholder="内存使用率上限" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="dataForm.relatedTag" placeholder="是否关联标签" clearable>
@@ -124,35 +124,35 @@
         label="区域">
       </el-table-column>
       <el-table-column
-        prop="cpuNumber"
+        prop="cpuCount"
         header-align="center"
         align="center"
         label="CPU核数"
         :sortable="'custom'">
       </el-table-column>
       <el-table-column
-        prop="memorySize"
+        prop="memTotalBytes"
         header-align="center"
         align="center"
         label="内存"
         :sortable="'custom'">
       </el-table-column>
       <el-table-column
-        prop="cpuUsage"
+        prop="cpuAvailable"
         header-align="center"
         align="center"
         label="CPU使用率"
         :sortable="'custom'">
       </el-table-column>
       <el-table-column
-        prop="memoryUsage"
+        prop="memAvailable"
         header-align="center"
         align="center"
         label="内存使用率"
         :sortable="'custom'">
       </el-table-column>
       <el-table-column
-        prop="fsUsage"
+        prop="fileSystemAvailable"
         header-align="center"
         align="center"
         label="磁盘使用率"
@@ -211,14 +211,14 @@ export default {
       dataForm: {
         ip: '',
         physicalSystem: '',
-        cpuNumber: '',
+        cpuCount: '',
         areaName: '',
-        cpuUsageUpperLimit: '',
-        cpuUsageLowerLimit: '',
-        fsUsageUpperLimit: '',
-        fsUsageLowerLimit: '',
-        memoryUsageUpperLimit: '',
-        memoryUsageLowerLimit: '',
+        cpuAvailableUpperLimit: '',
+        cpuAvailableLowerLimit: '',
+        fsAvailableUpperLimit: '',
+        fsAvailableLowerLimit: '',
+        memAvailableUpperLimit: '',
+        memAvailableLowerLimit: '',
         tagIDs: [],
         relatedTag: ''
       },
@@ -250,9 +250,18 @@ export default {
     SetTagBatch
   },
   activated () {
-    if (this.$route.params.tagIDs) {
-      this.dataForm.tagIDs = JSON.parse(this.$route.params.tagIDs)
+    let tagIDs = []
+    if (typeof this.$route.query.tagIDs === 'string') {
+    //   this.dataForm.tagIDs = JSON.parse(this.$route.query.tagIDs)
+      this.$route.query.tagIDs.split(',').forEach((tagID) => {
+        tagIDs.push(parseInt(tagID))
+      })
+    } else if (typeof this.$route.query.tagIDs === 'number') {
+      tagIDs.push(this.$route.query.tagIDs)
+    } else if (typeof this.$route.query.tagIDs === 'object') {
+      tagIDs = this.$route.query.tagIDs
     }
+    this.dataForm.tagIDs = tagIDs
     this.getDataList()
   },
   created () {
@@ -307,14 +316,14 @@ export default {
           'limit': this.pageSize,
           'ip': this.dataForm.ip,
           'physicalSystem': this.dataForm.physicalSystem,
-          'cpuNumber': this.dataForm.cpuNumber,
+          'cpuCount': this.dataForm.cpuCount,
           'areaName': this.dataForm.areaName,
-          'cpuUsageLowerLimit': this.dataForm.cpuUsageLowerLimit,
-          'cpuUsageUpperLimit': this.dataForm.cpuUsageUpperLimit,
-          'fsUsageLowerLimit': this.dataForm.fsUsageLowerLimit,
-          'fsUsageUpperLimit': this.dataForm.fsUsageUpperLimit,
-          'memoryUsageLowerLimit': this.dataForm.memoryUsageLowerLimit,
-          'memoryUsageUpperLimit': this.dataForm.memoryUsageUpperLimit,
+          'cpuAvailableLowerLimit': this.dataForm.cpuAvailableLowerLimit,
+          'cpuAvailableUpperLimit': this.dataForm.cpuAvailableUpperLimit,
+          'fsAvailableLowerLimit': this.dataForm.fsAvailableLowerLimit,
+          'fsAvailableUpperLimit': this.dataForm.fsAvailableUpperLimit,
+          'memAvailableLowerLimit': this.dataForm.memAvailableLowerLimit,
+          'memAvailableUpperLimit': this.dataForm.memAvailableUpperLimit,
           'tagIDs': this.dataForm.tagIDs,
           'relatedTag': this.dataForm.relatedTag,
           'orderBy': this.orderBy,
@@ -323,9 +332,9 @@ export default {
       }).then(({data}) => {
         if (data && data.list) {
           data.list.forEach(function (value, index, array) {
-            value.cpuUsage = value.cpuUsage + '%'
-            value.fsUsage = value.fsUsage + '%'
-            value.memoryUsage = value.memoryUsage + '%'
+            value.cpuAvailable = parseFloat(value.cpuAvailable).toFixed(2) + '%'
+            value.fileSystemAvailable = parseFloat(value.fileSystemAvailable).toFixed(2) + '%'
+            value.memAvailable = parseFloat(value.memAvailable).toFixed(2) + '%'
             array[index] = value
           })
           this.dataList = data.list
@@ -361,47 +370,6 @@ export default {
       this.order = order.replace('ending', '')
       this.getDataList()
     },
-    // // 设置列的排序规则
-    // headerCellClass ({column}) {
-    //   column.order = column.multiOrder
-    // },
-    // // 点击表头
-    // headerClickHandle (column) {
-    //   if (column.sortable !== 'custom') {
-    //     return
-    //   }
-    //   if (!column.multiOrder) {
-    //     column.multiOrder = 'DESC'
-    //   } else if (column.multiOrder === 'DESC') {
-    //     column.multiOrder = 'ASC'
-    //   } else {
-    //     column.multiOrder = ''
-    //   }
-    //   this.orderChangeHandle(column.property, column.multiOrder)
-    // },
-    // orderChangeHandle (prop, order) {
-    //   let result = this.orderList.find(item => item.prop === prop)
-    //   if (result) {
-    //     if (order) {
-    //       result.order = order
-    //     } else {
-    //       for (let i = 0; i < this.orderList.length; i++) {
-    //         if (this.orderList[i].prop === prop) {
-    //           this.orderList.splice(i, 1)
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     this.orderList.push({
-    //       prop: prop,
-    //       order: order
-    //     })
-    //   }
-    //   for (let i = 0; i < this.orderList.length; i++) {
-    //     console.log(this.orderList[i].prop, this.orderList[i].order)
-    //   }
-    //   this.getDataList()
-    // },
     clickIPHandle (id) {
       this.$router.push({ name: 'node-detail', params: {id: id} })
     },

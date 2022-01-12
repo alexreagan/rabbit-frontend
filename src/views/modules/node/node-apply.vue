@@ -5,7 +5,7 @@
         <el-input v-model="dataForm.applier" placeholder="申请人" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.cpuNumber" placeholder="CPU核数" clearable></el-input>
+        <el-input v-model="dataForm.cpuCount" placeholder="CPU核数" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="dataForm.areaName" placeholder="请选择区域" clearable>

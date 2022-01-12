@@ -6,7 +6,7 @@
 
   // api接口请求地址
   // window.SITE_CONFIG['baseUrl'] = 'http://demo.open.renren.io/renren-fast-server';
-  window.SITE_CONFIG['baseUrl'] = 'http://128.194.224.239:8080'
+  window.SITE_CONFIG['baseUrl'] = 'http://yangtze.dev.jh'
 
   // grafana url
   window.SITE_CONFIG['grafanaUrl'] = 'http://128.194.223.5:33000'

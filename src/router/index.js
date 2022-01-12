@@ -42,7 +42,7 @@ const mainRoutes = {
   path: '/',
   component: _import('main'),
   name: 'main',
-  redirect: {name: 'home'},
+  redirect: {name: 'app-tree-v4'},
   meta: {title: '主入口整体布局'},
   children: [
     // 通过meta对象设置路由展示方式
@@ -103,6 +103,24 @@ const mainRoutes = {
       component: _import('modules/node/node-apply-assign'),
       name: 'node-node-apply-assign',
       meta: {title: '资源分配', isTab: true}
+    },
+    {
+      path: '/app-tree-v4',
+      component: _import('modules/app/tree-v4'),
+      name: 'app-tree-v4',
+      meta: {title: '应用视图', isTab: true}
+    },
+    {
+      path: '/pub-apply-detail',
+      component: _import('modules/pub/pub-apply-detail'),
+      name: 'pub-apply-detail',
+      meta: {title: '发布单', isTab: true}
+    },
+    {
+      path: '/pub-apply-assign',
+      component: _import('modules/pub/pub-apply-assign'),
+      name: 'pub-apply-assign',
+      meta: {title: '发布单', isTab: true}
     },
     {
       path: '/demo-echarts',

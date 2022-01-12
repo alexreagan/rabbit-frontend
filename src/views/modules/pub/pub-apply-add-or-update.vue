@@ -2,7 +2,7 @@
   <div class="mod-template-add-or-update">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
       <el-form-item label="部署单元" prop="deployUnitID">
-        <el-select v-model="dataForm.deployUnitID" clearable>
+        <el-select v-model="dataForm.deployUnitID" filterable clearable>
           <el-option
             v-for="item in deployUnitChoices"
             :key="item.value"
@@ -14,12 +14,13 @@
       <el-form-item label="版本日期" prop="versionDate">
         <el-date-picker
           v-model="dataForm.versionDate"
-          type="date"
+          type="datetime"
           placeholder="选择日期">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="版本内容" prop="pubContent">
-        <el-input v-model="dataForm.pubContent" type="textarea" placeholder="版本内容"></el-input>
+        <VueUeditorWrap v-model="dataForm.pubContent" :config="editorConfig"/>
+        <!-- <el-input v-model="dataForm.pubContent" type="textarea" placeholder="版本内容"></el-input> -->
       </el-form-item>
       <el-form-item label="发布步骤" prop="pubStep">
         <VueUeditorWrap v-model="dataForm.pubStep" :config="editorConfig"/>
@@ -198,7 +199,7 @@
         deployUnitChoices: [],
         stateChoices: [{
           'label': '未开始',
-          'value': 'notstart'
+          'value': 'unstart'
         }, {
           'label': '进行中',
           'value': 'running'
@@ -225,11 +226,11 @@
             { required: true, message: '版本内容', trigger: 'blur' }
           ],
           pubStep: [
-            { required: false, message: '发布步骤', trigger: 'blur' }
+            { required: true, message: '发布步骤', trigger: 'blur' }
             // { validator: validatePubStep, trigger: 'blur' }
           ],
           rollbackStep: [
-            { required: false, message: '回滚步骤', trigger: 'blur' }
+            { required: true, message: '回滚步骤', trigger: 'blur' }
             // { validator: validateRollbackStep, trigger: 'blur' }
           ]
         }

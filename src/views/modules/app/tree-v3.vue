@@ -93,7 +93,8 @@ export default {
           break
         }
       }
-      this.$router.push({ name: 'node-node', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
+    //   this.$router.push({ name: 'node-node', params: {tagIDs: JSON.stringify(tagIDs.reverse())} })
+      this.$router.push({ name: 'node-node', query: {tagIDs: tagIDs.reverse()} })
     },
     checkChangeHandle (data, checked, node) {
       // console.log('checkChangeHandle')

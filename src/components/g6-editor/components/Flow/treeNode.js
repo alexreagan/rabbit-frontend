@@ -20,7 +20,8 @@ const treeNode = {
             r: size,
             lineWidth: 0.5,
             stroke: '#ced4d9',
-            fill: '#fff' // 此处必须有fill 不然不能触发事件
+            opacity: 0.7,
+            fill: '#339933' // 此处必须有fill 不然不能触发事件
           }
         })
         group.addShape('image', {

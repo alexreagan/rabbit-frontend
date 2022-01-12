@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button type="primary" @click="addOrUpdateHandle()">新建发布单</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -17,10 +17,13 @@
       @sort-change="sortChangeHandle"
       style="width: 100%;">
       <el-table-column
-        type="selection"
+        prop="id"
         header-align="center"
         align="center"
-        width="50">
+        label="ID">
+        <template slot-scope="scope">
+          <a @click="clickIDHandle(scope.row.id)">{{scope.row.id}}</a>
+        </template>
       </el-table-column>
       <el-table-column
         prop="deployUnitName"
@@ -42,14 +45,47 @@
         align="center"
         min-width="150"
         label="版本内容">
+        <template slot-scope="scope">
+            <p v-html='scope.row.pubContent'></p>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="requirement"
+        prop="creatorName"
         header-align="center"
         align="center"
-        label="需求说明书">
+        label="创建人">
       </el-table-column>
       <el-table-column
+        prop="createAt"
+        header-align="center"
+        align="center"
+        label="创建时间">
+      </el-table-column>
+      <el-table-column
+        prop="implementerName"
+        header-align="center"
+        align="center"
+        label="实施人">
+      </el-table-column>
+      <el-table-column
+        prop="implementAt"
+        header-align="center"
+        align="center"
+        label="实施时间">
+      </el-table-column>
+      <el-table-column
+        prop="status"
+        header-align="center"
+        align="center"
+        label="实施状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status=='submitted'" size="small">待实施</el-tag>
+          <el-tag v-if="scope.row.status=='success'" size="small">实施成功</el-tag>
+          <el-tag v-if="scope.row.status=='failure'" size="small">实施失败</el-tag>
+          <el-tag v-if="scope.row.status=='rolledback'" size="small">已回滚</el-tag>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column
         prop="appDesign"
         header-align="center"
         align="center"
@@ -180,7 +216,7 @@
           <el-tag v-if="scope.row.trialOperationCase=='finished'" size="small">已完成</el-tag>
           <el-tag v-if="scope.row.trialOperationCase=='trim'" size="small">裁剪</el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         fixed="right"
         header-align="center"
@@ -189,6 +225,7 @@
         label="操作">
         <template slot-scope="scope">
           <el-button v-if="isAuth('pub:pub:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button v-if="isAuth('pub:pub:assign')" type="text" size="small" @click="assignHandle(scope.row.id)">实施</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -202,8 +239,6 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <!-- <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update> -->
-    <assign v-if="assignVisible" ref="assign" @refreshDataList="getDataList"></assign>
   </div>
 </template>
 
@@ -223,9 +258,7 @@ export default {
       pageSize: 10,
       totalPage: 0,
       dataListLoading: false,
-      dataListSelections: [],
-      // addOrUpdateVisible: false,
-      assignVisible: false
+      dataListSelections: []
     }
   },
   components: {
@@ -294,6 +327,13 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs.addOrUpdate.init(id)
       // })
+    },
+    // 点击ID
+    clickIDHandle (id) {
+      this.$router.push({ name: 'pub-apply-detail', query: {id: id} })
+    },
+    assignHandle (id) {
+      this.$router.push({ name: 'pub-apply-assign', query: {id: id} })
     }
   }
 }

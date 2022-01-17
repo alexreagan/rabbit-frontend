@@ -5,6 +5,16 @@
         <el-input v-model="dataForm.serviceName" placeholder="服务" clearable></el-input>
       </el-form-item>
       <el-form-item>
+        <el-select v-model="dataForm.tagIDs" placeholder="标签" filterable clearable multiple>
+          <el-option
+            v-for="item in tagChoices"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
       </el-form-item>
     </el-form>
@@ -28,7 +38,7 @@
         min-width="150"
         label="服务名称">
         <template slot-scope="scope">
-          <a @click="clickServiceHandle(scope.row.namespace, scope.row.type)">{{scope.row.namespace}}</a>
+          <a @click="clickServiceHandle(scope.row.serviceName, scope.row.type)">{{scope.row.serviceName}}</a>
         </template>
       </el-table-column>
       <el-table-column
@@ -51,6 +61,15 @@
         align="center"
         min-width="150"
         label="集群名称">
+      </el-table-column>
+      <el-table-column
+        prop="tags"
+        header-align="center"
+        align="center"
+        label="标签">
+        <template slot-scope="scope">
+          <el-tag v-for="(item, index) in scope.row.tags" :key="index" :label="index" size="small">{{item.name}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="physicalSystemName"
@@ -139,10 +158,12 @@ export default {
   data () {
     return {
       dataForm: {
-        serviceName: ''
+        serviceName: '',
+        tagIDs: []
       },
       orderBy: '',
       order: '',
+      tagChoices: [],
       dataList: [],
       pageIndex: 1,
       pageSize: 10,
@@ -170,6 +191,7 @@ export default {
           'page': this.pageIndex,
           'limit': this.pageSize,
           'serviceName': this.dataForm.serviceName,
+          'tagIDs': this.dataForm.tagIDs,
           'orderBy': this.orderBy,
           'order': this.order
         })
@@ -182,6 +204,24 @@ export default {
           this.totalPage = 0
         }
         this.dataListLoading = false
+      })
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/tag/all'),
+        method: 'get',
+        params: this.$http.adornParams({
+          orderBy: 'name'
+        })
+      }).then(({data}) => {
+        let tagChoices = []
+        data.list.forEach((tag) => {
+          tagChoices.push({
+            'label': tag.name + '(' + tag.cnName + ')',
+            'value': tag.id
+          })
+        })
+        this.tagChoices = tagChoices
+      }).catch((error) => {
+        this.$message.error(error.message)
       })
     },
     // 新增 / 修改
@@ -216,8 +256,12 @@ export default {
       this.getDataList()
     },
     // 点击服务名
-    clickServiceHandle (namespace, typ) {
-      window.open(window.SITE_CONFIG['caasUrl'] + '/paas/service-mgmt/service/' + namespace + '?type=' + typ, '_blank')
+    clickServiceHandle (serviceName, typ) {
+      window.open(window.SITE_CONFIG['caasUrl'] + '/paas/service-mgmt/service/' + serviceName + '?type=' + typ, '_blank')
+    // },
+    // // 点击项目空间名
+    // clickNameSpaceHandle (namespace, typ) {
+    //   window.open(window.SITE_CONFIG['caasUrl'] + '/paas/service-mgmt/service/' + namespace + '?type=' + typ, '_blank')
     }
   }
 }

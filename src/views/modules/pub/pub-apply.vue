@@ -2,7 +2,18 @@
   <div class="mod-pub-apply">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.applier" placeholder="申请人" clearable></el-input>
+        <!-- <el-input v-model="dataForm.deployUnitID" placeholder="部署单元" clearable></el-input> -->
+        <el-select v-model="dataForm.deployUnitID" placeholder="部署单元" clearable style="width: 100%;">
+          <el-option
+            v-for="item in deployUnitChoices"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="dataForm.creator" placeholder="申请人" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -249,10 +260,13 @@ export default {
   data () {
     return {
       dataForm: {
+        deployUnitID: '',
+        creator: ''
       },
       orderBy: '',
       order: '',
       areaNameChoices: [],
+      deployUnitChoices: [],
       dataList: [],
       pageIndex: 1,
       pageSize: 10,
@@ -266,6 +280,7 @@ export default {
     Assign
   },
   activated () {
+    this.init()
     this.getDataList()
   },
   created () {
@@ -273,6 +288,29 @@ export default {
   mounted () {
   },
   methods: {
+    init () {
+      this.visible = true
+      this.$nextTick(() => {
+        this.$http({
+          url: this.$http.adornUrl(`/api/v1/tag/all`),
+          method: 'get',
+          params: this.$http.adornParams({
+            'categoryName': 'deployunit'
+          })
+        }).then(({data}) => {
+          let deployUnitChoices = []
+          data.list.forEach((data) => {
+            deployUnitChoices.push({
+              label: data.name,
+              value: data.id
+            })
+          })
+          this.deployUnitChoices = deployUnitChoices
+        }).catch((error) => {
+          this.$message.error(error.message)
+        })
+      })
+    },
     // 获取数据列表
     getDataList () {
       this.dataListLoading = true
@@ -280,10 +318,12 @@ export default {
         url: this.$http.adornUrl('/api/v1/pub/list'),
         method: 'get',
         params: this.$http.adornParams({
-          'page': this.pageIndex,
-          'limit': this.pageSize,
-          'orderBy': 'id',
-          'order': 'desc'
+          creator: this.dataForm.creator,
+          deployUnitID: this.dataForm.deployUnitID,
+          page: this.pageIndex,
+          limit: this.pageSize,
+          orderBy: 'id',
+          order: 'desc'
         })
       }).then(({data}) => {
         if (data && data.list) {

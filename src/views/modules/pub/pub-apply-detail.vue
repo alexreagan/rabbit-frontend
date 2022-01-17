@@ -7,6 +7,12 @@
       <el-form-item label="版本日期" prop="versionDate">
         <span v-html="dataForm.versionDate"></span>
       </el-form-item>
+      <el-form-item label="git地址" prop="git">
+        <span v-html="dataForm.git"></span>
+      </el-form-item>
+      <el-form-item label="commit id" prop="commitID">
+        <span v-html="dataForm.commitID"></span>
+      </el-form-item>
       <el-form-item label="版本内容" prop="pubContent">
         <span v-html="dataForm.pubContent"></span>
       </el-form-item>
@@ -101,6 +107,8 @@
           deployUnitID: '',
           deployUnitName: '',
           versionDate: '',
+          git: '',
+          commitID: '',
           pubContent: '',
           pubStep: '',
           rollbackStep: '',
@@ -206,6 +214,8 @@
               this.dataForm.deployUnitID = data.deployUnitID
               this.dataForm.deployUnitName = data.deployUnitName
               this.dataForm.versionDate = data.versionDate
+              this.dataForm.git = data.git
+              this.dataForm.commitID = data.commitID
               this.dataForm.pubContent = data.pubContent
               this.dataForm.pubStep = data.pubStep
               this.dataForm.rollbackStep = data.rollbackStep
@@ -225,24 +235,26 @@
               this.$message.error(error.message)
             })
           } else {
-            this.deployUnitID = ''
-            this.deployUnitName = ''
-            this.versionDate = ''
-            this.content = ''
-            this.pubStep = ''
-            this.rollbackStep = ''
-            this.requirement = ''
-            this.appDesign = ''
-            this.appAssemblyTestDesign = ''
-            this.appAssemblyTestCase = ''
-            this.appAssemblyTestReport = ''
-            this.userTestCase = ''
-            this.userTestReport = ''
-            this.codeReview = ''
-            this.pubControlTable = ''
-            this.pubShellReview = ''
-            this.trialOperationDesign = ''
-            this.trialOperationCase = ''
+            this.dataForm.deployUnitID = ''
+            this.dataForm.deployUnitName = ''
+            this.dataForm.versionDate = ''
+            this.dataForm.git = ''
+            this.dataForm.commitID = ''
+            this.dataForm.content = ''
+            this.dataForm.pubStep = ''
+            this.dataForm.rollbackStep = ''
+            this.dataForm.requirement = ''
+            this.dataForm.appDesign = ''
+            this.dataForm.appAssemblyTestDesign = ''
+            this.dataForm.appAssemblyTestCase = ''
+            this.dataForm.appAssemblyTestReport = ''
+            this.dataForm.userTestCase = ''
+            this.dataForm.userTestReport = ''
+            this.dataForm.codeReview = ''
+            this.dataForm.pubControlTable = ''
+            this.dataForm.pubShellReview = ''
+            this.dataForm.trialOperationDesign = ''
+            this.dataForm.trialOperationCase = ''
           }
         })
       }

@@ -18,6 +18,12 @@
           placeholder="选择日期">
         </el-date-picker>
       </el-form-item>
+      <el-form-item label="git地址" prop="git">
+          <el-input v-model="dataForm.git" placeholder="git地址"></el-input>
+      </el-form-item>
+      <el-form-item label="commit id" prop="commitID">
+          <el-input v-model="dataForm.commitID" placeholder="commit id"></el-input>
+      </el-form-item>
       <el-form-item label="版本内容" prop="pubContent">
         <VueUeditorWrap v-model="dataForm.pubContent" :config="editorConfig"/>
         <!-- <el-input v-model="dataForm.pubContent" type="textarea" placeholder="版本内容"></el-input> -->
@@ -154,25 +160,7 @@
   import VueUeditorWrap from 'vue-ueditor-wrap'
   export default {
     data () {
-      // var validatePubStep = (rule, value, callback) => {
-      //   if (!/\S/.test(this.pubStepEditor.getContent())) {
-      //     callback(new Error('发布步骤不能为空'))
-      //   } else {
-      //     callback()
-      //   }
-      // }
-      // var validateRollbackStep = (rule, value, callback) => {
-      //   if (!/\S/.test(this.rollbackStepEditor.getContent())) {
-      //     callback(new Error('回滚步骤不能为空'))
-      //   } else {
-      //     callback()
-      //   }
-      // }
       return {
-        // pubStepEditor: null,
-        // rollbackStepEditor: null,
-        // pubStepEditorID: `pubEditor_ueditorBox_${new Date().getTime()}`,
-        // rollbackStepEditorID: `rollbackEditor_ueditorBox_${new Date().getTime()}`,
         loading: false,
         visible: false,
         dataForm: {
@@ -180,6 +168,8 @@
           deployUnitID: '',
           deployUnitName: '',
           versionDate: '',
+          git: '',
+          commitID: '',
           pubContent: '',
           pubStep: '',
           rollbackStep: '',
@@ -291,6 +281,8 @@
               this.dataForm.deployUnitID = data.deployUnitID
               this.dataForm.deployUnitName = data.deployUnitName
               this.dataForm.versionDate = data.versionDate
+              this.dataForm.git = data.git
+              this.dataForm.commitID = data.commitID
               this.dataForm.pubContent = data.pubContent
               this.dataForm.pubStep = data.pubStep
               this.dataForm.rollbackStep = data.rollbackStep
@@ -310,24 +302,26 @@
               this.$message.error(error.message)
             })
           } else {
-            this.deployUnitID = ''
-            this.deployUnitName = ''
-            this.versionDate = ''
-            this.content = ''
-            this.pubStep = ''
-            this.rollbackStep = ''
-            this.requirement = ''
-            this.appDesign = ''
-            this.appAssemblyTestDesign = ''
-            this.appAssemblyTestCase = ''
-            this.appAssemblyTestReport = ''
-            this.userTestCase = ''
-            this.userTestReport = ''
-            this.codeReview = ''
-            this.pubControlTable = ''
-            this.pubShellReview = ''
-            this.trialOperationDesign = ''
-            this.trialOperationCase = ''
+            this.dataForm.deployUnitID = ''
+            this.dataForm.deployUnitName = ''
+            this.dataForm.versionDate = ''
+            this.dataForm.git = ''
+            this.dataForm.commitID = ''
+            this.dataForm.content = ''
+            this.dataForm.pubStep = ''
+            this.dataForm.rollbackStep = ''
+            this.dataForm.requirement = ''
+            this.dataForm.appDesign = ''
+            this.dataForm.appAssemblyTestDesign = ''
+            this.dataForm.appAssemblyTestCase = ''
+            this.dataForm.appAssemblyTestReport = ''
+            this.dataForm.userTestCase = ''
+            this.dataForm.userTestReport = ''
+            this.dataForm.codeReview = ''
+            this.dataForm.pubControlTable = ''
+            this.dataForm.pubShellReview = ''
+            this.dataForm.trialOperationDesign = ''
+            this.dataForm.trialOperationCase = ''
           }
         })
       },
@@ -342,6 +336,8 @@
                 'id': this.dataForm.id || undefined,
                 'deployUnitID': this.dataForm.deployUnitID,
                 'versionDate': this.dataForm.versionDate,
+                'git': this.dataForm.git,
+                'commitID': this.dataForm.commitID,
                 'pubContent': this.dataForm.pubContent,
                 'pubStep': this.dataForm.pubStep,
                 'rollbackStep': this.dataForm.rollbackStep,

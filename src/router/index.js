@@ -123,10 +123,10 @@ const mainRoutes = {
       meta: {title: '发布单', isTab: true}
     },
     {
-      path: '/demo-echarts',
-      component: _import('demo/echarts'),
-      name: 'demo-echarts',
-      meta: {title: 'demo-echarts', isTab: true}
+      path: '/pub-flow',
+      component: _import('modules/pub/pub-flow'),
+      name: 'pub-flow',
+      meta: {title: '发布单', isTab: true}
     },
     {
       path: '/demo-ueditor',

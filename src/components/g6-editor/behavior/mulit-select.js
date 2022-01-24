@@ -1,4 +1,4 @@
-import { each } from '@antv/util'
+import {each} from '@antv/util'
 import eventBus from '../utils/eventBus'
 import {uniqueId, getBox} from '../utils'
 import config from '../utils/global'

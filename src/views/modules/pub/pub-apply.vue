@@ -280,6 +280,7 @@ export default {
     Assign
   },
   activated () {
+    this.dataForm.deployUnitID = this.$route.query.deployUnitID
     this.init()
     this.getDataList()
   },

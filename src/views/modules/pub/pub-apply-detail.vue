@@ -13,6 +13,9 @@
       <el-form-item label="commit id" prop="commitID">
         <span v-html="dataForm.commitID"></span>
       </el-form-item>
+      <el-form-item label="版本包" prop="packageAddress">
+        <span v-html="dataForm.packageAddress"></span>
+      </el-form-item>
       <el-form-item label="版本内容" prop="pubContent">
         <span v-html="dataForm.pubContent"></span>
       </el-form-item>
@@ -109,6 +112,7 @@
           versionDate: '',
           git: '',
           commitID: '',
+          packageAddress: '',
           pubContent: '',
           pubStep: '',
           rollbackStep: '',

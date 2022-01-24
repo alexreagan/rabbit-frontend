@@ -209,12 +209,16 @@ export default {
         getContent(evt) {
           const outDiv = document.createElement('div')
           outDiv.id = "contextMenu"
-          outDiv.innerHTML = `
+
+          const node = evt.item.getModel()
+          if (node.ip === undefined) {
+            outDiv.innerHTML = `
             <div style="padding: 0 10px;">
             <div style="margin-bottom: 6px;cursor: pointer;" name="tag-detail">标签详情</div>
-            <div style="cursor: pointer;" name="tag-machines">查看全部机器</div>
-            <div style="cursor: pointer;" name="tag-pubinfo">查看发版信息</div>
+            <div style="margin-bottom: 6px;cursor: pointer;" name="tag-machines">查看全部机器</div>
+            <div style="margin-bottom: 6px;cursor: pointer;" name="tag-pubinfo">查看发版信息</div>
             </div>`
+          }
           return outDiv
         },
         handleMenuClick: (target, item) => {
@@ -224,7 +228,7 @@ export default {
           } else if (name === 'tag-machines') {
             self.$router.push({name: 'node-node', query: {tagIDs: item.getModel().path}})
           } else if (name === 'tag-pubinfo') {
-            self.$router.push({name: 'pub-pub-apply', query: {id: item.getModel().ID}})
+            self.$router.push({name: 'pub-pub-apply', query: {deployUnitID: item.getModel().ID}})
           }
         },
         // offsetX and offsetY include the padding of the parent container

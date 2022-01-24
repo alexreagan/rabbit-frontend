@@ -24,6 +24,9 @@
       <el-form-item label="commit id" prop="commitID">
           <el-input v-model="dataForm.commitID" placeholder="commit id"></el-input>
       </el-form-item>
+      <el-form-item label="版本包" prop="packageAddress">
+          <el-input v-model="dataForm.packageAddress" placeholder="版本包地址(http/ftp)"></el-input>
+      </el-form-item>
       <el-form-item label="版本内容" prop="pubContent">
         <VueUeditorWrap v-model="dataForm.pubContent" :config="editorConfig"/>
         <!-- <el-input v-model="dataForm.pubContent" type="textarea" placeholder="版本内容"></el-input> -->
@@ -170,6 +173,7 @@
           versionDate: '',
           git: '',
           commitID: '',
+          packageAddress: '',
           pubContent: '',
           pubStep: '',
           rollbackStep: '',
@@ -283,6 +287,7 @@
               this.dataForm.versionDate = data.versionDate
               this.dataForm.git = data.git
               this.dataForm.commitID = data.commitID
+              this.dataForm.packageAddress = data.packageAddress
               this.dataForm.pubContent = data.pubContent
               this.dataForm.pubStep = data.pubStep
               this.dataForm.rollbackStep = data.rollbackStep
@@ -307,7 +312,8 @@
             this.dataForm.versionDate = ''
             this.dataForm.git = ''
             this.dataForm.commitID = ''
-            this.dataForm.content = ''
+            this.dataForm.packageAddress = ''
+            this.dataForm.pubContent = ''
             this.dataForm.pubStep = ''
             this.dataForm.rollbackStep = ''
             this.dataForm.requirement = ''
@@ -338,6 +344,7 @@
                 'versionDate': this.dataForm.versionDate,
                 'git': this.dataForm.git,
                 'commitID': this.dataForm.commitID,
+                'packageAddress': this.dataForm.packageAddress,
                 'pubContent': this.dataForm.pubContent,
                 'pubStep': this.dataForm.pubStep,
                 'rollbackStep': this.dataForm.rollbackStep,

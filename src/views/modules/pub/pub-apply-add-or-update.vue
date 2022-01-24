@@ -221,11 +221,9 @@
           ],
           pubStep: [
             { required: true, message: '发布步骤', trigger: 'blur' }
-            // { validator: validatePubStep, trigger: 'blur' }
           ],
           rollbackStep: [
             { required: true, message: '回滚步骤', trigger: 'blur' }
-            // { validator: validateRollbackStep, trigger: 'blur' }
           ]
         }
       }

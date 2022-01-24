@@ -363,7 +363,7 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {
-      this.$router.push({ name: 'pub-apply-add-or-update', query: {id: id} })
+      this.$router.push({ name: 'pub-flow', query: {id: id} })
       // this.addOrUpdateVisible = true
       // this.$nextTick(() => {
       //   this.$refs.addOrUpdate.init(id)

@@ -1,11 +1,11 @@
 <template>
   <div class="mod-template-add-or-update">
     <div v-if="dataForm.id">
-        <pub-detail :id='dataForm.id'>
+        <pub-detail :id="dataForm.id" ref="detailForm">
         </pub-detail>
     </div>
     <div v-else>
-        <pub-add ref="formAdd">
+        <pub-add ref="addForm">
         </pub-add>
     </div>
 
@@ -55,7 +55,7 @@
             <div class="seperator"></div>
             <div class="flow-next-auditor">
                 <span>办理人员:</span>
-                <el-select v-model="selectAuditor"
+                <el-select v-model="nextAuditor"
                     clearable
                     filterable
                     remote
@@ -64,7 +64,7 @@
                     :remote-method="getNextAuditor"
                     :loading="loading">
                     <el-option
-                        v-for="item in auditorList"
+                        v-for="item in auditors"
                         :key="item.id"
                         :label="item.cnName"
                         :value="item.id">
@@ -99,6 +99,14 @@ import PubDetail from './pub-detail.vue'
 import PubAdd from './pub-add.vue'
 export default {
   data () {
+    var validateNextAuditor = (rule, value, callback) => {
+      console.log("validateNextAuditor")
+      if (value === '') {
+        callback(new Error('请选择审核人'))
+      } else {
+        callback()
+      }
+    }
     return {
       loading: false,
       visible: false,
@@ -123,7 +131,7 @@ export default {
         'value': 'trim'
       }],
       flowForm: {
-        audit: '0',
+        audit: '',
         auditComment: ''
       },
       enableFlowHistory: true,
@@ -136,8 +144,8 @@ export default {
           NODE_NAME: '申请变更开发任务需求范围'
         }]
       },
-      auditorList: [],
-      selectAuditor: '',
+      auditors: [],
+      nextAuditor: '',
       flowHistory: [
         {
           PCS_AVY_NM: '卡发中心评审',
@@ -161,14 +169,13 @@ export default {
         }
       ],
       flowRule: {
-        deployUnitID: [
-            { required: true, message: '部署单元', trigger: 'blur' }
+        nextAuditor: [
+            { required: true, message: '办理人员', validator: validateNextAuditor, trigger: 'blur' }
         ]
       }
     }
   },
   components: {
-    // VueUeditorWrap,
     NextAuditor,
     PubDetail,
     PubAdd
@@ -185,7 +192,7 @@ export default {
         this.$router.push({ name: 'pub-pub-apply' })
       }
     },
-    async selectAuditor(val) {
+    async nextAuditor(val) {
     }
   },
   methods: {
@@ -202,17 +209,15 @@ export default {
       })
       if (data && data.list) {
         if (data.list.length > 0) {
-          this.selectAuditor = data.list[0].id
+          this.nextAuditor = data.list[0].id
         }
-        this.auditorList = data.list
+        this.auditors = data.list
       } else {
-        this.auditorList = []
+        this.auditors = []
       }
       this.loading = false
     },
     init () {
-      console.log('init...')
-      console.log(this.dataForm)
       this.visible = true
       this.$nextTick(() => {
         this.$http({
@@ -290,18 +295,24 @@ export default {
       })
     },
     getNextNode() {
-      this.$http({
-        url: this.$http.adornUrl('/api/v1/proc/nextNodeInfo'),
-        method: 'post',
-        params: this.$http.adornParams({
-          processInstID: this.processInstID,
-          templateID: this.templateID,
-          taskID: this.taskID,
+      let params = {
+        processInstID: this.processInstID,
+        templateID: this.templateID,
+        taskID: this.taskID
+      }
+      if (this.flowForm.audit) {
+        params = {
+          ...params,
           conditions: [{
             Key: "choice",
             Value: this.flowForm.audit
-          }]
-        })
+          }]}
+      }
+
+      this.$http({
+        url: this.$http.adornUrl('/api/v1/proc/nextNodeInfo'),
+        method: 'post',
+        params: this.$http.adornParams(params)
       }).then(({data}) => {
       }).catch((error) => {
         this.$message.error(error.message)
@@ -332,15 +343,29 @@ export default {
     },
       // 流程提交
     flowFormSubmit () {
+      console.log('flowFormSubmit')
+      let params = {
+        templateID: this.templateID,
+        processInstID: this.processInstID,
+        taskID: this.taskID
+      }
+      console.log("flowFormSubmit enter", this.$refs)
+      console.log("flowFormSubmit params", params)
+      if (this.$refs['addForm']) {
+        console.log("this.$refs.addForm", this.$refs['addForm'], this.$refs['addForm'].dataForm)
+        this.$refs['addForm'].validate()
+        params = {
+          ...params,
+          ...this.$refs['addForm'].dataForm
+        }
+      }
       this.$refs['flowForm'].validate((valid) => {
+        console.log("nextNode: ", this.nextNode, this.nextAuditor)
+        if (this.nextNode && !this.nextAuditor) {
+          this.$message.error("请选择下一步审核人")
+          return
+        }
         if (valid) {
-          console.log("this.$refs.formAdd", this.$refs.formAdd)
-          let params = {
-            templateID: this.templateID,
-            processInstID: this.processInstID,
-            taskID: this.tasksID,
-            ...this.$refs.formAdd
-          }
           this.$http({
             url: this.$http.adornUrl('/api/v1/pub/create'),
             method: 'post',

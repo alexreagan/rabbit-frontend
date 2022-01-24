@@ -1,7 +1,7 @@
 <template>
   <div class="page-pub-add">
     <slot>
-        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
+        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="100px">
             <el-form-item label="部署单元" prop="deployUnitID">
                 <el-select v-model="dataForm.deployUnitID" filterable clearable>
                 <el-option
@@ -92,6 +92,9 @@ export default {
         deployUnitID: [{required: true, message: '部署单元', trigger: 'blur'}],
         versionDate: [{required: true, message: '版本日期', trigger: 'blur'}],
         pubContent: [{required: true, message: '版本内容', trigger: 'blur'}],
+        git: [{required: true, message: 'git地址', trigger: 'blur'}],
+        commitID: [{required: true, message: 'commit id', trigger: 'blur'}],
+        packageAddress: [{required: true, message: '版本包地址(http/ftp)', trigger: 'blur'}],
         pubStep: [
           {required: true, message: '发布步骤', trigger: 'blur'}
         ],
@@ -143,45 +146,10 @@ export default {
           })
       })
     },
-    // 表单提交
-    dataFormSubmit() {
+    // 表单校验
+    validate() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.$http({
-            url: this.$http.adornUrl(
-              `/api/v1/pub/${!this.dataForm.id ? 'create' : 'update'}`
-            ),
-            method: !this.dataForm.id ? 'post' : 'put',
-            data: this.$http.adornData({
-              id: this.dataForm.id || undefined,
-              deployUnitID: this.dataForm.deployUnitID,
-              versionDate: this.dataForm.versionDate,
-              git: this.dataForm.git,
-              commitID: this.dataForm.commitID,
-              packageAddress: this.dataForm.packageAddress,
-              pubContent: this.dataForm.pubContent,
-              pubStep: this.dataForm.pubStep,
-              rollbackStep: this.dataForm.rollbackStep
-            })
-          })
-            .then(({data}) => {
-              if (data && !data.error) {
-                this.$message({
-                  message: '操作成功',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.visible = false
-                    // this.$emit('refreshDataList')
-                  }
-                })
-              } else {
-                this.$message.error(data.error)
-              }
-            })
-            .catch((error) => {
-              this.$message.error(error.message)
-            })
         }
       })
     }

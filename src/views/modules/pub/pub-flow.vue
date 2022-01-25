@@ -45,47 +45,71 @@
             <el-button @click='clickBtnEnableFlowOperate' size='mini'><i class="el-icon-right"/>提交</el-button>
             <el-button @click='clickBtnDisableFlowOperate' size='mini'>关闭</el-button>
         </div>
-        <div class="flow-operate-panel" v-if='enableFlowOperate'>
-            <div class="flow-next-node">
-                <span>下一步骤:&nbsp;</span>
-                <span v-for="(nextNodeInfo, index) in nextNode.NEXT_NODE_INFO" :key="index">
-                    <a class="deco">{{nextNodeInfo.NODE_NAME}}</a>
-                </span>
-            </div>
-            <div class="seperator"></div>
-            <div class="flow-next-auditor">
-                <span>办理人员:</span>
-                <el-select v-model="nextAuditor"
-                    clearable
-                    filterable
-                    remote
-                    reserve-keyword
-                    placeholder="请输入关键词搜索"
-                    :remote-method="getNextAuditor"
-                    :loading="loading">
-                    <el-option
-                        v-for="item in auditors"
-                        :key="item.id"
-                        :label="item.cnName"
-                        :value="item.id">
-                    </el-option>
-                </el-select>
-            </div>
-            <div class="seperator"></div>
-            <div class="audit" v-if="dataForm.id">
-                <span>审批结果:&nbsp;</span>
-                <el-radio-group v-model="dataForm.audit">
-                    <el-radio label="0">不同意</el-radio>
-                    <el-radio label="1">同意</el-radio>
-                </el-radio-group>
-            </div>
-            <el-input v-model="dataForm.auditComment" type="textarea" :rows="4" placeholder="请输入审批意见"></el-input>
+        <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @enter-cancelled="enterCancelled" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave" @leave-cancelled="leaveCancelled" v-bind:css="false">
+            <div class="flow-operate-panel" v-if='enableFlowOperate'>
+                <div class="flow-next-node">
+                    <!-- <el-form-item class="el-flow-form" label="下一步骤:" prop="nextNode">
+                        <span v-for="(nextNodeInfo, index) in nextNode.NEXT_NODE_INFO" :key="index">
+                            <a class="deco">{{nextNodeInfo.NODE_NAME}}</a>
+                        </span>
+                    </el-form-item> -->
+                    <span>下一步骤:&nbsp;</span>
+                    <span v-for="(nextNodeInfo, index) in nextNode.NEXT_NODE_INFO" :key="index">
+                        <a class="deco">{{nextNodeInfo.NODE_NAME}}</a>
+                    </span>
+                </div>
+                <div class="seperator"></div>
+                <div class="flow-next-auditor">
+                    <!-- <el-form-item label="办理人员:" prop="nextAuditor">
+                        <el-select v-model="nextAuditor"
+                            clearable
+                            filterable
+                            remote
+                            reserve-keyword
+                            placeholder="请输入关键词搜索"
+                            :remote-method="getNextAuditor"
+                            :loading="loading">
+                            <el-option
+                                v-for="item in auditors"
+                                :key="item.id"
+                                :label="item.cnName"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item> -->
+                    <span>办理人员:</span>
+                    <el-select v-model="nextAuditor"
+                            clearable
+                            filterable
+                            remote
+                            reserve-keyword
+                            placeholder="请输入关键词搜索"
+                            :remote-method="getNextAuditor"
+                            :loading="loading">
+                            <el-option
+                                v-for="item in auditors"
+                                :key="item.id"
+                                :label="item.cnName"
+                                :value="item.id">
+                            </el-option>
+                    </el-select>
+                </div>
+                <div class="seperator"></div>
+                <div class="audit" v-if="dataForm.id">
+                    <span>审批结果:&nbsp;</span>
+                    <el-radio-group v-model="dataForm.audit">
+                        <el-radio label="0">不同意</el-radio>
+                        <el-radio label="1">同意</el-radio>
+                    </el-radio-group>
+                </div>
+                <el-input v-model="dataForm.auditComment" type="textarea" :rows="4" placeholder="请输入审批意见"></el-input>
 
-            <div class="footer">
-                <el-button type="primary" size="mini" @click="flowFormSubmit()">确定</el-button>
-                <!-- <el-button size="mini" @click="visible = false">取消</el-button> -->
+                <div class="footer">
+                    <el-button type="primary" size="mini" @click="flowFormSubmit()">确定</el-button>
+                    <!-- <el-button size="mini" @click="visible = false">取消</el-button> -->
+                </div>
             </div>
-        </div>
+        </transition>
         <!-- 弹窗 -->
         <NextAuditor v-if="enableNextAuditor" ref="nextAuditor"></NextAuditor>
     </el-form>
@@ -341,9 +365,53 @@ export default {
     clickBtnDisableFlowOperate() {
       this.enableFlowOperate = false
     },
+    beforeEnter(el) {
+    //   console.log('beforeEnter')
+      el.style.transition = "0.3s height ease-in-out"
+      if (!el.dataset) el.dataset = {}
+      el.style.height = 0
+    },
+    enter(el, done) {
+    //   console.log('enter')
+      if (el.scrollHeight !== 0) {
+        el.style.height = `${el.scrollHeight + 20}px`
+      } else {
+        el.style.height = ''
+      }
+      el.style.overflow = 'hidden'
+    },
+    afterEnter(el) {
+    //   console.log('afterEnter')
+      el.style.transition = ''
+      el.style.height = ''
+    },
+    enterCancelled(el) {
+    //   console.log('enterCancelled')
+    },
+    beforeLeave(el) {
+    //   console.log('beforeLeave')
+      if (!el.dataset) el.dataset = {}
+      el.style.height = `${el.scrollHeight + 20}px`
+      el.style.overflow = 'hidden'
+    },
+    leave(el, done) {
+    //   console.log('leave')
+      if (el.scrollHeight !== 0) {
+        el.style.transition = "0.3s height ease-in-out"
+        el.style.height = 0
+      }
+    },
+    afterLeave(el) {
+    //   console.log('afterLeave')
+      el.style.transition = ''
+      el.style.height = ''
+    },
+    leaveCancelled(el) {
+    //   console.log('leaveCancelled')
+    },
       // 流程提交
     flowFormSubmit () {
-      console.log('flowFormSubmit')
+    //   console.log('flowFormSubmit')
       let params = {
         templateID: this.templateID,
         processInstID: this.processInstID,
@@ -513,6 +581,10 @@ a:focus, a:hover {
 .flow-next-auditor {
     margin: 10px;
 }
+.el-flow-form {
+    text-align: left;
+    margin-bottom: 0px;
+}
 .audit {
     margin: 10px;
 }
@@ -521,7 +593,7 @@ a:focus, a:hover {
 }
 .v-form{padding-bottom: 10px;}
 .flow-operate-panel {
-    margin-top: 20px; 
+    margin-top: 0px; 
 }
 .flow-operate-panel p {
     margin-bottom: 10px;

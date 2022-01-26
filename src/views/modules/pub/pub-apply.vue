@@ -364,10 +364,6 @@ export default {
     // 新增 / 修改
     addOrUpdateHandle (id) {
       this.$router.push({ name: 'pub-flow', query: {id: id} })
-      // this.addOrUpdateVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs.addOrUpdate.init(id)
-      // })
     },
     // 点击ID
     clickIDHandle (id) {

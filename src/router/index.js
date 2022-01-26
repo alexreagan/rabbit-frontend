@@ -53,8 +53,14 @@ const mainRoutes = {
       path: '/home',
       component: _import('common/home'),
       name: 'home',
-      meta: {title: '首页'}
+      meta: {title: '工作台', isTab: true}
     },
+    // {
+    //   path: '/workbench',
+    //   component: _import('common/workbench'),
+    //   name: 'workbench',
+    //   meta: {title: '工作台', isTab: true}
+    // },
     {
       path: '/theme',
       component: _import('common/theme'),
@@ -85,7 +91,6 @@ const mainRoutes = {
       name: 'template-add-or-update',
       meta: {title: '模板信息', isTab: true}
     },
-    // { path: '/template-design', component: _import('modules/app/template-design'), name: 'template-design', meta: { title: '模板设计', isTab: true } },
     {
       path: '/template-design',
       component: _import('modules/app/template-design'),
@@ -97,6 +102,12 @@ const mainRoutes = {
       component: _import('modules/pub/pub-apply-add-or-update'),
       name: 'pub-apply-add-or-update',
       meta: {title: '发布单', isTab: true}
+    },
+    {
+      path: '/notice-add-or-update',
+      component: _import('modules/sys/notice-add-or-update'),
+      name: 'notice-add-or-update',
+      meta: {title: '系统公告', isTab: true}
     },
     {
       path: '/node-node-apply-assign',

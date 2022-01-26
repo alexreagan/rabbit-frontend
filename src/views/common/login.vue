@@ -4,10 +4,10 @@
       <div class="site-content">
         <div class="brand-info">
           <h2 class="brand-info__text">yangtze</h2>
-          <p class="brand-info__intro">致力于提供一套优秀的机器管理方案</p>
+          <p class="brand-info__intro">致力于提供一套优秀的自动化运维方案</p>
         </div>
         <div class="login-main">
-          <h3 class="login-title">管理员登录</h3>
+          <h3 class="login-title">登录</h3>
           <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" status-icon>
             <el-form-item prop="userName">
               <el-input v-model="dataForm.userName" placeholder="帐号"></el-input>

@@ -435,10 +435,9 @@ export default {
         }
         if (valid) {
           this.$http({
-            url: this.$http.adornUrl('/api/v1/proc/create'),
+            url: this.$http.adornUrl('/api/v1/pub/create'),
             method: 'post',
-            data: this.$http.adornData(params, false)
-            // params: this.$http.adornParams(params)
+            params: this.$http.adornParams(params)
           }).then(({data}) => {
           }).catch((error) => {
             this.$message.error(error.message)
@@ -468,17 +467,17 @@ a:focus, a:hover {
     margin-bottom: 20px;
 }
 .flow-title {
-    font-size: 16px;
+    font-size: 16px; 
     line-height: 40px;
-    border-bottom: 1px solid #f4f4f4;
-    font-family: '微软雅黑';
-    padding-left: 10px;
+    border-bottom: 1px solid #f4f4f4; 
+    font-family: '微软雅黑'; 
+    padding-left: 10px; 
     margin-bottom: 20px;
 }
 .flow-content {
-    margin: 10px 0 0 0;
-    border: 1px solid #d8d8d8;
-    border-radius: 2px;
+    margin: 10px 0 0 0; 
+    border: 1px solid #d8d8d8; 
+    border-radius: 2px; 
     position: relative;
     padding: 5px;
 }
@@ -494,11 +493,11 @@ a:focus, a:hover {
     bottom: 0;
 }
 .line {
-    position: absolute;
-    width: 1px;
-    background: #ddd;
-    left: 186px;
-    top: 26px;
+    position: absolute; 
+    width: 1px; 
+    background: #ddd; 
+    left: 186px; 
+    top: 26px; 
     height: 80px
 }
 .flow-item {
@@ -555,11 +554,11 @@ a:focus, a:hover {
     margin-left: 50px;
 }
 .flow-itemC {
-    width: 6px;
-    height: 6px;
+    width: 6px; 
+    height: 6px; 
     border: 1px solid #2d8cf0;
     border-radius: 100px;
-    margin:0 30px;
+    margin:0 30px; 
     margin-top: 24px;
 }
 .flow-item-image {
@@ -594,7 +593,7 @@ a:focus, a:hover {
 }
 .v-form{padding-bottom: 10px;}
 .flow-operate-panel {
-    margin-top: 0px;
+    margin-top: 0px; 
 }
 .flow-operate-panel p {
     margin-bottom: 10px;

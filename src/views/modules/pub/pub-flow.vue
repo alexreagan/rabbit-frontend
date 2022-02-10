@@ -160,7 +160,7 @@ export default {
       },
       enableFlowHistory: true,
       enableFlowOperate: false,
-      enableNextAuditor: false,
+      enableNextAuditor: true,
       nextNode: {
         NEXT_NODE_INFO: [{
           multiple: null,
@@ -338,6 +338,9 @@ export default {
         method: 'post',
         params: this.$http.adornParams(params)
       }).then(({data}) => {
+        this.nextNode = {
+          NEXT_NODE_INFO: data.NEXT_NODE_INFO
+        }
       }).catch((error) => {
         this.$message.error(error.message)
       })
@@ -436,6 +439,7 @@ export default {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl('/api/v1/proc/create'),
+            // url: this.$http.adornUrl('/api/v1/pub/create'),
             method: 'post',
             data: this.$http.adornData(params, false)
             // params: this.$http.adornParams(params)

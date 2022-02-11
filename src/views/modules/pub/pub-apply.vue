@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button type="primary" @click="addOrUpdateHandle()">新建发布单</el-button>
+        <el-button type="primary" @click="AddHandle()">新建发布单</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -235,7 +235,7 @@
         min-width="100"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('pub:pub:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button v-if="isAuth('pub:pub:update')" type="text" size="small" @click="UpdateHandle(scope.row.id)">修改</el-button>
           <el-button v-if="isAuth('pub:pub:assign')" type="text" size="small" @click="assignHandle(scope.row.id)">实施</el-button>
         </template>
       </el-table-column>
@@ -272,7 +272,10 @@ export default {
       pageSize: 10,
       totalPage: 0,
       dataListLoading: false,
-      dataListSelections: []
+      dataListSelections: [],
+      defaultTemplateID: '600100PubAudit',
+    //   defaultTemplateID: '040500ChgTskBizReq',
+      defaultTaskID: '10101'
     }
   },
   components: {
@@ -361,9 +364,13 @@ export default {
       this.order = order.replace('ending', '')
       this.getDataList()
     },
-    // 新增 / 修改
-    addOrUpdateHandle (id) {
-      this.$router.push({ name: 'pub-flow', query: {id: id} })
+    // 新增
+    AddHandle () {
+      this.$router.push({name: 'pub-flow', query: {templateID: this.defaultTemplateID, taskID: this.defaultTaskID}})
+    },
+    // 修改
+    UpdateHandle (id) {
+      this.$router.push({ name: 'pub-flow', query: {prjSN: id} })
     },
     // 点击ID
     clickIDHandle (id) {

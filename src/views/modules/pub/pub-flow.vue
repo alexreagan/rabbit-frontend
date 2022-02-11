@@ -1,7 +1,7 @@
 <template>
   <div class="mod-template-add-or-update">
-    <div v-if="dataForm.id">
-        <pub-detail :id="dataForm.id" ref="detailForm">
+    <div v-if="flowForm.prjSN">
+        <pub-detail :id="flowForm.prjSN" ref="detailForm">
         </pub-detail>
     </div>
     <div v-else>
@@ -11,7 +11,7 @@
 
     <el-form class="flow" :model="flowForm" :rules="flowRule" ref="flowForm" @keyup.enter.native="flowFormSubmit()" label-width="100px">
         <!-- <div class="flow-panel" v-show='enableFlowHistory'> -->
-        <div class="flow-panel" v-if='dataForm.id'>
+        <div class="flow-panel" v-if='flowForm.prjSN'>
             <div class="flow-title">流转记录</div>
             <div class="flow-content">
                 <div class="flow-items">
@@ -21,7 +21,7 @@
                         </div>
                         <div class="flow-item-desc">
                             <div class="flow-item-text">{{item.PCS_AVY_NM}}</div>
-                            <div class="flow-item-time">{{item.START_TIME}}</div>
+                            <div class="flow-item-time">{{item.END_TIME}}</div>
                         </div>
                         <div class="flow-item-content">
                             <div class="flow-item-image">
@@ -29,7 +29,7 @@
                             </div>
                             <div class="flow-item-info">
                                 <a class="deco">{{item.EXECUTER_INFO.NAME + "(" + item.EXECUTER_INFO.BLNG_INST_NM + ")"}}</a>&nbsp;于&nbsp;
-                                <span>{{item.START_TIME}}</span>&nbsp;{{item.BUTTON_NAME}}给&nbsp;
+                                <span>{{item.END_TIME}}</span>&nbsp;{{item.BUTTON_NAME}}给&nbsp;
                                 <span v-for="(user, index) in item.USER_INFO" :key="index">
                                     <a class="deco">{{user.NAME + "(" + user.BLNG_INST_NM + ")"}}</a>
                                 </span>
@@ -48,37 +48,16 @@
         <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @enter-cancelled="enterCancelled" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave" @leave-cancelled="leaveCancelled" v-bind:css="false">
             <div class="flow-operate-panel" v-if='enableFlowOperate'>
                 <div class="flow-next-node">
-                    <!-- <el-form-item class="el-flow-form" label="下一步骤:" prop="nextNode">
-                        <span v-for="(nextNodeInfo, index) in nextNode.NEXT_NODE_INFO" :key="index">
-                            <a class="deco">{{nextNodeInfo.NODE_NAME}}</a>
-                        </span>
-                    </el-form-item> -->
                     <span>下一步骤:&nbsp;</span>
-                    <span v-for="(nextNodeInfo, index) in nextNode.NEXT_NODE_INFO" :key="index">
+                    <a class="deco">{{flowForm.nextNode.NODE_NAME}}</a>
+                    <!-- <span v-for="(nextNodeInfo, index) in flowForm.nextNode.NEXT_NODE_INFO" :key="index">
                         <a class="deco">{{nextNodeInfo.NODE_NAME}}</a>
-                    </span>
+                    </span> -->
                 </div>
                 <div class="seperator"></div>
-                <div class="flow-next-auditor">
-                    <!-- <el-form-item label="办理人员:" prop="nextAuditor">
-                        <el-select v-model="nextAuditor"
-                            clearable
-                            filterable
-                            remote
-                            reserve-keyword
-                            placeholder="请输入关键词搜索"
-                            :remote-method="getNextAuditor"
-                            :loading="loading">
-                            <el-option
-                                v-for="item in auditors"
-                                :key="item.id"
-                                :label="item.cnName"
-                                :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item> -->
+                <div class="flow-next-auditor" v-if="enableNextAuditor">
                     <span>办理人员:</span>
-                    <el-select v-model="nextAuditor"
+                    <el-select v-model="flowForm.nextAuditor"
                             clearable
                             filterable
                             remote
@@ -88,45 +67,46 @@
                             :loading="loading">
                             <el-option
                                 v-for="item in auditors"
-                                :key="item.id"
+                                :key="item.jgygUserID"
                                 :label="item.cnName"
-                                :value="item.id">
+                                :value="item.jgygUserID">
                             </el-option>
                     </el-select>
                 </div>
                 <div class="seperator"></div>
-                <div class="audit" v-if="dataForm.id">
+                <div class="audit" v-if="flowForm.prjSN">
                     <span>审批结果:&nbsp;</span>
-                    <el-radio-group v-model="dataForm.audit">
+                    <el-radio-group v-model="flowForm.opinCode">
                         <el-radio label="0">不同意</el-radio>
                         <el-radio label="1">同意</el-radio>
                     </el-radio-group>
                 </div>
-                <el-input v-model="dataForm.auditComment" type="textarea" :rows="4" placeholder="请输入审批意见"></el-input>
+                <el-input v-model="flowForm.remark" type="textarea" :rows="4" placeholder="备注"></el-input>
 
                 <div class="footer">
                     <el-button type="primary" size="mini" @click="flowFormSubmit()">确定</el-button>
-                    <!-- <el-button size="mini" @click="visible = false">取消</el-button> -->
                 </div>
             </div>
         </transition>
         <!-- 弹窗 -->
-        <NextAuditor v-if="enableNextAuditor" ref="nextAuditor"></NextAuditor>
+        <!-- <NextAuditor v-if="enableNextAuditor" ref="nextAuditor"></NextAuditor> -->
     </el-form>
   </div>
 </template>
 
 <script>
-// import VueUeditorWrap from 'vue-ueditor-wrap'
-import NextAuditor from './flow-select-person'
 import PubDetail from './pub-detail.vue'
 import PubAdd from './pub-add.vue'
 export default {
   data () {
     var validateNextAuditor = (rule, value, callback) => {
-      console.log("validateNextAuditor")
-      if (value === '') {
-        callback(new Error('请选择审核人'))
+      if (this.enableNextAuditor === true) {
+        console.log("validateNextAuditor")
+        if (value === '') {
+          callback(new Error('请选择审核人'))
+        } else {
+          callback()
+        }
       } else {
         callback()
       }
@@ -134,11 +114,14 @@ export default {
     return {
       loading: false,
       visible: false,
-      dataForm: {
-        id: 0
-      },
+      defaultTemplateID: '600100PubAudit',
+    //   defaultTemplateID: '040500ChgTskBizReq',
+      defaultProcessInstID: '',
+      defaultTodoID: '',
+      defaultTaskID: '10101',
       templateID: '',
       processInstID: '',
+      todoID: '',
       taskID: '',
       deployUnitChoices: [],
       stateChoices: [{
@@ -155,43 +138,48 @@ export default {
         'value': 'trim'
       }],
       flowForm: {
-        audit: '',
-        auditComment: ''
+        prjSN: 0,
+        opinCode: '',
+        opinDesc: '',
+        nextNode: {},
+        nextAuditor: '',
+        nextUserGrp: [],
+        remark: ''
       },
       enableFlowHistory: true,
       enableFlowOperate: false,
-      enableNextAuditor: false,
-      nextNode: {
-        NEXT_NODE_INFO: [{
-          multiple: null,
-          USER: null,
-          NODE_NAME: '申请变更开发任务需求范围'
-        }]
-      },
+      enableNextAuditor: true,
+    //   nextNode: {
+    //     NEXT_NODE_INFO: [{
+    //       multiple: null,
+    //       USER: null,
+    //       NODE_NAME: '申请变更开发任务需求范围'
+    //     }]
+    //   },
       auditors: [],
-      nextAuditor: '',
-      flowHistory: [
-        {
-          PCS_AVY_NM: '卡发中心评审',
-          START_TIME: '2020-04-10 12:09',
-          BUTTON_NAME: '提交',
-          EXECUTER_INFO: {
-            ID: "92167192",
-            NAME: "张欣",
-            BLNG_INST_ID: "010102913",
-            BLNG_INST_NM: "中国建设银行软件中心"
-          },
-          USER_INFO: [{
-            NAME: "周可",
-            ID: "03110531",
-            BLNG_INST_ID: "010200800",
-            BLNG_INST_NM: "中国建设银行股份有限公司运营数据中心"
-          }
-          ],
-          pass: '通过/不通过',
-          des: 'xxxxx'
-        }
-      ],
+      flowHistory: [],
+    //   flowHistory: [
+    //     {
+    //       PCS_AVY_NM: '卡发中心评审',
+    //       START_TIME: '2020-04-10 12:09',
+    //       BUTTON_NAME: '提交',
+    //       EXECUTER_INFO: {
+    //         ID: "92167192",
+    //         NAME: "张欣",
+    //         BLNG_INST_ID: "010102913",
+    //         BLNG_INST_NM: "中国建设银行软件中心"
+    //       },
+    //       USER_INFO: [{
+    //         NAME: "周可",
+    //         ID: "03110531",
+    //         BLNG_INST_ID: "010200800",
+    //         BLNG_INST_NM: "中国建设银行股份有限公司运营数据中心"
+    //       }
+    //       ],
+    //       pass: '通过/不通过',
+    //       des: 'xxxxx'
+    //     }
+    //   ],
       flowRule: {
         nextAuditor: [
             { required: true, message: '办理人员', validator: validateNextAuditor, trigger: 'blur' }
@@ -200,14 +188,18 @@ export default {
     }
   },
   components: {
-    NextAuditor,
+    // NextAuditor,
     PubDetail,
     PubAdd
   },
   mounted () {
   },
   activated () {
-    this.dataForm.id = this.$route.query.id
+    this.flowForm.prjSN = this.$route.query.prjSN
+    this.templateID = this.$route.query.templateID || this.defaultTemplateID
+    this.processInstID = this.$route.query.processInstID || this.defaultProcessInstID
+    this.todoID = this.$route.query.todoID || this.defaultTodoID
+    this.taskID = this.$route.query.taskID || this.defaultTaskID
     this.init()
   },
   watch: {
@@ -228,13 +220,10 @@ export default {
         params: this.$http.adornParams({
           'page': 1,
           'limit': 20,
-          'name': query
+          'username': query
         })
       })
       if (data && data.list) {
-        if (data.list.length > 0) {
-          this.nextAuditor = data.list[0].id
-        }
         this.auditors = data.list
       } else {
         this.auditors = []
@@ -244,76 +233,92 @@ export default {
     init () {
       this.visible = true
       this.$nextTick(() => {
-        this.$http({
-          url: this.$http.adornUrl(`/api/v1/tag/all`),
-          method: 'get',
-          params: this.$http.adornParams({
-            'categoryName': 'deployunit'
-          })
-        }).then(({data}) => {
-          let deployUnitChoices = []
-          data.list.forEach((data) => {
-            deployUnitChoices.push({
-              label: data.name,
-              value: data.id
-            })
-          })
-          this.deployUnitChoices = deployUnitChoices
-        }).catch((error) => {
-          this.$message.error(error.message)
-        })
-        // 当前流程信息
-        if (this.dataForm.id) {
-          this.$http({
-            url: this.$http.adornUrl(`/api/v1/pub/proc/info`),
-            method: 'get',
-            params: this.$http.adornParams({
-              'id': this.dataForm.id
-            })
-          }).then(({data}) => {
-            // process info
-            this.templateID = data.templateID
-            this.processInstID = data.processInstID
-            this.taskID = data.taskID
-          }).catch((error) => {
-            this.$message.error(error.message)
-          })
-        } else {
-          // process info
-          this.templateID = '600100PubAudit'
-          this.processInstID = ''
-          this.taskID = ''
-        }
+        // 部署单元
+        this.getDeployUnit()
+
+        // 流程历史记录
+        this.getFlowHistory()
+
+        // // 当前流程信息
+        // if (this.dataForm.prjSN) {
+        //   this.$http({
+        //     url: this.$http.adornUrl(`/api/v1/pub/proc/info`),
+        //     method: 'get',
+        //     params: this.$http.adornParams({
+        //       'id': this.dataForm.prjSN
+        //     })
+        //   }).then(({data}) => {
+        //     // process info
+        //     this.templateID = data.templateID
+        //     this.processInstID = data.processInstID
+        //     this.taskID = data.taskID
+        //   }).catch((error) => {
+        //     this.$message.error(error.message)
+        //   })
+        // } else {
+        //   // process info
+        //   this.templateID = this.defaultTemplateID
+        //   this.processInstID = ''
+        //   this.taskID = this.defaultTaskID
+        // }
       })
     },
-    // 获取流程历史记录
+    // 部署单元
+    getDeployUnit() {
+      this.$http({
+        url: this.$http.adornUrl(`/api/v1/tag/all`),
+        method: 'get',
+        params: this.$http.adornParams({
+          'categoryName': 'deployunit'
+        })
+      }).then(({data}) => {
+        let deployUnitChoices = []
+        data.list.forEach((data) => {
+          deployUnitChoices.push({
+            label: data.name,
+            value: data.id
+          })
+        })
+        this.deployUnitChoices = deployUnitChoices
+      }).catch((error) => {
+        this.$message.error(error.message)
+      })
+    },
+    // 流程历史记录
     getFlowHistory() {
       this.$http({
-        url: this.$http.adornUrl('/api/v1/proc/getHistDetailList'),
+        url: this.$http.adornUrl('/api/v1/wfe/histDetails'),
         method: 'post',
-        params: this.$http.adornParams({})
-      }).then((data) => {
+        params: this.$http.adornParams({
+          processInstID: this.processInstID
+        })
+      }).then(({data}) => {
+        let flowHistory = []
+        if (data.TX_BODY.ENTITY.PROCESS_INFO) {
+          flowHistory = data.TX_BODY.ENTITY.PROCESS_INFO
+        }
+        this.flowHistory = flowHistory
         // this.flowHistory = data.PROCESS_INFO
-        this.flowHistory = [
-          {
-            PCS_AVY_NM: '卡发中心评审',
-            START_TIME: '2020-04-10 12:09',
-            BUTTON_NAME: '提交',
-            EXECUTER_INFO: {
-              ID: "92167192",
-              NAME: "张欣",
-              BLNG_INST_ID: "010102913",
-              BLNG_INST_NM: "中国建设银行软件中心"
-            },
-            USER_INFO: [{
-              NAME: "周可",
-              ID: "03110531",
-              BLNG_INST_ID: "010200800",
-              BLNG_INST_NM: "中国建设银行股份有限公司运营数据中心"
-            }
-            ]
-          }
-        ]
+        // this.flowHistory = [
+        //   {
+        //     PCS_AVY_NM: '卡发中心评审',
+        //     START_TIME: '2020-04-10 12:09',
+        //     BUTTON_NAME: '提交',
+        //     EXECUTER_INFO: {
+        //       ID: "92167192",
+        //       NAME: "张欣",
+        //       BLNG_INST_ID: "010102913",
+        //       BLNG_INST_NM: "中国建设银行软件中心"
+        //     },
+        //     USER_INFO: [{
+        //       NAME: "周可",
+        //       ID: "03110531",
+        //       BLNG_INST_ID: "010200800",
+        //       BLNG_INST_NM: "中国建设银行股份有限公司运营数据中心"
+        //     }
+        //     ]
+        //   }
+        // ]
       }).catch((error) => {
         this.$message.error(error.message)
       })
@@ -324,38 +329,48 @@ export default {
         templateID: this.templateID,
         taskID: this.taskID
       }
-      if (this.flowForm.audit) {
-        params = {
-          ...params,
-          conditions: [{
-            Key: "choice",
-            Value: this.flowForm.audit
-          }]}
-      }
+    //   if (this.flowForm.opinCode) {
+    //     params = {
+    //       ...params,
+    //       conditions: [{
+    //         Key: "choice",
+    //         Value: this.flowForm.opinCode
+    //       }]}
+    //   }
 
       this.$http({
-        url: this.$http.adornUrl('/api/v1/proc/nextNodeInfo'),
+        url: this.$http.adornUrl('/api/v1/wfe/nextNodeInfo'),
         method: 'post',
         params: this.$http.adornParams(params)
       }).then(({data}) => {
+        let nextNode
+        if (data.TX_BODY.ENTITY.NEXT_NODE_INFO) {
+          nextNode = data.TX_BODY.ENTITY.NEXT_NODE_INFO[data.TX_BODY.ENTITY.NEXT_NODE_INFO.length - 1]
+        }
+        this.flowForm.nextNode = nextNode
+        if (nextNode && nextNode.NODE_ID === "99999") {
+          this.enableNextAuditor = false
+        } else {
+          this.enableNextAuditor = true
+        }
       }).catch((error) => {
         this.$message.error(error.message)
       })
-      this.nextNode = {
-        NEXT_NODE_INFO: [{
-          multiple: null,
-          USER: null,
-          NODE_NAME: '申请变更开发任务需求范围'
-        }]
-      }
+    //   this.flowForm.nextNode = {
+    //     NEXT_NODE_INFO: [{
+    //       multiple: null,
+    //       USER: null,
+    //       NODE_NAME: '申请变更开发任务需求范围'
+    //     }]
+    //   }
     },
       // 选取下一个待办人
-    clickBtnAddNextAuditor() {
-      this.enableNextAuditor = true
-      this.$nextTick(() => {
-        this.$refs.nextAuditor.init()
-      })
-    },
+    // clickBtnAddNextAuditor() {
+    //   this.enableNextAuditor = true
+    //   this.$nextTick(() => {
+    //     this.$refs.nextAuditor.init()
+    //   })
+    // },
       // 提交
     clickBtnEnableFlowOperate() {
       this.enableFlowOperate = true
@@ -374,7 +389,7 @@ export default {
     enter(el, done) {
     //   console.log('enter')
       if (el.scrollHeight !== 0) {
-        el.style.height = `${el.scrollHeight + 20}px`
+        el.style.height = `${el.scrollHeight + 60}px`
       } else {
         el.style.height = ''
       }
@@ -391,7 +406,7 @@ export default {
     beforeLeave(el) {
     //   console.log('beforeLeave')
       if (!el.dataset) el.dataset = {}
-      el.style.height = `${el.scrollHeight + 20}px`
+      el.style.height = `${el.scrollHeight + 60}px`
       el.style.overflow = 'hidden'
     },
     leave(el, done) {
@@ -415,6 +430,7 @@ export default {
       let params = {
         templateID: this.templateID,
         processInstID: this.processInstID,
+        todoID: this.todoID,
         taskID: this.taskID
       }
       console.log("flowFormSubmit enter", this.$refs)
@@ -428,20 +444,59 @@ export default {
         }
       }
       this.$refs['flowForm'].validate((valid) => {
-        console.log("nextNode: ", this.nextNode, this.nextAuditor)
-        if (this.nextNode && !this.nextAuditor) {
+        console.log("nextNode: ", this.flowForm.nextNode, this.flowForm.nextAuditor)
+        if (this.flowForm.nextNode && this.flowForm.nextNode.NODE_ID !== "99999" && !this.flowForm.nextAuditor) {
           this.$message.error("请选择下一步审核人")
           return
         }
         if (valid) {
-          this.$http({
-            url: this.$http.adornUrl('/api/v1/pub/create'),
-            method: 'post',
-            params: this.$http.adornParams(params)
-          }).then(({data}) => {
-          }).catch((error) => {
-            this.$message.error(error.message)
-          })
+            // 模拟多选
+          let condition = {
+            "key": "choice",
+            "value": this.flowForm.opinCode
+          }
+          // 组装参数
+          params = {
+            ...params,
+            ...this.flowForm,
+            buttonName: '提交',
+            nextUserGrp: [this.flowForm.nextAuditor],
+            conditions: [condition]
+            // nextUserFlag: this.flowForm.nextNode.NEXT_USER_FLAG
+          }
+          console.log('flowForm params:', params, this.$http.adornParams(params))
+          // 创建
+          if (this.taskID === '10101') {
+            this.$http({
+              url: this.$http.adornUrl('/api/v1/pub/create'),
+              method: 'post',
+              params: this.$http.adornParams(params)
+            }).then(({data}) => {
+              console.log("create pub response: ", data)
+              if (data.TX_HEADER.SYS_RESP_CODE !== "000000000000") {
+                this.$message.error(data.TX_HEADER.SYS_RESP_DESC)
+              } else {
+                this.$router.push({name: 'pub-pub-apply'})
+              }
+            }).catch((error) => {
+              this.$message.error(error.message)
+            })
+          } else if (this.taskID !== '10101') {
+            this.$http({
+              url: this.$http.adornUrl('/api/v1/pub/execute'),
+              method: 'post',
+              params: this.$http.adornParams(params)
+            }).then(({data}) => {
+              console.log("execute pub response: ", data)
+              if (data.TX_HEADER.SYS_RESP_CODE !== "000000000000") {
+                this.$message.error(data.TX_HEADER.SYS_RESP_DESC)
+              } else {
+                this.$router.push({name: 'pub-pub-apply'})
+              }
+            }).catch((error) => {
+              this.$message.error(error.message)
+            })
+          }
         }
       })
     }
@@ -570,7 +625,7 @@ a:focus, a:hover {
 .flow-item-info {
     float: left;
     margin-left: 10px;
-    width: 94%;
+    width: 92%;
 }
 .flow-btn-groups {
     margin: 5px;

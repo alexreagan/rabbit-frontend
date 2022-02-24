@@ -49,13 +49,13 @@
       </div>
     </el-card>
 
-    <el-card class="card-hasDone">
+    <el-card class="card-hists">
       <div slot="header" class="clearfix">
         <span>已办事项</span>
       </div>
-      <div class="proc-hasDone">
+      <div class="proc-hists">
         <template>
-          <el-table :data="hasDone" stripe border style="width: 100%">
+          <el-table :data="hists" stripe border style="width: 100%">
             <el-table-column prop="PRJ_BELONG_TYPE" label="流程分类"></el-table-column>
             <el-table-column prop="PRJ_TYPE" label="流程名称"></el-table-column>
             <el-table-column prop="PROCESS_INST_ID" label="编号"> </el-table-column>
@@ -65,7 +65,7 @@
             <el-table-column prop="TODO_START_TM" label="办理时间"> </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="procHasDoneHandle(scope.row.TEMPLATE_ID, scope.row.PROCESS_INST_ID, scope.row.TASK_ID, scope.row.TODO_SN, scope.row.PRJ_SN)">办理</el-button>
+                <el-button type="text" size="small" @click="procHistHandle(scope.row.TEMPLATE_ID, scope.row.PROCESS_INST_ID, scope.row.TASK_ID, scope.row.TODO_SN, scope.row.PRJ_SN)">办理</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -90,7 +90,7 @@ export default {
     return {
       notices: [],
       todos: [],
-      hasDone: [],
+      hists: [],
       pageIndex: 1,
       pageSize: 10,
       totalPage: 0,
@@ -142,7 +142,7 @@ export default {
         })
         // 已办消息
         this.$http({
-          url: this.$http.adornUrl(`/api/v1/wfe/hasDone`),
+          url: this.$http.adornUrl(`/api/v1/wfe/hists`),
           method: 'post',
           params: this.$http.adornParams({
             page: this.pageIndex,
@@ -150,20 +150,20 @@ export default {
           })
         }).then(({data}) => {
           this.dataListLoading = false
-          let hasDone = []
-          if (data.TX_BODY.ENTITY.HASDONE_INFO) {
-            hasDone = data.TX_BODY.ENTITY.HASDONE_INFO
+          let hists = []
+          if (data.TX_BODY.ENTITY.HIST_INFO) {
+            hists = data.TX_BODY.ENTITY.HIST_INFO
           }
           let totalPage = 0
           if (data.TX_BODY.COMMON.COMB.TOTAL_PAGE) {
             totalPage = data.TX_BODY.COMMON.COMB.TOTAL_PAGE
           }
-          this.hasDone = hasDone
+          this.hists = hists
           this.totalPage = totalPage
         }).catch(error => {
           this.dataListLoading = false
           this.$message.error(error.messag)
-          this.hasDone = []
+          this.hists = []
           this.pageIndex = 1
           this.pageSize = 10
           this.totalPage = 0
@@ -187,7 +187,7 @@ export default {
       console.log(processInstID)
     },
     // 处理已办
-    procHasDoneHandle (templateID, processInstID, taskID, todoID, prjSN) {
+    procHistHandle (templateID, processInstID, taskID, todoID, prjSN) {
       // this.$router.push({name: 'pub-flow', query: {'templateID': templateID, 'processInstID': processInstID, 'taskID': taskID, 'todoID': todoID, 'prjSN': prjSN}})
       console.log(processInstID)
     },
@@ -247,7 +247,7 @@ a:focus, a:hover {
     list-style-type: none;
     margin-bottom: 2px;
 }
-.card-hasDone {
+.card-hists {
   float: left;
   margin-top: 10px;
   margin-right: 10px;
